@@ -1,4 +1,4 @@
-# Oregon Universal Health Plan calculator
+# Oregon Universal Health Plan explainer and calculator
 
 > **Work in progress.** This repository is being extracted from the explainer at
 > [www.malcom.io/oregon-universal-health-plan](https://www.malcom.io/oregon-universal-health-plan).
