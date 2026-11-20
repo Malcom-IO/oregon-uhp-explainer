@@ -1,0 +1,209 @@
+.oregon-uhp {
+  color-scheme: light dark;
+  --surface: #f1f5f7;
+  --paper: #fff;
+  --ink: #142938;
+  --muted: #465d6c;
+  --line: #c5d3dc;
+  --control-line: #768c9c;
+  --grid: #dbe4e9;
+  --accent: #245f9a;
+  --status: #e5eff8;
+  --error: #a32a37;
+  --series-1: #235d9c;
+  --series-2: #ad4828;
+  --series-3: #21715c;
+  --series-4: #835196;
+  --series-5: #855c0b;
+  max-inline-size: 72rem;
+  margin-inline: auto;
+  padding: clamp(.75rem, 3vw, 2rem);
+  border-radius: 1rem;
+  background: var(--surface);
+  color: var(--ink);
+  font: 400 1rem/1.5 system-ui, sans-serif;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-color-scheme: dark) {
+  .oregon-uhp {
+    --surface: #111c25;
+    --paper: #1b2b37;
+    --ink: #eaf2f7;
+    --muted: #b7c9d5;
+    --line: #496274;
+    --control-line: #7f99ab;
+    --grid: #3a4e5d;
+    --accent: #a6d0fc;
+    --status: #243b50;
+    --error: #ffacaf;
+    --series-1: #86bef9;
+    --series-2: #ffa987;
+    --series-3: #72d5b0;
+    --series-4: #d5aaf1;
+    --series-5: #e8c075;
+  }
+}
+
+.oregon-uhp, .oregon-uhp * { box-sizing: border-box; }
+.oregon-uhp [hidden] { display: none !important; }
+
+.oregon-uhp :where(h1, h2, h3, h4, p, dl, dd, figure, ul) { margin: 0; }
+.oregon-uhp :where(h1, h2, h3, h4) {
+  color: var(--ink);
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.oregon-uhp h1 {
+  max-inline-size: 24ch;
+  font-size: clamp(1.7rem, 6vw, 3rem);
+  letter-spacing: -.035em;
+}
+.oregon-uhp h2 { font-size: clamp(1.25rem, 4vw, 1.65rem); }
+.oregon-uhp h3 { font-size: 1.12rem; }
+.oregon-uhp h4 { font-size: 1rem; }
+
+.oregon-uhp .widget-header { display: grid; gap: .65rem; padding: .35rem .15rem 1.35rem; }
+.oregon-uhp .snapshot { color: var(--accent); font-size: .87rem; font-weight: 700; }
+.oregon-uhp .intro { max-inline-size: 65ch; color: var(--muted); }
+
+.oregon-uhp .calculator-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  min-inline-size: 0;
+  margin-block-end: 1rem;
+  padding: clamp(.8rem, 3vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: .8rem;
+  background: var(--paper);
+}
+
+.oregon-uhp .fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+  align-items: start;
+  gap: 1rem 1.35rem;
+}
+
+.oregon-uhp .field-group { display: grid; gap: .65rem; }
+.oregon-uhp .field { display: grid; gap: .3rem; min-inline-size: 0; }
+.oregon-uhp .field label { display: block; color: var(--ink); font-size: .92rem; font-weight: 650; }
+.oregon-uhp .field :is(input, select) {
+  inline-size: 100%;
+  min-inline-size: 0;
+  font: inherit;
+  color: var(--ink);
+}
+.oregon-uhp .field :is(input[type="number"], select) {
+  min-block-size: 2.75rem;
+  margin: 0;
+  padding: .4rem .65rem;
+  border: 1px solid var(--control-line);
+  border-radius: .35rem;
+  background: var(--paper);
+}
+.oregon-uhp .field input[type="range"] {
+  min-block-size: 1.75rem;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.oregon-uhp :focus-visible { outline: .15rem solid var(--accent); outline-offset: .15rem; }
+.oregon-uhp .hint { color: var(--muted); font-size: .9rem; }
+.oregon-uhp .field-error { color: var(--error); font-size: .9rem; }
+.oregon-uhp .field input[aria-invalid="true"] { border-color: var(--error); }
+
+.oregon-uhp .result-status {
+  padding: .65rem .8rem;
+  border-radius: .35rem;
+  background: var(--status);
+  font-weight: 650;
+}
+.oregon-uhp .visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.oregon-uhp .bills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .7rem;
+  margin-block: .65rem;
+}
+.oregon-uhp .series-1 { --series: var(--series-1); --dash: none; }
+.oregon-uhp .series-2 { --series: var(--series-2); --dash: 9 3; }
+.oregon-uhp .series-3 { --series: var(--series-3); --dash: 4 3; }
+.oregon-uhp .series-4 { --series: var(--series-4); --dash: 10 3 2 3; }
+.oregon-uhp .series-5 { --series: var(--series-5); --dash: 2 3; }
+.oregon-uhp .bill {
+  min-inline-size: 0;
+  padding: .85rem;
+  border: 1px solid var(--line);
+  border-block-start: .22rem solid var(--series);
+  border-radius: .44rem;
+}
+.oregon-uhp .bill-name { margin-block: .18rem .5rem; color: var(--muted); font-size: .9rem; }
+.oregon-uhp .bill-amount { font-size: 1.55rem; font-weight: 750; font-variant-numeric: tabular-nums; }
+.oregon-uhp .bill-amount span { color: var(--muted); font-size: .86rem; font-weight: 400; }
+.oregon-uhp .bill dl { display: grid; gap: .2rem; margin-block-start: .55rem; font-size: .86rem; }
+.oregon-uhp .bill dl div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 .5rem; }
+.oregon-uhp .bill dt { color: var(--muted); }
+.oregon-uhp .bill dd { font-variant-numeric: tabular-nums; font-weight: 650; }
+
+.oregon-uhp .chart {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: .4rem;
+  min-inline-size: 0;
+  margin-block-start: 1.2rem;
+  padding-block-start: .8rem;
+  border-block-start: 1px solid var(--line);
+}
+.oregon-uhp figcaption { font-size: 1.06rem; font-weight: 700; }
+.oregon-uhp .chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 1rem;
+  padding: 0;
+  list-style: none;
+  font-size: .88rem;
+}
+.oregon-uhp .chart-legend li { display: flex; gap: .35rem; align-items: center; }
+.oregon-uhp .key { inline-size: 1.8rem; block-size: .55rem; }
+.oregon-uhp .uhp-plot { min-inline-size: 0; }
+.oregon-uhp .uhp-plot svg { display: block; inline-size: 100%; block-size: auto; }
+.oregon-uhp .grid-line { stroke: var(--grid); }
+.oregon-uhp .tick, .oregon-uhp .axis-title { fill: var(--muted); font-size: 12px; }
+.oregon-uhp .axis-title { font-weight: 650; }
+.oregon-uhp .series { fill: none; stroke: var(--series); stroke-width: 2.1; stroke-dasharray: var(--dash); }
+.oregon-uhp .income-line { stroke: var(--muted); stroke-dasharray: 3 3; }
+.oregon-uhp .cost-line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 8 4; }
+.oregon-uhp .dot { fill: var(--series); stroke: var(--paper); }
+.oregon-uhp .chart-lookup { max-inline-size: 20rem; }
+.oregon-uhp .chart-inspection { color: var(--muted); font-size: .87rem; }
+.oregon-uhp details > summary { color: var(--accent); font-weight: 650; cursor: pointer; }
+
+.oregon-uhp .table-scroll { min-inline-size: 0; overflow-x: auto; }
+.oregon-uhp details .table-scroll { margin-block-start: .4rem; }
+.oregon-uhp table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: .9rem;
+  font-variant-numeric: tabular-nums;
+}
+.oregon-uhp :is(th, td) {
+  padding: .38rem .45rem;
+  border-block-end: 1px solid var(--line);
+  text-align: start;
+}
+.oregon-uhp :is(th, td):not(:first-child) { text-align: end; }
+.oregon-uhp td { white-space: nowrap; }
+.oregon-uhp .privacy { color: var(--muted); font-size: .9rem; }

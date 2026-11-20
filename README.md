@@ -44,6 +44,22 @@ npm test
 npm run typecheck
 ```
 
+## Run the calculator
+
+With Node 24, run `npm ci` and `npm run dev`. For a static build, run
+`npm run build` and serve `dist/`. To host under a subpath, pass that path to
+Vite, for example `npm run build -- --base=/oregon-uhp-explainer/`. Use
+`npm run preview` to check the default build locally, or pass the same
+`--base` flag to preview a subpath build.
+
+A TypeScript host that bundles CSS imports can use `mount(host, options)` from
+`src/widget/index.ts`. The optional settings supply initial household income,
+household size, employer kind, and employer payroll. The mount returns a
+function that removes the widget and stops observing its chart size. An iframe
+can point to the calculator page directly. Give it the title “Oregon Universal
+Health Plan calculator” and enough height for the available space. The
+calculator scrolls inside the frame as needed.
+
 ## License
 
 Code: [MIT](LICENSE). Figures are transcribed from the Board's draft documents,
