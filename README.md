@@ -48,3 +48,4 @@ npm run typecheck
 
 Code: [MIT](LICENSE). Figures are transcribed from the Board's draft documents,
 published on oregon.gov, and cited in the source.
+See [SOURCES.md](SOURCES.md) for document versions, page references, and SHA-256 checksums.
