@@ -18,6 +18,22 @@ cell the report appears to misprint (Table S1, $90,000, Model 5: the report prin
 3,699 where its own schedule gives 3,669). The tests also check that the statewide
 cost tables add up.
 
+The engine holds no rates or thresholds of its own. Each revenue model is a proposal: a
+data file that states its exemption, brackets, rates, payroll tiers, public-employer rule
+and worker credit, with the source of its thresholds and of each rule. `src/model/proposal.ts` defines what a proposal
+can express and checks a file against it. `src/model/proposals/uhpgb-2026-10.ts` holds the
+Board's five models from the October 2026 drafts. A revised model or a "what if" that fits
+the schema is a new data file, not a code change:
+
+```ts
+import { parseProposal } from './src/model/proposal';
+import { bill } from './src/model/uhp-model';
+
+const proposal = parseProposal(JSON.parse(text)); // throws, listing every problem
+const result = bill(proposal, 85_000, 2, 'private', 8_500_000);
+// result.household, result.gross, result.credit, result.employer
+```
+
 ## Run the tests
 
 Requires Node 24 or later.
