@@ -1,2 +1,4 @@
 # Local notes and drafts, never committed
 .notes/
+node_modules/
+dist/
