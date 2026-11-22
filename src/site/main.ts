@@ -5,11 +5,15 @@
  *  - the two calculators, mounted from the widget;
  *  - a picker over the Board's example households, which otherwise all show;
  *  - collapsed sections opened for printing;
- *  - a fixed light or dark look when the address says ?theme=light or ?theme=dark.
+ *  - a fixed light or dark look when the address says ?theme=light or
+ *    ?theme=dark, or when a host has set data-uhp-theme on the page element.
  */
 import { mount } from '../widget/index';
 import type { WidgetTheme } from '../widget/index';
 import './site.css';
+
+/** Shown in place of a calculator that could not start. */
+export const CALCULATOR_FAILED = 'The calculator could not load in this browser. The tables on this page show worked examples.';
 
 /** The example shown first: the household insured through a private employer. */
 const FIRST_EXAMPLE = 'private';
@@ -75,16 +79,33 @@ export function enhance(doc: Document, search: string): void {
   const page = doc.querySelector<HTMLElement>('.uhp-page');
   if (!page) return;
 
-  const theme = themeFrom(search);
+  // The address wins; otherwise a theme a host set on the page element; otherwise the reader's system.
+  const hostTheme = page.dataset['uhpTheme'];
+  const fromAddress = themeFrom(search);
+  const theme: WidgetTheme = fromAddress !== 'auto'
+    ? fromAddress
+    : hostTheme === 'light' || hostTheme === 'dark' ? hostTheme : 'auto';
   if (theme !== 'auto') {
     page.dataset['uhpTheme'] = theme;
     doc.querySelector('meta[name="color-scheme"]')?.setAttribute('content', theme);
   }
 
-  const household = page.querySelector<HTMLElement>('#uhp-household-calculator');
-  if (household) mount(household, { show: 'household', header: false, headingLevel: 3, theme });
-  const employer = page.querySelector<HTMLElement>('#uhp-employer-calculator');
-  if (employer) mount(employer, { show: 'employer', header: false, headingLevel: 3, theme });
+  for (const [selector, show] of [
+    ['#uhp-household-calculator', 'household'],
+    ['#uhp-employer-calculator', 'employer'],
+  ] as const) {
+    const host = page.querySelector<HTMLElement>(selector);
+    if (!host) continue;
+    try {
+      mount(host, { show, header: false, headingLevel: 3, theme });
+    } catch {
+      // The rest of the page does not depend on the calculator; say plainly that it did not load.
+      const note = doc.createElement('p');
+      note.className = 'xp-noscript';
+      note.textContent = CALCULATOR_FAILED;
+      host.replaceChildren(note);
+    }
+  }
 
   examplePicker(page, doc);
   if (doc.defaultView) openDetailsForPrint(page, doc.defaultView);

@@ -251,3 +251,25 @@
 .oregon-uhp.uhp-root td { white-space: nowrap; }
 .oregon-uhp.uhp-root .uhp-privacy { color: var(--_muted); font-size: .9em; }
 .oregon-uhp.uhp-root .uhp-employer-note { margin-block-start: -.2em; }
+
+/* Paper is light, whatever theme is on screen. */
+@media print {
+  .oregon-uhp, .oregon-uhp[data-uhp-theme="dark"] {
+    color-scheme: light;
+    --_surface: var(--uhp-surface, #fff);
+    --_paper: var(--uhp-paper, #fff);
+    --_ink: var(--uhp-ink, #1a1a1a);
+    --_muted: var(--uhp-muted, #555);
+    --_line: var(--uhp-line, #d4d4d4);
+    --_control-line: var(--uhp-control-line, #767676);
+    --_grid: var(--uhp-grid, #e4e4e4);
+    --_accent: var(--uhp-accent, #1a5fb4);
+    --_status: var(--uhp-status, #f1f3f5);
+    --_error: var(--uhp-error, #b3261e);
+    --_series-1: var(--uhp-series-1, #235d9c);
+    --_series-2: var(--uhp-series-2, #ad4828);
+    --_series-3: var(--uhp-series-3, #21715c);
+    --_series-4: var(--uhp-series-4, #835196);
+    --_series-5: var(--uhp-series-5, #855c0b);
+  }
+}

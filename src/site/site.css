@@ -26,7 +26,6 @@
   --_series-3: var(--uhp-series-3, #21715c);
   --_series-4: var(--uhp-series-4, #835196);
   --_series-5: var(--uhp-series-5, #855c0b);
-  min-block-size: 100vh;
   background: var(--_surface);
   color: var(--_ink);
   font: 400 1em/1.55 var(--uhp-font, system-ui, sans-serif);
@@ -325,11 +324,11 @@
 
 .uhp-page .xp-raised-title { font-weight: 700; margin-block: 1em .4em; }
 .uhp-page .xp-stack-rows { display: grid; gap: .4em; }
-.uhp-page .xp-stack-row { display: grid; grid-template-columns: 3.5em minmax(0, 1fr) 4.5em; gap: .6em; align-items: center; }
+.uhp-page .xp-stack-row { display: grid; grid-template-columns: 3.5em minmax(3em, 1fr) auto; gap: .6em; align-items: center; }
 .uhp-page .xp-raised { display: flex; block-size: 1.7em; background: var(--_grid); }
 .uhp-page .xp-raised > span { overflow: hidden; padding-inline: .4em; color: var(--_surface); font-size: .82em; font-weight: 600; line-height: 2.05; white-space: nowrap; }
 .uhp-page .xp-raised-main { background: var(--_series-1); }
-.uhp-page .xp-raised-partb { background: var(--_series-3); }
+.uhp-page .xp-raised-partb { background: var(--_series-3); border-inline-start: 2px solid var(--_surface); }
 .uhp-page .xp-stack-total { text-align: end; }
 
 /* -------------------------------------------------------------- footer */
@@ -337,6 +336,25 @@
 
 /* --------------------------------------------------------------- print */
 @media print {
+  /* Paper is light, whatever theme is on screen. */
+  .uhp-page, .uhp-page[data-uhp-theme="dark"] {
+    color-scheme: light;
+    --_surface: var(--uhp-surface, #fff);
+    --_paper: var(--uhp-paper, #fff);
+    --_ink: var(--uhp-ink, #1a1a1a);
+    --_muted: var(--uhp-muted, #555);
+    --_line: var(--uhp-line, #d4d4d4);
+    --_control-line: var(--uhp-control-line, #767676);
+    --_grid: var(--uhp-grid, #e4e4e4);
+    --_accent: var(--uhp-accent, #1a5fb4);
+    --_status: var(--uhp-status, #f1f3f5);
+    --_error: var(--uhp-error, #b3261e);
+    --_series-1: var(--uhp-series-1, #235d9c);
+    --_series-2: var(--uhp-series-2, #ad4828);
+    --_series-3: var(--uhp-series-3, #21715c);
+    --_series-4: var(--uhp-series-4, #835196);
+    --_series-5: var(--uhp-series-5, #855c0b);
+  }
   .uhp-page .xp-jump, .uhp-page .xp-picker, .uhp-page .xp-skip { display: none; }
   .uhp-page .xp-example.xp-off { display: block; }
   .uhp-page .xp-print-only { display: block; }

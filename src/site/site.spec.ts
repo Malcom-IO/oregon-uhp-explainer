@@ -131,7 +131,9 @@ describe('the stylesheet', () => {
   it('uses the calculator’s color properties with the same defaults', () => {
     const tokens = (source: string) => [...source.matchAll(/--_[\w-]+: var\(--uhp-[\w-]+, #[0-9a-f]+\);/g)].map((m) => m[0]);
     expect(tokens(css)).toEqual(tokens(widgetCss));
-    expect(tokens(css)).toHaveLength(45);
+    // Fifteen properties, four times: light, dark by system setting, dark by attribute, and light again for print.
+    expect(tokens(css)).toHaveLength(60);
+    expect(tokens(css).slice(45)).toEqual(tokens(css).slice(0, 15));
   });
 });
 
@@ -143,6 +145,26 @@ describe('what scripts add', () => {
     enhance(document, search);
     return document.querySelector<HTMLElement>('.uhp-page')!;
   }
+
+  it('follows a theme the host set on the page element, in the page and both calculators', () => {
+    const body = /<body>([\s\S]*)<\/body>/.exec(renderBlocks(page))![1].replace(/<script[^>]*><\/script>/, '');
+    for (const [hostTheme, search, expected] of [
+      ['light', '', 'light'], ['dark', '', 'dark'], ['dark', '?theme=light', 'light'], ['sepia', '', undefined],
+    ] as const) {
+      document.head.innerHTML = '<meta name="color-scheme" content="light dark">';
+      document.body.innerHTML = body;
+      const root = document.querySelector<HTMLElement>('.uhp-page')!;
+      root.dataset['uhpTheme'] = hostTheme;
+      enhance(document, search);
+      const widgets = [...root.querySelectorAll<HTMLElement>('.oregon-uhp')];
+      expect(widgets).toHaveLength(2);
+      expect(widgets.map((widget) => widget.dataset['uhpTheme'])).toEqual([expected, expected]);
+      if (expected) {
+        expect(root.dataset['uhpTheme']).toBe(expected);
+        expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe(expected);
+      }
+    }
+  });
 
   it('reads the theme from the address and nothing else', () => {
     expect(themeFrom('?theme=dark')).toBe('dark');

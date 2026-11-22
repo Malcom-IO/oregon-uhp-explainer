@@ -416,10 +416,11 @@ export function raised(groups: readonly RaisedGroup[]): string {
         return (
           `<div class="xp-stack-row"><span class="xp-stack-name">${esc(r.name)}</span>` +
           `<span class="xp-raised" aria-hidden="true">` +
-          `<span class="xp-raised-main" style="${width((r.main / 40) * 100)}">${bn(r.main)}</span>` +
-          `<span class="xp-raised-partb" style="${width((r.partB / 40) * 100)}">${bn(r.partB)}</span>` +
+          `<span class="xp-raised-main" style="${width((r.main / 40) * 100)}"></span>` +
+          `<span class="xp-raised-partb" style="${width((r.partB / 40) * 100)}"></span>` +
           `</span>` +
-          `<span class="xp-stack-total"><span class="xp-vh">${bn(r.main)} plus ${bn(r.partB)} of Part B premiums, total </span>${bn(total)}</span>` +
+          // The amounts sit beside the bar as text: a label inside the narrow Part B segment is cut off on small screens.
+          `<span class="xp-stack-total">${bn(r.main)} + ${bn(r.partB)}<span class="xp-vh"> of Part B premiums</span> = ${bn(total)}</span>` +
           `</div>`
         );
       });

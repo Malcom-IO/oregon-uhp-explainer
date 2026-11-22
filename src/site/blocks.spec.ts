@@ -324,16 +324,17 @@ describe('the statewide math', () => {
     groups.flat().forEach((r, i) => {
       const total = Math.round((r.main + r.partB) * 10) / 10;
       expect(text(rows[i].querySelector('.xp-stack-name'))).toBe(r.name);
-      expect(texts(rows[i], '.xp-raised span')).toEqual([billions(r.main), billions(r.partB)]);
+      // The amounts are text beside the bar, where a narrow screen cannot clip them.
+      expect(texts(rows[i], '.xp-raised span')).toEqual(['', '']);
       expect(text(rows[i].querySelector('.xp-stack-total'))).toBe(
-        `${billions(r.main)} plus ${billions(r.partB)} of Part B premiums, total ${billions(total)}`,
+        `${billions(r.main)} + ${billions(r.partB)} of Part B premiums = ${billions(total)}`,
       );
       expect([...rows[i].querySelectorAll('.xp-raised span')].map((bar) => bar.getAttribute('style'))).toEqual([
         `width:${((r.main / 40) * 100).toFixed(2)}%`,
         `width:${((r.partB / 40) * 100).toFixed(2)}%`,
       ]);
     });
-    expect(texts(host, '.xp-stack-total').map((line) => line.split('total ')[1])).toEqual(['$39.6B', '$39.0B', '$36.6B', '$30.0B']);
+    expect(texts(host, '.xp-stack-total').map((line) => line.split('= ')[1])).toEqual(['$39.6B', '$39.0B', '$36.6B', '$30.0B']);
   });
 
   it('hides each drawing from assistive technology and leaves its figures in text', () => {

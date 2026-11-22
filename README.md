@@ -1,8 +1,7 @@
 # Oregon Universal Health Plan explainer and calculator
 
-> **Work in progress.** This repository is being extracted from the explainer at
-> [www.malcom.io/oregon-universal-health-plan](https://www.malcom.io/oregon-universal-health-plan).
-> Until the first release, treat its numbers as unverified and use that page instead.
+> **Draft.** Built on the Board's October 2026 draft documents. There is no tagged
+> release yet, and the Board's final report may change the numbers.
 
 A plain-language explainer and household calculator for Oregon's proposed Universal
 Health Plan. It applies the five financing models in the Universal Health Plan
@@ -21,15 +20,17 @@ have to trust whoever built the calculator. So everything here is public:
   calculator uses is in [`src/model/proposals/`](src/model/proposals/), each with the
   document and table it comes from. Nothing is computed on a server; the calculator
   runs in your browser from this code.
-- **Every figure traces to a public document.** [SOURCES.md](SOURCES.md) lists each
-  Board document with its address on oregon.gov, the page and table of every figure,
-  and a checksum that shows if a document is changed later. Figures that are this
+- **The calculator's figures trace to public documents.** [SOURCES.md](SOURCES.md) lists
+  each Board document the code uses with its address on oregon.gov, the page and table
+  of each figure, and a checksum that shows if a document is changed later. Figures
+  quoted only in the explainer's text are not all cataloged there yet. Figures that are this
   project's own arithmetic are labeled as such there.
 - **The math is tested against the Board's own examples.** The tests reproduce the
   worked household examples in the Board's draft report (Tables S1–S4) for all five
-  models. Run `npm test` to see it. Where this project and a Board document disagree,
+  models, each within $4, apart from one cell the report appears to misprint. Run
+  `npm test` to see it. Where this project and a Board document disagree,
   SOURCES.md says so under "Known discrepancies".
-- **It shows results; it does not argue.** For the same household, some models cost
+- **It takes no position on the plan.** For the same household, some models cost
   more than what people pay today and some cost less, and the calculator shows
   whichever it is. The explainer describes what the Board's documents say, including
   what they leave unsettled.
