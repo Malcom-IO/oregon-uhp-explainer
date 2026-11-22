@@ -192,7 +192,7 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
   const doc = host.ownerDocument;
   // Another bundled copy of this module on the page keeps its own counter, so check the document too.
   let prefix: string;
-  do prefix = `oregon-uhp-${++nextId}`; while (doc.getElementById(`${prefix}-income`));
+  do prefix = `oregon-uhp-${++nextId}`; while (doc.querySelector(`[id^="${prefix}-"]`));
   const id = (name: string) => `${prefix}-${name}`;
   const level = [1, 2, 3].includes(options.headingLevel as number) ? options.headingLevel as number : 2;
 
