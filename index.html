@@ -4,13 +4,1229 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <title>Oregon Universal Health Plan explainer (unofficial)</title>
+    <title>Oregon's proposed Universal Health Plan, explained (unofficial)</title>
+    <meta name="description" content="An unofficial plain-language explainer of Oregon's proposed Universal Health Plan: what it would cover, what households and employers would pay under the five draft revenue models, and what is still undecided.">
+    <!-- An empty icon, so the browser does not go looking for one. -->
+    <link rel="icon" href="data:,">
+    <style>body { margin: 0; }</style>
   </head>
   <body>
-    <main>
-      <h1>Oregon Universal Health Plan explainer (unofficial)</h1>
-      <p>The explainer page is being built. <a href="calculator/">Open the calculator</a> or see
-        <a href="demo/">how to embed it</a>.</p>
-    </main>
+    <!--
+      The prose of this page is plain HTML: edit or translate it here.
+
+      A span with data-fig holds a number computed from the model. Its text
+      must equal the entry with that key in src/site/figures.ts, and
+      src/site/site.spec.ts fails if it does not.
+
+      A comment that starts with "uhp:" marks where a table or chart built
+      from the model is placed when the page is served or built. The
+      renderers are in src/site/blocks.ts.
+    -->
+    <div class="uhp-page">
+      <a class="xp-skip" href="#short-version">Skip to the short version</a>
+
+      <!-- ================================================================ hero -->
+      <header class="xp-hero">
+        <div class="xp-wrap">
+          <div class="xp-hero-grid">
+            <div class="xp-narrow">
+              <p class="xp-eyebrow">Oregon &middot; plain-language explainer</p>
+              <h1>Oregon's proposed Universal Health Plan, explained (unofficial)</h1>
+              <p class="xp-lead">
+                Oregon's Universal Health Plan Governance Board has designed one public health plan for
+                everyone who lives in the state, paid for with taxes instead of premiums. Its draft
+                report to the Legislature runs 77 pages. This page is the short version: what the plan
+                covers, what you would pay, and what is still undecided.
+              </p>
+              <p class="xp-status">
+                <strong>It is a proposal, not law.</strong> Nothing changes unless the Legislature acts,
+                starting in 2027.
+              </p>
+              <p class="xp-notice">
+                <strong>This page is unofficial.</strong> It is not published, reviewed or endorsed by
+                the Universal Health Plan Governance Board or the State of Oregon. It uses the figures
+                in the Board's October 2026 draft documents, which are listed in
+                <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/blob/main/SOURCES.md">SOURCES.md</a>.
+                Corrections go to
+                <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/issues">the project's issues</a>.
+              </p>
+            </div>
+            <aside class="xp-official" aria-labelledby="xp-official-title">
+              <p class="xp-official-title" id="xp-official-title">Official sources</p>
+              <ul>
+                <li>
+                  <a href="https://www.oregon.gov/uhpgb/Pages/index.aspx" rel="noopener">Universal Health Plan Governance Board</a>
+                  <span>The state board designing the plan</span>
+                </li>
+                <li>
+                  <a href="https://www.oregon.gov/uhpgb/Documents/board-meetings/2026/20261015/20261015-legislative-report-draft.pdf" rel="noopener">Draft report to the Legislature (PDF)</a>
+                  <span>77 pages, October 2026</span>
+                </li>
+                <li>
+                  <a href="https://www.oregon.gov/uhpgb/board-meetings/Pages/2026-meetings.aspx" rel="noopener">Board meeting materials</a>
+                  <span>Agendas, appendices and recordings</span>
+                </li>
+              </ul>
+            </aside>
+          </div>
+          <nav class="xp-jump" aria-label="On this page">
+            <a href="#coverage">What it covers</a>
+            <a href="#calculator">What you would pay</a>
+            <a href="#employers">If you run a business</a>
+            <a href="#providers">If you work in health care</a>
+            <a href="#total-cost">The statewide math</a>
+          </nav>
+          <p class="xp-snapshot">Source snapshot &middot; October 2026 drafts</p>
+        </div>
+      </header>
+
+      <main>
+        <!-- ======================================================= short version -->
+        <section class="xp-section" id="short-version">
+          <div class="xp-wrap">
+            <h2>The short version</h2>
+            <div class="xp-facts">
+              <div class="xp-fact">
+                <h3>Who is covered</h3>
+                <p class="xp-fact-lead">Everyone who lives in Oregon</p>
+                <p>
+                  Once the plan is fully phased in. Coverage would not depend on your job, age or
+                  income. Medicare, VA and similar federal coverage would continue alongside it.
+                </p>
+              </div>
+              <div class="xp-fact">
+                <h3>What you pay for care</h3>
+                <p class="xp-fact-lead">No premiums</p>
+                <p>
+                  You would pay a tax based on income instead. The board's goal is no copays or
+                  deductibles either, but that part is not final.
+                </p>
+              </div>
+              <div class="xp-fact">
+                <h3>What pays for it</h3>
+                <p class="xp-fact-lead">New taxes</p>
+                <p>
+                  A household contribution on income above a set level, a tax on employers' payroll
+                  (the wages they pay) above $500,000, and smaller business taxes.
+                </p>
+              </div>
+              <div class="xp-fact xp-fact-open">
+                <h3>How much</h3>
+                <p class="xp-fact-lead">Not decided</p>
+                <p>
+                  The board's draft lays out five tax models and recommends none. A middle-income household
+                  would pay under 1% to 2.5% of its income, or 8% to 10% counting the payroll tax on
+                  its wages.
+                </p>
+              </div>
+              <div class="xp-fact xp-fact-open">
+                <h3>Who comes out ahead</h3>
+                <p class="xp-fact-lead">Depends on your situation</p>
+                <p>
+                  The board says most people would pay the same or less. In its examples, higher
+                  incomes pay more. Its appendix adds that in the models without a worker credit, most
+                  public employees and most single workers with job-based coverage would pay more too.
+                </p>
+              </div>
+              <div class="xp-fact xp-fact-open">
+                <h3>When</h3>
+                <p class="xp-fact-lead">No date is set</p>
+                <p>
+                  A phased start could come one to two years after a law passes. Moving everyone at
+                  once, Medicare included, would more likely take ten years or more. The cost
+                  estimates use 2032.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================== timeline -->
+        <section class="xp-section" id="status">
+          <div class="xp-wrap">
+            <div class="xp-narrow">
+              <h2>Where it stands</h2>
+              <ol class="xp-timeline">
+                <li>
+                  <span class="xp-when">2023</span>
+                  <span>
+                    Senate Bill 1089 creates the Universal Health Plan Governance Board: nine
+                    volunteers appointed by the governor and confirmed by the Senate.
+                  </span>
+                </li>
+                <li>
+                  <span class="xp-when">Oct 2026</span>
+                  <span>
+                    The board takes up its draft report to the Legislature. It lays out the plan's
+                    design and five ways to fund it.
+                  </span>
+                </li>
+                <li class="xp-next">
+                  <span class="xp-when">Dec 1, 2026</span>
+                  <span>The final report is due to the Legislature.</span>
+                </li>
+                <li>
+                  <span class="xp-when">2027</span>
+                  <span>
+                    Lawmakers decide whether to act, whether to do it in one bill or two, and whether
+                    to send any of it to voters. The board is asking for funding to keep working on the
+                    design through 2029.
+                  </span>
+                </li>
+                <li>
+                  <span class="xp-when">After a law</span>
+                  <span>
+                    The board has not chosen how to start. Beginning with people the state can cover on
+                    its own, about half of Oregonians, could take one to two years. Adding the Oregon
+                    Health Plan and Marketplace would cover about 82% and could take two to five years.
+                    Medicare would come last and needs federal permission that does not exist today.
+                  </span>
+                </li>
+                <li>
+                  <span class="xp-when">2032</span>
+                  <span>
+                    The year the cost estimates use, chosen as the earliest the plan could be fully
+                    running. They assume it covers everyone by then, sooner than the report's own
+                    timeline for Medicare.
+                  </span>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================== coverage -->
+        <section class="xp-section" id="coverage">
+          <div class="xp-wrap">
+            <h2>What the plan would cover</h2>
+            <p class="xp-narrow">
+              Benefits are modeled on the plan Oregon's public employees have today, with broader
+              mental health coverage added.
+            </p>
+            <ul class="xp-promises">
+              <li>Any qualified provider who takes the plan</li>
+              <li>No restrictive networks</li>
+              <li>No bills beyond what the plan pays</li>
+            </ul>
+            <p class="xp-note">
+              Whether doctors and hospitals would have to take the plan, or could choose, has not been
+              decided.
+            </p>
+
+            <h3 class="xp-band">Covered</h3>
+            <ul class="xp-pairs">
+              <li>
+                <strong>Hospital and emergency</strong>
+                <span>Inpatient care, surgery and ambulance rides</span>
+              </li>
+              <li>
+                <strong>Doctor visits</strong>
+                <span>Primary, specialty and preventive care, with screenings</span>
+              </li>
+              <li>
+                <strong>Prescription drugs</strong>
+                <span>Including specialty medications</span>
+              </li>
+              <li>
+                <strong>Mental health</strong>
+                <span>Substance use treatment and crisis services too</span>
+              </li>
+              <li>
+                <strong>Dental and vision</strong>
+                <span>Part of the core plan, not an add-on</span>
+              </li>
+              <li>
+                <strong>Maternity and family</strong>
+                <span>Newborn, fertility and reproductive care</span>
+              </li>
+              <li>
+                <strong>Tests and equipment</strong>
+                <span>Labs, imaging, rehabilitation, medical equipment</span>
+              </li>
+              <li>
+                <strong>End-of-life care</strong>
+                <span>Hospice and palliative care</span>
+              </li>
+            </ul>
+
+            <h3 class="xp-band">Limits worth knowing</h3>
+            <ul class="xp-pairs xp-pairs-wide">
+              <li>
+                <strong>Long-term care</strong>
+                <span>Not included, unless you already qualify for it through Medicaid.</span>
+              </li>
+              <li>
+                <strong>Your first six months</strong>
+                <span>
+                  New enrollees get primary, behavioral health, emergency and medically necessary
+                  care right away. The full package, including planned (elective) outpatient
+                  procedures and fertility services, starts after six months of continuous coverage.
+                  The report does not say where dental, vision or prescriptions fall.
+                </span>
+              </li>
+              <li>
+                <strong>Care outside Oregon</strong>
+                <span>
+                  Covered, but may come with some copays or deductibles, especially for non-emergency
+                  care.
+                </span>
+              </li>
+              <li>
+                <strong>Copays</strong>
+                <span>
+                  The board is still weighing limited copays for some high-cost drugs and elective
+                  services.
+                </span>
+              </li>
+            </ul>
+
+            <h3>If this is your coverage today</h3>
+            <div class="xp-cards">
+              <div class="xp-card">
+                <p class="xp-pill">Kept; most would owe nothing</p>
+                <h4>Oregon Health Plan</h4>
+                <p>
+                  You would keep your coverage and every benefit Medicaid requires. The board says
+                  most people who qualify by income would have no health care costs under the plan.
+                </p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-pill">You would be covered</p>
+                <h4>No insurance</h4>
+                <p>
+                  You would get the full plan. You would pay the household contribution only if your
+                  income is above the exemption.
+                </p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-pill">Your employer decides</p>
+                <h4>Insurance through work</h4>
+                <p>
+                  Federal law keeps the state from ending employer plans, so your employer could keep
+                  its plan or drop it. Whether the state plan would pay first or second when you have
+                  both is undecided. The payroll tax is meant to apply to every employer either way,
+                  and no offset for keeping a plan has been proposed.
+                </p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-pill">Likely replaced</p>
+                <h4>A plan you buy yourself</h4>
+                <p>
+                  The state plan would cover what it does. Insurers could still sell supplemental
+                  coverage; the board has not discussed whether they could keep selling plans that
+                  duplicate the state's.
+                </p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-pill">Stays</p>
+                <h4>Medicare</h4>
+                <p>
+                  Current law gives Oregon no way to fold Medicare into a state plan. The board
+                  recommends the plan pay your Part B premium (Part B is Medicare's doctor and
+                  outpatient coverage), pending more study. The report does not say what happens to
+                  Medigap or Part D.
+                </p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-pill">Stays separate</p>
+                <h4>VA, TRICARE, federal employee and Tribal health</h4>
+                <p>Members of federally recognized Tribes could choose to join the state plan.</p>
+              </div>
+            </div>
+
+            <h3>How you would sign up</h3>
+            <ol class="xp-steps">
+              <li>
+                <span class="xp-step-num">Step 1</span>
+                <span class="xp-step-fig">Day 1</span>
+                <span class="xp-step-unit">basic coverage starts</span>
+                <strong>Say Oregon is your home and you intend to stay.</strong>
+                <span class="xp-step-text">
+                  You could list your dependents at the same time. Planned procedures and some other
+                  benefits wait six months, as noted above.
+                </span>
+              </li>
+              <li>
+                <span class="xp-step-num">Step 2</span>
+                <span class="xp-step-fig">60 days</span>
+                <span class="xp-step-unit">to show proof</span>
+                <strong>Show where you live.</strong>
+                <span class="xp-step-text">
+                  A lease or a utility bill, for example, plus your income and identity. The state
+                  would check its own records first.
+                </span>
+              </li>
+              <li>
+                <span class="xp-step-num">Step 3</span>
+                <span class="xp-step-fig">90% to 95%</span>
+                <span class="xp-step-unit">renewed with no action, the board expects</span>
+                <strong>Stay covered automatically.</strong>
+                <span class="xp-step-text">
+                  Filing an Oregon tax return, or already being in a state program such as the Oregon
+                  Health Plan or SNAP, would renew you.
+                </span>
+              </li>
+            </ol>
+
+            <figure class="xp-figure">
+              <figcaption>
+                <strong>The first six months for a new member</strong>
+              </figcaption>
+              <div class="xp-clock-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+              <ol class="xp-clock-marks">
+                <li>
+                  <strong>Day 1</strong>
+                  <span>Primary, behavioral health, emergency and medically necessary care, on your statement</span>
+                </li>
+                <li>
+                  <strong>Day 60</strong>
+                  <span>Proof of where you live is due</span>
+                </li>
+                <li>
+                  <strong>Month 6</strong>
+                  <span>The full package, with planned procedures and fertility services</span>
+                </li>
+              </ol>
+            </figure>
+          </div>
+        </section>
+
+        <!-- ============================================================ funding -->
+        <section class="xp-section" id="funding">
+          <div class="xp-wrap">
+            <h2>How it would be paid for</h2>
+            <p class="xp-narrow">
+              The idea is to replace what households and employers already spend on premiums,
+              deductibles and copays with new taxes. The report assumes existing federal and state
+              health funding continues, which depends on federal waivers, and covers more than half
+              the cost. That leaves $30 billion to $39 billion a year for new state taxes to raise.
+            </p>
+
+            <figure class="xp-figure">
+              <figcaption><strong>Where the new money would come from</strong></figcaption>
+              <div class="xp-share" aria-hidden="true"><span></span><span></span><span></span></div>
+              <ul class="xp-share-key">
+                <li><span class="xp-key xp-key-1" aria-hidden="true"></span>Employer payroll tax, 51 to 55%</li>
+                <li><span class="xp-key xp-key-2" aria-hidden="true"></span>Household contribution, 40 to 43%</li>
+                <li><span class="xp-key xp-key-3" aria-hidden="true"></span>Business taxes, about 5%</li>
+              </ul>
+            </figure>
+
+            <div class="xp-cards xp-cards-3">
+              <div class="xp-card">
+                <p class="xp-kicker">A little more than half</p>
+                <h3>Employer payroll tax</h3>
+                <p>
+                  Employers pay it; it is not withheld from paychecks. But like today's employer
+                  premiums, which the board's consultants call "typically embedded in compensation,"
+                  much of it may come out of wages over time.
+                </p>
+                <p>
+                  Only payroll above $500,000 a year is taxed, at 9.6%, so there is no cliff: a
+                  $520,000 payroll would owe 9.6% of $20,000, or $1,920. In four of the five models
+                  the rate rises to 14% on payroll above $10 million.
+                </p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-kicker">About 40%</p>
+                <h3>Household contribution</h3>
+                <p>
+                  Collected through your Oregon income tax return, on the income shown there (your
+                  adjusted gross income). Social Security does not count.
+                </p>
+                <p>
+                  Income up to twice the federal poverty level, a yardstick the government sets by
+                  household size, is not taxed in three models: $31,920 for one person, $66,000 for
+                  a family of four. Only income above that is taxed.
+                </p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-kicker">About 5%</p>
+                <h3>Business taxes</h3>
+                <p>
+                  An extra 4.25 points on the corporate income tax, which is 6.6% and 7.6% today,
+                  and an extra 0.12 points on the Corporate Activity Tax, now 0.57%. One model adds
+                  a small statewide lodging tax to help cover care for visitors.
+                </p>
+              </div>
+            </div>
+
+            <h3>The five models</h3>
+            <p class="xp-narrow">
+              All five were set to raise the same money. They differ in who it comes from, and three
+              choices drive the difference.
+            </p>
+            <div class="xp-dials">
+              <div>
+                <h4>A credit for workers, or not</h4>
+                <p>
+                  With the credit, half of the payroll tax your employer paid on your wages comes off
+                  your own bill. Fewer people pay, and those who do pay a higher rate. Self-employed
+                  people get no credit, so they pay more than most employees with the same income.
+                </p>
+              </div>
+              <div>
+                <h4>How much income is exempt</h4>
+                <p>
+                  Either $66,000 or $45,540 for a family of four. In January 2026 the board voted 8 to
+                  0 for the higher exemption. Models 4 and 5 use the lower one: more people pay, at
+                  lower rates.
+                </p>
+              </div>
+              <div>
+                <h4>One rate, or steps</h4>
+                <p>
+                  One rate is simple to explain. Stepped rates, like income tax brackets, move more of
+                  the household contribution onto the highest earners.
+                </p>
+              </div>
+            </div>
+
+            <!-- uhp:model-cards -->
+
+            <p class="xp-note">
+              The names are ours; the board only numbers its models. Exemptions are shown for a family
+              of four and equal 200% or 138% of the federal poverty level. "Tax filers" are Oregon
+              resident tax returns. The two middle-fifth figures are average rates for the middle
+              fifth of incomes: the household contribution alone, after any credit, and then with the
+              employer payroll tax on their wages added. The board calls every figure here
+              illustrative, not final.
+            </p>
+            <p class="xp-note">
+              Top rates are from the report's appendix, where all five models are set to raise the
+              same money on 2022 tax data. The report's summary table lists lower figures for three of
+              them, 7.69% to 12.05% in all: 12.0% for Model 1, from a 2032 projection that also raises
+              the payroll tax to 9.89%, and 11.7% and 10.4% for Models 4 and 5, which appear to be the
+              average rate paid by the top 1% and not the top rate. The board's own examples are
+              consistent with 13.5% for Model 1 and 14.3% for Model 4. None of them reaches Model 5's top bracket, so
+              its 12% rests on the appendix alone. Both documents are drafts. The one 2032 projection
+              is sized to the board's own $30 billion estimate; if the $39 billion from Milliman, the
+              board's actuary, is closer,
+              the taxes would have to raise about 30% more. <span class="xp-ours">our math</span>
+            </p>
+
+            <details class="xp-details">
+              <summary>Show every figure as a table</summary>
+              <!-- uhp:models-table -->
+            </details>
+
+            <h3>Counting the payroll tax too</h3>
+            <p class="xp-narrow">
+              The household contribution is only part of the picture. The board's appendix also
+              adds the employer payroll tax on each group's wages, on the assumption that it comes
+              out of pay. Counted that way, households are putting about 6% to 13.5% of income toward
+              health care, in place of the premiums and other costs they and their employers pay
+              now. The report says the models are "more progressive than current health care
+              spending."
+            </p>
+            <!-- uhp:fifths-table -->
+            <p class="xp-note">
+              From Figure AFR4Fi of the appendix. The lowest fifth pays a higher combined rate than
+              the second fifth in every model, which the appendix says means the models "are not
+              progressive over the full range." Its explanation is that some large employers of
+              low-wage workers do not cover many of them today and would now pay the tax on their
+              wages. The lowest
+              fifth also supplies less than half a percent of the money.
+            </p>
+          </div>
+        </section>
+
+        <!-- ========================================================= calculator -->
+        <section class="xp-section" id="calculator">
+          <div class="xp-wrap">
+            <h2>What would your household pay?</h2>
+            <p class="xp-narrow">
+              An estimate of your household contribution, the income-based tax that would replace
+              premiums, under all five models. It uses the rate tables in the report's
+              appendix. The payroll tax your employer would pay on your wages is shown beside each
+              result for reference; it is not part of your bill.
+            </p>
+
+            <div class="xp-calc" id="uhp-household-calculator">
+              <noscript>
+                <p class="xp-noscript">
+                  The calculator needs JavaScript. The table below runs twelve example households
+                  through the same schedules.
+                </p>
+              </noscript>
+            </div>
+
+            <h3 id="households">Example households, side by side</h3>
+            <p class="xp-narrow">
+              The same schedules, run for twelve households. Each row is the household contribution
+              for a year under each model, beside what that household pays for health care now.
+              &darr; marks a model that costs it less than today, &uarr; one that costs more.
+            </p>
+            <!-- uhp:households-table -->
+            <p class="xp-note">
+              <span class="xp-ours">our math</span> The households are our choice; the board's
+              examples stop at $220,000. What each pays today, and how much of its income is wages,
+              come from the board: report Tables S1, S2 and S4 for the self-employed person, the couple
+              and the Medicare couple, and Appendix FR Figures AFR4Fb and AFR4Fc for the rest. (For
+              the couple, the wages are the $80,000 that reproduce the board's figures.) The
+              appendix's figures stop at $400,000, so the two highest rows keep its last figure for a
+              family buying its own plan. "Median" and "percentile" are the appendix's, for tax
+              returns with that many people. About 4% of Oregonians buy their own plan; those rows
+              are over-represented here to show the top of the range. One cell differs from the
+              board's table: the report prints $3,699 for Model 5 at $90,000 where its own schedule
+              gives $3,669.
+            </p>
+            <p class="xp-note">
+              The private-employer rows use the 9% payroll tax of the board's example employer, with
+              an $8.5 million payroll, and assume it drops its plan and pay stays the same. At a
+              smaller employer the worker credit is smaller, and under $500,000 of payroll there is
+              none: the single worker would then owe $1,766, $1,576 and $1,474 under Models 1, 2 and
+              4 instead of $0. The employer's own payroll tax on those wages (9% private, 9.6% to
+              14% public) is not shown. The appendix's own tables use each model's average payroll
+              rate, about 10%, so its private-employer figures run about $500 to $1,000 lower under
+              Models 2 and 4; on that basis the $220,000 family pays $9,445 under Model 2, slightly
+              less than today. The Medicare row assumes the plan pays the Part B premium;
+              Medigap and Part D are not addressed.
+            </p>
+            <p class="xp-note">The rates are the draft's and will change.</p>
+
+            <h3 id="high-incomes">What the documents say about very high incomes</h3>
+            <div class="xp-narrow">
+              <p>
+                The household contribution is set by income at every level, not by the care a
+                household uses; the finance committee's report calls it the Health Care Personal
+                Income Tax. None of the five schedules in Appendix FR has an upper limit, so the
+                contribution keeps rising with income. Depending on the model, the top 1% of
+                tax filers would pay 25% to 40% of all household contributions.
+              </p>
+              <p>
+                The report says the board "considered, but did not include in the models, a soft cap
+                (reduction in tax rate after a certain amount of taxes have been paid) on high-income
+                households, on grounds that it would make the structure less progressive."
+              </p>
+              <p>
+                Its Finance and Revenue Committee set out both sides. It looked at a soft cap
+                because contributions far above what a household spends on health care today could
+                lead some high earners to shelter income or move. It recognized that these
+                responses "may be limited for most households," but that "even a small number of
+                high-income taxpayers can represent meaningful revenue exposure." It did not
+                recommend one "primarily because it is regressive," and because any cap "requires
+                explicit offsets elsewhere" to raise the same money. It left a soft cap as "an
+                optional design dial for the Board's consideration."
+              </p>
+            </div>
+            <p class="xp-note">
+              From the draft report (page 49) and the ECOnorthwest finance and revenue report. The
+              25% to 40% is the range of "share paid by the top 1%" across the five models above.
+            </p>
+
+            <details class="xp-details">
+              <summary>How this is calculated, and what it leaves out</summary>
+              <ul class="xp-list">
+                <li>
+                  Each slice of your income above the exemption is charged at that slice's rate, the
+                  worker credit is subtracted, and the result is never less than zero. This matches
+                  the board's own example tables to within $4 for all five models.
+                </li>
+                <li>
+                  The rates and brackets come from Appendix FR of the draft report. Its dollar
+                  brackets are in 2022 dollars; we bring them to 2026 by the growth in the
+                  one-person poverty level, which is what reproduces the board's examples.
+                </li>
+                <li>
+                  The worker credit is half of the payroll tax your employer would pay on your wages.
+                  For a private employer we work that out from the payroll you enter. Public employers
+                  would pay the top rate from the first dollar.
+                </li>
+                <li>
+                  If you have an employer, all your income is treated as wages. Investment, rental or
+                  business income would raise your bill, because the credit only applies to wages.
+                </li>
+                <li>
+                  Amounts are in today's dollars and compared with what you pay today. The plan would
+                  not start for years, and today's premiums are likely to be higher by then.
+                </li>
+                <li>
+                  Today's premiums are often paid before tax, and the self-employed can deduct them.
+                  The report does not say whether the household contribution would be deductible. If
+                  you deduct premiums today, your income would be higher without that deduction; that
+                  is our reading, not the report's.
+                </li>
+                <li>
+                  Treat these as a low case. The rates are sized to the board's own cost estimate; at
+                  Milliman's higher estimate the taxes would have to raise about 30% more.
+                </li>
+                <li>
+                  These rates were set on 2022 tax data. The Legislative Revenue Office's 2032
+                  projection for Model 1 uses 12.0% instead of 13.5%, with the employer payroll tax
+                  raised to 9.89%, so expect all five to move.
+                </li>
+                <li>
+                  Household size stands in for the number of exemptions on your tax return, as the
+                  appendix intends. Married couples filing separately have their own schedule, which
+                  is not modeled here.
+                </li>
+                <li>
+                  Income here means federal adjusted gross income, less the Social Security counted in
+                  it. The appendix also leaves out interest on U.S. savings bonds and Treasury
+                  obligations and some older federal pensions.
+                </li>
+                <li>
+                  A model's top rate applies only to the highest slice of income, not to all of it.
+                </li>
+                <li>Poverty-level figures are for 2026. Nothing you enter leaves your browser.</li>
+              </ul>
+            </details>
+          </div>
+        </section>
+
+        <!-- =========================================================== examples -->
+        <section class="xp-section" id="examples">
+          <div class="xp-wrap">
+            <h2>The board's own examples</h2>
+            <p class="xp-narrow">
+              These four households come straight from the report, covering all five models. &darr;
+              marks a model that costs the household less than it pays today, &uarr; one that costs
+              more. The board's summary is that
+              "the majority of people living in Oregon will pay the same amount or less." It calls its
+              figures group averages and says more study is needed of who pays more.
+            </p>
+
+            <!-- uhp:board-examples -->
+
+            <p class="xp-note">
+              Yearly household cost, from Tables S1 to S4 of the draft report. Employer costs are not
+              shown. In the private-employer example the employer's cost drops from $16,700 to $7,200
+              at an $85,000 income and rises to $18,000 at $220,000. The appendix adds that without
+              the worker credit, most people covered by a public employer, and most single workers
+              covered by a private one, would pay more than they do today.
+            </p>
+          </div>
+        </section>
+
+        <!-- ========================================================== employers -->
+        <section class="xp-section" id="employers">
+          <div class="xp-wrap">
+            <h2>If you run a business</h2>
+            <p class="xp-narrow">
+              The payroll tax is a share of payroll, not a price per employee. On the payroll tax
+              alone, an employer comes out ahead only if what it spends on health benefits today is a
+              bigger share of payroll than the tax. A private business with payroll under $500,000
+              owes nothing. Above that, each added dollar of payroll costs 9.6 cents (14 cents above
+              $10 million in Models 2 to 5), and a business that offers no coverage today has nothing
+              to offset it. Profitable companies would also pay
+              the corporate tax add-ons described above, which the figures here leave out.
+            </p>
+
+            <div class="xp-calc" id="uhp-employer-calculator">
+              <noscript>
+                <p class="xp-noscript">
+                  The employer calculator needs JavaScript. The table below shows the tax at five
+                  payroll sizes. To compare by hand, divide what you spend on health benefits by your
+                  payroll and set it beside the percentage in the table.
+                </p>
+              </noscript>
+            </div>
+
+            <div class="xp-callout">
+              <p>
+                <strong>These figures assume you drop your plan.</strong> The board's consultants
+                say that to survive federal law the tax must apply to every employer whether or
+                not it offers coverage. No offset for keeping a plan has been proposed, and the
+                brief lists the treatment of employers that keep one as still to be decided. Our
+                reading: keeping a plan would mean paying for both.
+              </p>
+            </div>
+
+            <!-- uhp:business-table -->
+            <p class="xp-note">
+              Yearly payroll tax and its share of payroll, at 9.6% above $500,000 and, in Models 2
+              to 5, 14% above $10 million. <span class="xp-ours">our math</span> The one 2032
+              projection so far, for Model 1, raises the 9.6% to 9.89%. The appendix intends public
+              employers to pay the top rate from the first dollar, with no $500,000 exemption: 9.6%
+              of payroll under Model 1 and 14% under the others.
+            </p>
+
+            <h3>What the documents do and do not say</h3>
+            <ul class="xp-open">
+              <li>
+                <strong>No cliff at $500,000</strong>
+                The rates are marginal by design, "to avoid fiscal cliffs." Crossing the line taxes
+                only the payroll above it. The thresholds are meant to rise with inflation.
+              </li>
+              <li>
+                <strong>Your workers' credit depends on your size</strong>
+                In the models with a worker credit, employees can take up to half of the tax you paid
+                on their wages off their own contribution; it is not a refund. A small firm pays
+                little or none, so its employees get little or no credit.
+              </li>
+              <li>
+                <strong>Tax treatment</strong>
+                The report says the payroll tax would be exempt from state and federal taxes the way
+                employer health contributions are today. Federal treatment is not the state's to
+                decide.
+              </li>
+              <li>
+                <strong>Wages</strong>
+                The report expects that replacing premiums with a payroll tax "will likely keep wages
+                at a lower level because nothing will force wages up when the premium cost goes
+                away." Whether an employer that saves money shares it is left to the employer.
+              </li>
+              <li>
+                <strong>Not decided: what counts as payroll</strong>
+                The report's examples count only wages. Nothing settles how owner draws, distributions
+                or contractor payments are treated, and the appendix expects that without a worker
+                credit both sides would have a reason to shift to contractor arrangements. The
+                appendix intends the tax to be figured each pay period, not once a year, but does not
+                say how the $500,000 is spread across pay periods; the figures here use yearly
+                totals. The board has not studied workers paid on a 1099.
+              </li>
+              <li>
+                <strong>Not decided: multi-state and remote workers</strong>
+                The report calls the $500,000 a "firmwide payroll threshold." It does not say whether
+                payroll outside Oregon counts, or how the tax treats Oregon residents working
+                elsewhere and people who live in one state and work in another.
+              </li>
+              <li>
+                <strong>Not decided: which plan pays first</strong>
+                If the state plan pays first and yours fills in around it, the report sees "possible
+                disruption to benefits won through collective bargaining" and added legal risk under
+                federal benefits law. If your plan pays first and the state plan wraps around it, less
+                changes and less is saved.
+              </li>
+              <li>
+                <strong>Not decided: insured plans versus self-funded ones</strong>
+                Federal law shields self-funded plans from state rules. Plans bought from an insurer
+                are different: the state regulates insurers, and the brief says the future role of
+                that coverage "was not discussed by the Board."
+              </li>
+              <li>
+                <strong>Not decided: when the tax starts</strong>
+                The brief says lawmakers must decide when employer and household payments begin, how
+                they apply to people not yet moved to the plan, and how to "minimize overlapping
+                payment obligations" during a phased start. The thresholds, tiers and rates are
+                themselves still open.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ========================================================== providers -->
+        <section class="xp-section" id="providers">
+          <div class="xp-wrap">
+            <h2>If you work in health care</h2>
+            <p class="xp-narrow">
+              The plan's cost savings depend on how providers are paid, so this is where much of the
+              open work sits. One standard payment system would replace each insurer's own rates.
+            </p>
+            <ul class="xp-open">
+              <li>
+                <strong>Primary care</strong>
+                Mostly a set payment per patient paid in advance, plus fees for some services, monthly
+                payments for running the practice, and payments tied to quality. At least 15% of the
+                plan's spending would go to primary care. That is a share of spending, not a rate for
+                any one practice.
+              </li>
+              <li>
+                <strong>Hospitals</strong>
+                Mostly a fixed yearly budget covering about 70% of a hospital's payments, phased in
+                over three to five years. It would also cover physician services at acute care
+                hospitals. Critical access hospitals would get budgets too, which may be structured in
+                line with Medicare's cost-based "reasonable cost" approach.
+              </li>
+              <li>
+                <strong>Specialists and everyone else</strong>
+                For specialists paid outside a hospital budget, behavioral health, oral health,
+                pharmacy and others: not chosen. The report says the board "did not select detailed
+                payment approaches for specialty care sectors."
+              </li>
+              <li>
+                <strong>More, less or the same?</strong>
+                Not determined. The report says it depends on "how the standardized fee schedule is
+                structured and each provider's payer mix." It does not say what the standard rates
+                would be tied to.
+              </li>
+              <li>
+                <strong>The savings assume lower rates</strong>
+                About 10% below what the plan would otherwise pay, on average.
+                <span class="xp-ours">our math</span> The reasoning is that providers would collect
+                every dollar billed and need fewer billing staff hours, leaving them, in the report's
+                words, "paid approximately the same as they are now" overall. It does not say how that
+                would fall on practices that rely on commercial rates, or what happens to billing
+                staff.
+              </li>
+              <li>
+                <strong>Payment in full</strong>
+                Providers who take the plan would accept its payment as payment in full and could not
+                bill patients the difference. Whether taking the plan would be required has not been
+                decided; the board has not discussed it.
+              </li>
+              <li>
+                <strong>More patients, same workforce</strong>
+                More insured people, pent-up demand and few or no copays and deductibles would mean more
+                demand: $5.7 to $8.7 billion a year of added care in the estimates. The report flags staffing shortages and
+                thin margins as a risk but does not estimate whether there are enough clinicians.
+              </li>
+              <li>
+                <strong>Protections named, not designed</strong>
+                The report mentions phasing in new rates, adjustments for "rural, safety net, or other
+                vulnerable providers," and transition support for fragile ones. No rural or safety-net
+                adjustment has been specified yet. The report expects that some providers and health
+                systems "may resist" where standard rates or fixed budgets would cut their revenue.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ========================================================== unsettled -->
+        <section class="xp-section" id="open-questions">
+          <div class="xp-wrap">
+            <h2>What is not settled</h2>
+            <p class="xp-narrow">
+              The report is candid about how much is open. These are the ones most likely to change
+              what you would pay or get.
+            </p>
+            <ul class="xp-open">
+              <li>
+                <strong>The tax rates</strong> No model is recommended, and the board says the
+                rates must be recalculated with current data before the plan is implemented. All
+                five were set on 2022 tax data. Only Model 1 has a 2032 projection so far: a
+                12.0% household rate instead of 13.5%, with a higher payroll tax. That projection
+                is sized to raise the board's $30 billion; at Milliman's $39 billion the taxes would
+                have to raise about 30% more. The report says "all figures need outside vetting."
+              </li>
+              <li>
+                <strong>Your wages</strong> The report says the cost of health benefits "has held
+                wages down over time," and that replacing an employer's insurance cost with a
+                payroll tax "will likely keep wages at a lower level because nothing will force
+                wages up when the premium cost goes away." It chose a payroll tax anyway
+                to keep health money untaxed, and the worker credit is partly a response to this.
+              </li>
+              <li>
+                <strong>The wider economy</strong> The tax estimates assume nobody changes behavior,
+                and the cost estimates assume a plan that is already fully running. A study of
+                effects on wages, prices, jobs and migration has not been done.
+              </li>
+              <li>
+                <strong>Start-up money</strong> Start-up costs have not been estimated. The plan
+                would also need about $21 billion in reserves, with no settled way to raise it.
+              </li>
+              <li>
+                <strong>Employer plans</strong> About two-thirds of workers with job-based coverage
+                are in plans the state cannot regulate, by a national survey the brief cites. How many
+                employers would switch is unknown, and the report says large, multi-state or
+                self-funded employers "may have less reason or ability" to.
+              </li>
+              <li>
+                <strong>Provider pay and participation</strong> Whether doctors and hospitals would
+                be paid more, less or the same is undetermined, and so is whether they must take the
+                plan. The cost savings assume lower rates.
+              </li>
+              <li>
+                <strong>Federal approval</strong> Keeping Medicaid and Marketplace money requires
+                federal waivers that can only be sought after the Legislature acts. Medicare cannot
+                be folded in under current law.
+              </li>
+              <li>
+                <strong>Copays</strong> The board prefers none but has not set a final policy.
+              </li>
+              <li>
+                <strong>Timing and a public vote</strong> There is no launch date, and the board has
+                not chosen how to phase people in. Moving everyone at once, including Medicare,
+                would take six years at best and more likely "a minimum of ten years, if such
+                pathways even become available." Lawmakers could also refer the plan to voters.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ====================================================== nothing changes -->
+        <section class="xp-section" id="status-quo">
+          <div class="xp-wrap">
+            <h2>If nothing changes</h2>
+            <p class="xp-narrow">
+              The open questions above are the plan's. The report sets them beside the costs of
+              staying put: "Every path forward carries risk, including making no changes at all."
+            </p>
+            <div class="xp-sq">
+              <div class="xp-card">
+                <p class="xp-sq-label">Oregonians without insurance</p>
+                <p class="xp-sq-big">Nearly triple</p>
+                <div class="xp-sq-bars" aria-hidden="true">
+                  <span>2026</span>
+                  <span class="xp-track"><span style="width:35.06%"></span></span>
+                  <span>122,000</span>
+                  <span>2032</span>
+                  <span class="xp-track"><span style="width:100%"></span></span>
+                  <span>348,000</span>
+                </div>
+                <p class="xp-hint">
+                  From 122,000 in 2026 to 348,000 in 2032 under the current system, by Milliman's
+                  estimate.
+                </p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-sq-label">Approved rate increases for 2027</p>
+                <p class="xp-sq-big">21.6%</p>
+                <div class="xp-sq-bars" aria-hidden="true">
+                  <span>Own plan</span>
+                  <span class="xp-track"><span style="width:100%"></span></span>
+                  <span>21.6%</span>
+                  <span>Small business</span>
+                  <span class="xp-track"><span style="width:71.76%"></span></span>
+                  <span>15.5%</span>
+                </div>
+                <p class="xp-hint">
+                  Average increases: 21.6% for plans people buy themselves, 15.5% for small-business
+                  plans.
+                </p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-sq-label">Medical bills took most of their savings</p>
+                <p class="xp-sq-big">1 in 8</p>
+                <div class="xp-sq-dots" aria-hidden="true">
+                  <span class="xp-on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <p class="xp-hint">Oregonians who say so in a state survey.</p>
+              </div>
+              <div class="xp-card">
+                <p class="xp-sq-label">Delay or skip care because of cost</p>
+                <p class="xp-sq-big">1 in 7</p>
+                <div class="xp-sq-dots" aria-hidden="true">
+                  <span class="xp-on"></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <p class="xp-hint">
+                  Oregonians in the same survey. In rural southwest Oregon it is 1 in 5, the highest in
+                  the state.
+                </p>
+              </div>
+            </div>
+
+            <h3 class="xp-band">What the board says the plan would fix</h3>
+            <ul class="xp-pairs xp-pairs-wide">
+              <li>
+                <strong>Coverage that stays put</strong>
+                <span>It would not end when a job, income or eligibility changes.</span>
+              </li>
+              <li>
+                <strong>The same or less for most people</strong>
+                <span>
+                  With few or no copays and deductibles, and no surprise bills. The report calls its figures
+                  group averages.
+                </span>
+              </li>
+              <li>
+                <strong>Less paperwork for providers</strong>
+                <span>
+                  By staff estimates, 85% to 90% of the simplification could come even before federal
+                  programs join, if most employers move their workers onto the plan. How many would
+                  is unknown.
+                </span>
+              </li>
+              <li>
+                <strong>One set of payment rules</strong>
+                <span>
+                  The same whatever a patient's coverage, with room to pay more where access is
+                  short, such as rural areas.
+                </span>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ============================================================ the sum -->
+        <section class="xp-section" id="total-cost">
+          <div class="xp-wrap">
+            <h2>The statewide math</h2>
+            <p class="xp-narrow">
+              The report's headline is that Oregon could cover everyone for a little less than the
+              current system would cost. That rests on resetting what providers are paid, which the
+              plan would have the authority to do; the rates are not set. Here is how the numbers fit together. Figures marked
+              <span class="xp-ours">our math</span> are our own arithmetic on the report's tables,
+              not numbers the board published. Both source documents are drafts, and the report says
+              "all figures need outside vetting."
+            </p>
+
+            <!-- uhp:statewide-estimates -->
+
+            <p class="xp-note">
+              Yearly figures for 2032, with about 348,000 more people covered and few or no copays and
+              deductibles. "Payments that would end" is <span class="xp-ours">our math</span>: the
+              current-system total less the public funding the report expects to continue, plus Part
+              B premiums. The totals are statewide; some households and employers would pay more than
+              today and others less. Both estimates assume provider payment rates are reset, as
+              described below. Milliman also gives a high estimate for the plan of $<span data-fig="statewide.highPlan">86.5</span>
+              billion; the report gives no matching high figure for the current system, and
+              Milliman's high projections raise both.
+            </p>
+
+            <!-- ------------------------------------------------------- the bridge -->
+            <h3>How covering everyone could cost about the same</h3>
+            <p class="xp-narrow">
+              Covering more people with broader benefits costs more. The plan gets back to the current
+              system's total by spending less on administration and billing, and by paying providers
+              lower rates in exchange for full, reliable payment.
+            </p>
+            <figure class="xp-figure">
+              <figcaption>
+                <strong>From the current system to the plan</strong>
+                <span class="xp-soft">Milliman's best estimate for 2032, billions of dollars</span>
+              </figcaption>
+              <ul class="xp-legend" aria-hidden="true">
+                <li><span class="xp-key xp-key-up"></span>Adds cost</li>
+                <li><span class="xp-key xp-key-down"></span>Saves cost</li>
+                <li><span class="xp-key xp-key-cond"></span>Saves cost only if provider rates are reset</li>
+              </ul>
+              <!-- uhp:bridge -->
+            </figure>
+            <p class="xp-note">
+              The last two savings, $7.8 billion together, depend on the plan setting payment rates
+              about <span data-fig="statewide.rateResetBest">10%</span> below what it would otherwise pay providers.
+              <span class="xp-ours">our math</span> The reasoning: providers would collect every
+              dollar billed and need less billing staff, so lower rates would leave them "paid
+              approximately the same as they are now." The report adds: "If those renegotiations do
+              not occur, these savings cannot be realized."
+            </p>
+            <p class="xp-note">
+              The size of the "dental, vision, hearing" and "administration" steps is
+              <span class="xp-ours">our math</span>: the plan's figure less the current system's.
+              The report's current-system figure counts dental care but not what people spend today on
+              vision, hearing aids or fertility care, so that step overstates the added cost. Steps
+              may not add exactly because the report rounds each figure.
+            </p>
+
+            <!-- ---------------------------------------------------- the scenarios -->
+            <h3>The published estimates, and what they depend on</h3>
+            <p class="xp-narrow">
+              The two published estimates put the plan about 1% to 9% below what the current system
+              would cost in 2032. Both assume provider rates are reset. The last two rows are our own
+              sensitivity check, not the board's: if rates were not reset, providers would in effect
+              be paid about 10% more than today, and the plan would cost 2% to 9% more.
+              <span class="xp-ours">our math</span>
+            </p>
+            <figure class="xp-figure">
+              <figcaption>
+                <strong>The plan compared with the current system</strong>
+                <span class="xp-soft">2032, billions of dollars a year</span>
+              </figcaption>
+              <!-- uhp:statewide-scenarios -->
+            </figure>
+            <p class="xp-note">
+              Milliman's rows are measured against a current system costing $78.3 billion. The board's
+              rows assume slower cost growth for both the plan and the current system ($72.8 billion),
+              so part of the gap between the two pairs is the growth rate, not the plan. The report
+              calls the board's figure "roughly 8% lower"; $6.6 billion of $72.8 billion is 9%. The
+              board's drug and fraud savings come from studies of national plans, and the report
+              says a single state "would not be able to realize the savings of a national program."
+              The board also lowered Milliman's administration estimate from 4.6% of spending to 3%. The report
+              says members discussed that this "could be considered an ambitiously low estimate" and
+              concluded it "is believed to be attainable."
+            </p>
+
+            <!-- ------------------------------------------------------- who pays -->
+            <h3>What Oregon employers and households would pay</h3>
+            <p class="xp-narrow">
+              The new taxes are large because they replace spending of about the same size by
+              employers, including public employers, and households. The totals match; who pays does
+              not, and some households and employers would pay more than today. The report assumes
+              federal and state health funding of $40 to $42 billion continues either way, which
+              depends on federal waivers.
+            </p>
+            <figure class="xp-figure">
+              <figcaption>
+                <strong>Raised from Oregon employers and households</strong>
+                <span class="xp-soft">2032, billions of dollars a year</span>
+              </figcaption>
+              <ul class="xp-legend" aria-hidden="true">
+                <li>
+                  <span class="xp-key xp-key-1"></span>Premiums and
+                  out-of-pocket costs today; new state taxes under the plan
+                </li>
+                <li><span class="xp-key xp-key-3"></span>Medicare Part B premiums</li>
+              </ul>
+              <!-- uhp:raised -->
+            </figure>
+            <p class="xp-note">
+              "Today" is <span class="xp-ours">our math</span>: the report's current-system total
+              less the public funding it expects to continue. The report's own summary adds the $3.5
+              billion of Part B premiums to the plan's side only, and shows the plan $2.9 billion
+              above the current system. The board added them on purpose: the state would have to
+              raise that money, and each $1 of Part B premium brings in about $3 of federal Medicare
+              funding. It also says the topic "requires further evaluation." Medicare enrollees or
+              their former employers pay those premiums today, so we count them on both sides, and
+              the plan comes out about $0.6 billion lower on Milliman's estimate, the same gap the
+              report shows before Part B. That is our reading; the report does not say whether its
+              public-funding figure is already net of those premiums.
+            </p>
+            <p class="xp-note">
+              All figures come from Tables E2 to E11 of the draft report, for a plan fully running in
+              2032. They leave out start-up costs, about $21 billion in reserves, and long-term care.
+            </p>
+          </div>
+        </section>
+
+        <!-- ============================================================ sources -->
+        <section class="xp-section" id="sources">
+          <div class="xp-wrap">
+            <div class="xp-narrow">
+              <h2>Sources</h2>
+              <ul class="xp-list">
+                <li>
+                  <a href="https://www.oregon.gov/uhpgb/Documents/board-meetings/2026/20261015/20261015-legislative-report-draft.pdf" rel="noopener">Draft legislative report</a>, Universal
+                  Health Plan Governance Board, dated October 13, 2026 (77 pages)
+                </li>
+                <li>
+                  <a href="https://www.oregon.gov/uhpgb/Documents/board-meetings/2026/20261015/legislative-brief-10142026.pdf" rel="noopener">Legislative brief</a>, posted for the
+                  October 15, 2026 meeting (16 pages)
+                </li>
+                <li>
+                  <a href="https://www.oregon.gov/uhpgb/Documents/board-meetings/2026/20261015/expenditure-revenue-appendix-10142026.pdf" rel="noopener">Appendix FR: expenditure and revenue</a>,
+                  draft dated October 13, 2026 (48 pages), with each model's bracket schedule
+                </li>
+                <li>
+                  <a href="https://www.oregon.gov/uhpgb/Documents/board-meetings/2026/20260618/20260605-ECOnorthwest-FR-Full-Report.pdf" rel="noopener">ECOnorthwest finance and revenue report</a>,
+                  June 2026
+                </li>
+                <li>
+                  <a href="https://www.oregon.gov/uhpgb/Pages/index.aspx" rel="noopener">The board's website</a> and
+                  <a href="https://www.oregon.gov/uhpgb/board-meetings/Pages/2026-meetings.aspx" rel="noopener">2026 meeting materials</a>
+                </li>
+              </ul>
+              <p class="xp-note">
+                This page is an independent summary. It is not affiliated with the board or the State
+                of Oregon, takes no position on the plan, and is not tax or insurance advice. The
+                source documents are drafts and their numbers will change. Where this page differs
+                from the report, it says so and shows why. Spot an error?
+                <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/issues">Report it in the project's issues</a>.
+              </p>
+              <p class="xp-note">
+                Document versions, page references and checksums are in
+                <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/blob/main/SOURCES.md">SOURCES.md</a>.
+              </p>
+              <p class="xp-note xp-print-only">
+                Every source document is on the board's site, oregon.gov/uhpgb, under Board Meetings,
+                2026. On screen, the titles above are links.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="xp-footer">
+        <div class="xp-wrap">
+          <p>
+            Unofficial: not published, reviewed or endorsed by the Universal Health Plan Governance
+            Board or the State of Oregon. Figures are from the Board's October 2026 draft documents.
+          </p>
+          <p>
+            <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/blob/main/LICENSE">MIT license</a>
+            &middot;
+            <a href="https://github.com/Malcom-IO/oregon-uhp-explainer">Source code</a>
+            &middot;
+            <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/blob/main/SOURCES.md">Sources</a>
+            &middot;
+            <a href="calculator/">The calculator on its own page</a>
+            &middot;
+            <a href="demo/">Embed the calculator</a>
+          </p>
+        </div>
+      </footer>
+    </div>
+    <script type="module" src="/src/site/main.ts"></script>
   </body>
 </html>
