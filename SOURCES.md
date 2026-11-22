@@ -92,7 +92,8 @@ materials. **686,974 bytes.** SHA-256
 - The proposal names and blurbs are project wording. The Board identifies its models by
   number. The S-table fixtures' wages are inferred from the employer payment and displayed
   tax rate where applicable. The household comparisons select their own cases, use the
-  appendix's $400,000 marketplace cost for the cases beyond that income, and calculate
+  marketplace cost the appendix gives at $400,000 of income for the cases beyond that
+  income, and calculate
   model payments using the same schedules as the engine. The 9% rate for private employers
   in those comparisons comes from the Board's worked example. The engine can separately
   calculate the effective rate from annual payroll.
@@ -144,8 +145,12 @@ materials. **686,974 bytes.** SHA-256
 
 The October 29 entry in the [Board's 2026 meeting archive](https://www.oregon.gov/uhpgb/board-meetings/Pages/2026-meetings.aspx)
 points to the October 15 URLs for both appendices. The October 15 draft executive summary
-records a vote to approve the report as an account of the Board's work. The downloaded
-report still carries its draft label. The October 22 brief and executive summary are newer
+prints a sentence saying the Board voted on October 15 to approve the report, but its
+recorded-vote line is blank and the file was last modified before that meeting, so it is
+not a record of a vote. The downloaded report still carries its draft label and a cover
+note that the Board has not approved it. This catalog treats every document as a draft.
+Draft minutes for the October 15 and October 29 meetings are posted with the November 19
+materials and were not reviewed here. The October 22 brief and executive summary are newer
 versions of those briefing materials. The newer brief repeats the model comparison figures
 used here and adds preliminary 2032 revenue projections that are outside this snapshot.
 The newer executive summary's $81.2 billion estimate matches the report's $77.7 billion
