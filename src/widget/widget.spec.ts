@@ -607,6 +607,29 @@ describe('calculator widget', () => {
     expect(host.querySelector<HTMLElement>('.oregon-uhp')?.dataset['uhpTheme']).toBe('light');
   });
 
+  it('shows one calculator, or none of the header, when the host asks', () => {
+    destroy = mount(host, { show: 'household', header: false, headingLevel: 3, initialEmployer: 'none' });
+    expect(host.querySelector('.uhp-header')).toBeNull();
+    expect(host.querySelector('.uhp-business')).toBeNull();
+    expect([...host.querySelectorAll('.uhp-section-title')].map(node => [node.tagName, node.textContent]))
+      .toEqual([['H3', 'Household calculator']]);
+    expect(host.querySelector('.uhp-results-title')?.tagName).toBe('H4');
+    expect(host.querySelector('.uhp-bill-title')?.tagName).toBe('H5');
+    expectBills(85_000, 2, 'none');
+    expect(host.querySelector('.uhp-privacy')).not.toBeNull();
+
+    destroy = mount(host, { show: 'employer' });
+    expect(host.querySelector('.uhp-header')).not.toBeNull();
+    expect(host.querySelectorAll('.uhp-section')).toHaveLength(1);
+    expect(host.querySelector('.uhp-business .uhp-section-title')?.textContent).toBe('Employer payroll tax calculator');
+    expect(host.querySelectorAll('.uhp-bill')).toHaveLength(0);
+    change(BUSINESS_PAYROLL, '14,500,000');
+    expect(host.querySelectorAll('.uhp-business tbody tr')).toHaveLength(MODELS.length);
+
+    destroy = mount(host, { show: 'everything' as 'all', initialEmployer: 'none' });
+    expect(host.querySelectorAll('.uhp-section')).toHaveLength(2);
+  });
+
   it('associates each control with its own visible label across mounts', () => {
     destroy = mount(host);
     const otherHost = document.createElement('div');

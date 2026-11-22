@@ -17,6 +17,14 @@ export interface WidgetOptions {
   theme?: WidgetTheme;
   /** Heading level of the calculator's title, 1 to 3. Headings inside it follow from there. */
   headingLevel?: 1 | 2 | 3;
+  /** Which calculator to show: both (the default), the household one or the employer one. */
+  show?: 'all' | 'household' | 'employer';
+  /**
+   * Set false to leave out the title, the source snapshot line and the
+   * "unofficial" note, for a page that already states all three beside the
+   * calculator. Headings then start at `headingLevel`.
+   */
+  header?: boolean;
 }
 
 /** Household sizes every model's schedule covers, taken from the proposal data. */
@@ -198,8 +206,10 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
     element(doc, 'p', copy.intro(MODELS.length), 'uhp-intro'),
   );
 
+  const withHeader = options.header !== false;
+  const sectionLevel = withHeader ? level + 1 : level;
   const household = element(doc, 'section', undefined, 'uhp-section');
-  household.append(heading(doc, level + 1, copy.household, 'uhp-section-title'));
+  household.append(heading(doc, sectionLevel, copy.household, 'uhp-section-title'));
   const inputs = element(doc, 'div', undefined, 'uhp-fields');
   const sizes = SIZES.map(value => ({ value: String(value), label: String(value) }));
   const initialSize = SIZES.includes(options.initialHouseholdSize as number)
@@ -252,7 +262,7 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
   const cards = element(doc, 'div', undefined, 'uhp-bills');
   const chart = createChart(doc, id('chart-income'));
   const assumption = element(doc, 'p', copy.unchangedPay, 'uhp-hint');
-  householdResults.append(heading(doc, level + 2, copy.results, 'uhp-results-title'), cards, assumption, chart.figure);
+  householdResults.append(heading(doc, sectionLevel + 1, copy.results, 'uhp-results-title'), cards, assumption, chart.figure);
   household.append(inputs, householdStatus, householdLive, householdResults);
 
   let announcedNote: string | undefined;
@@ -313,7 +323,7 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
       comparison,
     ].filter(Boolean).join(' '), quiet);
     announcedNote = note;
-    cards.replaceChildren(...results.map((result, i) => billCard(doc, level + 3, result, i, baseline)));
+    cards.replaceChildren(...results.map((result, i) => billCard(doc, sectionLevel + 2, result, i, baseline)));
     assumption.hidden = kind === 'none';
     chart.update({ income: amount, size: householdSize, employer: kind, payroll: payrollAmount, currentCost: baseline, bills: results });
   }
@@ -329,7 +339,7 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
   employer.addEventListener('change', () => updateHousehold());
 
   const business = element(doc, 'section', undefined, 'uhp-section uhp-business');
-  business.append(heading(doc, level + 1, copy.business, 'uhp-section-title'));
+  business.append(heading(doc, sectionLevel, copy.business, 'uhp-section-title'));
   const businessInputs = element(doc, 'div', undefined, 'uhp-fields');
   const businessKind = select(doc, id('business-kind'), employers.filter(option => option.value !== 'none'), 'private');
   const businessPayroll = moneyField(doc, id('business-payroll'), copy.businessPayroll, {
@@ -342,7 +352,7 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
   const businessLive = status(doc);
   const businessAnnouncer = announcer(businessLive);
   const businessResults = scrollRegion(doc, copy.businessResults);
-  const businessHeading = heading(doc, level + 2, copy.businessResults, 'uhp-results-title');
+  const businessHeading = heading(doc, sectionLevel + 1, copy.businessResults, 'uhp-results-title');
   business.append(businessInputs, businessHeading, businessLive, businessResults);
 
   function updateBusiness(quiet = false) {
@@ -379,7 +389,11 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
   businessPayroll.control.addEventListener('input', () => updateBusiness());
   spend.control.addEventListener('input', () => updateBusiness());
 
-  root.append(header, household, business, element(doc, 'p', copy.privacy, 'uhp-privacy'));
+  const show = options.show === 'household' || options.show === 'employer' ? options.show : 'all';
+  if (withHeader) root.append(header);
+  if (show !== 'employer') root.append(household);
+  if (show !== 'household') root.append(business);
+  root.append(element(doc, 'p', copy.privacy, 'uhp-privacy'));
   // Keep widget controls independent of any form that contains the host.
   root.querySelectorAll('input, select').forEach(control => control.setAttribute('form', id('unowned-form')));
   host.replaceChildren(root);

@@ -89,6 +89,8 @@ optional:
 | --- | --- |
 | `theme` | `'light'`, `'dark'` or `'auto'`. `auto`, the default, follows the reader's system setting. Name a theme if your page has one fixed look. |
 | `headingLevel` | `1`, `2` or `3`: the heading level of the calculator's title. The default is `2`. Headings inside the calculator follow from it. |
+| `show` | `'all'` (the default), `'household'` or `'employer'`: which calculator to show. |
+| `header` | `false` leaves out the title, the source snapshot line and the “unofficial” note. Use it only where the page around the calculator states all three. |
 | `initialIncome`, `initialHouseholdSize`, `initialEmployer`, `initialPayroll` | Starting values. A value the matching field would not accept is ignored. |
 
 **Colors and font.** The defaults are a white background with dark text, and a
