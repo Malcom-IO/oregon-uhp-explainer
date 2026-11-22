@@ -5,9 +5,48 @@
 > Until the first release, treat its numbers as unverified and use that page instead.
 
 A plain-language explainer and household calculator for Oregon's proposed Universal
-Health Plan, built on the revenue models published by the Universal Health Plan
-Governance Board. It is independent work and is not affiliated with or endorsed by
-the State of Oregon or the Board.
+Health Plan. It applies the five financing models in the Universal Health Plan
+Governance Board's October 2026 draft report to a household or an employer and shows
+the result under each one.
+
+It is unofficial. It is not published, reviewed or endorsed by the Board or the State
+of Oregon, and it takes no position on the plan.
+
+## Open to review
+
+Anyone weighing a proposal like this should be able to check the math, and should not
+have to trust whoever built the calculator. So everything here is public:
+
+- **The code and the data are open source.** Every rate, threshold and rule the
+  calculator uses is in [`src/model/proposals/`](src/model/proposals/), each with the
+  document and table it comes from. Nothing is computed on a server; the calculator
+  runs in your browser from this code.
+- **Every figure traces to a public document.** [SOURCES.md](SOURCES.md) lists each
+  Board document with its address on oregon.gov, the page and table of every figure,
+  and a checksum that shows if a document is changed later. Figures that are this
+  project's own arithmetic are labeled as such there.
+- **The math is tested against the Board's own examples.** The tests reproduce the
+  worked household examples in the Board's draft report (Tables S1–S4) for all five
+  models. Run `npm test` to see it. Where this project and a Board document disagree,
+  SOURCES.md says so under "Known discrepancies".
+- **It shows results; it does not argue.** For the same household, some models cost
+  more than what people pay today and some cost less, and the calculator shows
+  whichever it is. The explainer describes what the Board's documents say, including
+  what they leave unsettled.
+- **It collects nothing.** No account, no analytics, no advertising, no cookies. What
+  you type stays in your browser.
+- **Corrections are public.** If a number is wrong or a description is unfair, open an
+  [issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues). Issues and the
+  changes that answer them are visible to everyone. Please use made-up household
+  figures in a report, not your own.
+
+What it cannot tell you: the models are drafts and may change; the results are
+estimates of the contribution and payroll tax in those drafts, not a prediction of
+what a household would finally pay or save; and the calculator makes simplifying
+assumptions, stated beside its results (for example, that all household income is
+wages when an employer is selected, and that pay stays the same).
+
+Maintained by Marcus Malcom (Malcom IO LLC).
 
 ## What is here so far
 
@@ -112,8 +151,19 @@ the chart's axis labels, which are a fixed 12 pixels. The
 calculator sends nothing over the network and stores nothing: entries stay in
 the reader's browser.
 
-## License
+## Use it
 
-Code: [MIT](LICENSE). Figures are transcribed from the Board's draft documents,
-published on oregon.gov, and cited in the source.
-See [SOURCES.md](SOURCES.md) for document versions, page references, and SHA-256 checksums.
+The code is under the [MIT license](LICENSE): anyone may use, copy, change and
+republish it, including a government agency, a newsroom, an advocacy group on any side,
+or a business, as long as the copyright and license notice stays with the copy. You do
+not need to ask.
+
+If you publish results or a copy, please cite the project and the source snapshot, so
+readers can find the code and the documents behind the numbers:
+
+> Oregon Universal Health Plan explainer and calculator (unofficial), October 2026
+> drafts snapshot. https://github.com/Malcom-IO/oregon-uhp-explainer
+
+The figures themselves are transcribed from the Board's draft documents, published on
+oregon.gov. See [SOURCES.md](SOURCES.md) for document versions, page references, and
+SHA-256 checksums.

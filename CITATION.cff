@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you publish results from this calculator or a copy of it, please cite it and name the source snapshot."
+title: "Oregon Universal Health Plan explainer and calculator (unofficial)"
+type: software
+authors:
+  - family-names: Malcom
+    given-names: Marcus
+    affiliation: Malcom IO LLC
+repository-code: "https://github.com/Malcom-IO/oregon-uhp-explainer"
+license: MIT
+abstract: >-
+  A plain-language explainer and household calculator for Oregon's proposed
+  Universal Health Plan. It applies the five financing models in the Universal
+  Health Plan Governance Board's October 2026 draft report. Unofficial: not
+  published, reviewed or endorsed by the Board or the State of Oregon.
