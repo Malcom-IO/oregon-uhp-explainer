@@ -23,7 +23,7 @@ have to trust whoever built the calculator. So everything here is public:
 - **The calculator's figures trace to public documents.** [SOURCES.md](SOURCES.md) lists
   each Board document the code uses with its address on oregon.gov, the page and table
   of each figure, and a checksum that shows if a document is changed later. Figures
-  quoted only in the explainer's text are not all cataloged there yet. Figures that are this
+  quoted in the explainer's text are cataloged there with verification notes. Figures that are this
   project's own arithmetic are labeled as such there.
 - **The math is tested against the Board's own examples.** The tests reproduce the
   worked household examples in the Board's draft report (Tables S1–S4) for all five

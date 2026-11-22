@@ -1,7 +1,9 @@
 // @vitest-environment happy-dom
 import page from '../../index.html?raw';
+import { HOUSEHOLD_ROWS } from '../model/uhp-households';
+import { MODELS, SCENARIOS } from '../model/uhp-model';
 import { HIGH_PLAN, RATE_RESET } from '../model/uhp-statewide';
-import { renderBlocks } from './blocks';
+import { BUSINESS_PAYROLLS, renderBlocks } from './blocks';
 import { figures } from './figures';
 import { enhance, themeFrom } from './main';
 import css from './site.css?raw';
@@ -35,7 +37,69 @@ describe('figures in the prose', () => {
     expect(figures['statewide.highPlan']).toBe(String(HIGH_PLAN));
     expect(figures['statewide.rateResetBest']).toBe(`${Number((RATE_RESET.best * 100).toFixed(0))}%`);
     // Anchors, so a change to a formatter cannot move the page and the map together.
-    expect(figures).toEqual({ 'statewide.highPlan': '86.5', 'statewide.rateResetBest': '10%' });
+    expect(figures).toEqual({
+      'household.exemption200Single': '$31,920',
+      'household.exemption200Family': '$66,000',
+      'household.exemption138Family': '$45,540',
+      'household.singleWithoutCredit': '$1,766, $1,576 and $1,474',
+      'household.exampleSinglePrivatePayment': '$0',
+      'household.exemptionChoices': '200% or 138%',
+      'household.workerCreditShare': 'half',
+      'household.model5At90000': '$3,669',
+      'household.reportedModel5At90000': '$3,699',
+      'household.combinedRange': '6% to 13.5%',
+      'household.middleFifthRange': '1% to 2.5%',
+      'household.middleFifthCombinedRange': '8% to 10%',
+      'household.topShareRange': '25% to 40%',
+      'household.reportRateRange': '7.69% to 12.05%',
+      'household.model1ReportRate': '12.0%',
+      'household.model4ReportRate': '11.7%',
+      'household.model5ReportRate': '10.4%',
+      'household.model1TopRate': '13.5%',
+      'household.model4TopRate': '14.3%',
+      'household.model5TopRate': '12%',
+      'household.examplePrivateWages': '$80,000',
+      'household.examplePrivateIncome': '$85,000',
+      'household.examplePrivateFamilyIncome': '$220,000',
+      'household.examplePrivateHighIncome': '$220,000',
+      'household.exampleSelfIncome': '$90,000',
+      'household.highestReportExampleIncome': '$220,000',
+      'payroll.exemption': '$500,000',
+      'payroll.upperTier': '$10 million',
+      'payroll.exampleAmount': '$520,000',
+      'payroll.taxExample': '$1,920',
+      'payroll.taxableExample': '$20,000',
+      'payroll.firstPrivateRate': '9.6%',
+      'payroll.topPrivateRate': '14%',
+      'payroll.firstRateCents': '9.6',
+      'payroll.topRateCents': '14',
+      'payroll.publicRateModel1': '9.6%',
+      'payroll.publicRateOtherModels': '14%',
+      'payroll.examplePrivateRate': '9%',
+      'payroll.examplePrivateTax': '$7,200',
+      'payroll.examplePrivateHighTax': '$18,000',
+      'statewide.highPlan': '86.5',
+      'statewide.rateResetBest': '10%',
+      'statewide.providerSavings': '$7.8 billion',
+      'statewide.publishedSavingsRange': '1% to 9%',
+      'statewide.noResetIncreaseRange': '2% to 9%',
+      'statewide.bestStatusQuo': '$78.3 billion',
+      'statewide.lowStatusQuo': '$72.8 billion',
+      'statewide.boardSavings': '$6.6 billion',
+      'statewide.boardSavingsRate': '9%',
+      'statewide.publicFundingRange': '$40 to $42 billion',
+      'statewide.partB': '$3.5',
+      'statewide.bestIncreaseWithPartB': '$2.9 billion',
+      'statewide.bestSavings': '$0.6 billion',
+      'statewide.boardRevenueTarget': '$30 billion',
+      'statewide.bestRevenueTarget': '$39 billion',
+      'statewide.revenueIncrease': '30% more',
+      'statewide.lowAddedCare': '$5.7',
+    });
+  });
+
+  it('describes the lowest middle-fifth rate as under 1%', () => {
+    expect(Math.min(...MODELS.map(model => model.middleFifthRate))).toBeLessThan(0.01);
   });
 
   it('fails on a wrong number in the page', () => {
@@ -43,6 +107,38 @@ describe('figures in the prose', () => {
     expect(planted).not.toBe(page);
     const wrong = figuresIn(planted).filter(({ key, text }) => figures[key] !== text);
     expect(wrong).toEqual([{ key: 'statewide.highPlan', text: '88.5' }]);
+  });
+});
+
+describe('figures beside the tables and bars', () => {
+  const doc = new DOMParser().parseFromString(page, 'text/html');
+
+  it('describes the number of household and employer examples in the tables', () => {
+    const counts = new Map([[4, 'four'], [5, 'five'], [12, 'twelve']]);
+    const households = counts.get(HOUSEHOLD_ROWS.length);
+    const payrolls = counts.get(BUSINESS_PAYROLLS.length);
+    const scenarios = counts.get(SCENARIOS.length);
+    expect(scenarios).toBeDefined();
+    expect(households).toBeDefined();
+    expect(payrolls).toBeDefined();
+    expect(doc.querySelector('#uhp-household-calculator noscript')?.textContent).toContain(`${households} example households`);
+    expect(doc.querySelector('#examples')?.textContent).toContain(`${scenarios} households`);
+    expect(doc.querySelector('#households + p')?.textContent).toContain(`run for ${households} households`);
+    expect(doc.querySelector('#uhp-employer-calculator noscript')?.textContent).toMatch(new RegExp(`at ${payrolls}\\s+payroll sizes`));
+  });
+
+  it('scales each status quo bar against the largest figure in its card', () => {
+    const groups = [...doc.querySelectorAll('.xp-sq-bars')];
+    expect(groups).toHaveLength(2);
+    for (const group of groups) {
+      const tracks = [...group.querySelectorAll('.xp-track')];
+      expect(tracks).toHaveLength(2);
+      const values = tracks.map(track => Number(track.nextElementSibling?.textContent?.replace(/[, %]/g, '')));
+      const largest = Math.max(...values);
+      expect(Math.min(...values)).toBeGreaterThan(0);
+      expect(tracks.map(track => track.firstElementChild?.getAttribute('style')))
+        .toEqual(values.map(value => `width:${Number((100 * value / largest).toFixed(2))}%`));
+    }
   });
 });
 
