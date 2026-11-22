@@ -7,7 +7,9 @@ authors:
     given-names: Marcus
     affiliation: Malcom IO LLC
 repository-code: "https://github.com/Malcom-IO/oregon-uhp-explainer"
-license: MIT
+license:
+  - MIT
+  - CC-BY-4.0
 abstract: >-
   A plain-language explainer and household calculator for Oregon's proposed
   Universal Health Plan. It applies the five financing models in the Universal

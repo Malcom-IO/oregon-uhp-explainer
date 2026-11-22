@@ -182,13 +182,19 @@ that reads complete with JavaScript off, inside one element with the class
 
 ## Use it
 
-The code is under the [MIT license](LICENSE): anyone may use, copy, change and
-republish it, including a government agency, a newsroom, an advocacy group on any side,
-or a business, as long as the copyright and license notice stays with the copy. You do
-not need to ask.
+Anyone may use, copy, change and republish this project, including a government agency,
+a newsroom, an advocacy group on any side, or a business. You do not need to ask.
 
-If you publish results or a copy, please cite the project and the source snapshot, so
-readers can find the code and the documents behind the numbers:
+- **The code** (the calculator, the engine and its data, the site's markup, styles and
+  scripts) is under the [MIT license](LICENSE). Keep its copyright and license notice
+  with any copy.
+- **The written content** (the explainer page's text, this README and `SOURCES.md`) is
+  under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Credit the project,
+  link the license, and say whether you changed anything. [LICENSE-CONTENT.md](LICENSE-CONTENT.md)
+  says exactly what it covers and gives a credit line.
+
+If you publish results, please also cite the project and the source snapshot, so readers
+can find the code and the documents behind the numbers:
 
 > Oregon Universal Health Plan explainer and calculator (unofficial), October 2026
 > drafts snapshot. https://github.com/Malcom-IO/oregon-uhp-explainer
