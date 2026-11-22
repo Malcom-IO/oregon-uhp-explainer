@@ -6,7 +6,10 @@
  *  - a picker over the Board's example households, which otherwise all show;
  *  - collapsed sections opened for printing;
  *  - a fixed light or dark look when the address says ?theme=light or
- *    ?theme=dark, or when a host has set data-uhp-theme on the page element.
+ *    ?theme=dark, or when a host has set data-uhp-theme on the page element;
+ *  - a switch between the device's setting, light and dark, where the page
+ *    has a [data-uhp-theme-switch] element. It is not remembered: nothing is
+ *    stored, and a reload starts from the device's setting again.
  */
 import { mount } from '../widget/index';
 import type { WidgetTheme } from '../widget/index';
@@ -22,6 +25,46 @@ const FIRST_EXAMPLE = 'private';
 export function themeFrom(search: string): WidgetTheme {
   const theme = new URLSearchParams(search).get('theme');
   return theme === 'light' || theme === 'dark' ? theme : 'auto';
+}
+
+/** Puts the page, both calculators and the browser's own controls in one look. */
+export function applyTheme(page: HTMLElement, doc: Document, theme: WidgetTheme): void {
+  for (const root of [page, ...page.querySelectorAll<HTMLElement>('.oregon-uhp')]) {
+    if (theme === 'auto') delete root.dataset['uhpTheme'];
+    else root.dataset['uhpTheme'] = theme;
+  }
+  doc.querySelector('meta[name="color-scheme"]')?.setAttribute('content', theme === 'auto' ? 'light dark' : theme);
+}
+
+const THEME_CHOICES: readonly { theme: WidgetTheme; label: string }[] = [
+  { theme: 'auto', label: 'Match my device' },
+  { theme: 'light', label: 'Light' },
+  { theme: 'dark', label: 'Dark' },
+];
+
+/** Fills a [data-uhp-theme-switch] element with buttons for the device's setting, light and dark. */
+export function themeSwitch(page: HTMLElement, doc: Document, initial: WidgetTheme): void {
+  const slot = page.querySelector<HTMLElement>('[data-uhp-theme-switch]');
+  if (!slot) return;
+  const group = doc.createElement('div');
+  group.className = 'xp-theme-buttons';
+  group.setAttribute('role', 'group');
+  group.setAttribute('aria-label', 'Color theme');
+  const buttons = THEME_CHOICES.map(({ theme, label }) => {
+    const button = doc.createElement('button');
+    button.type = 'button';
+    button.textContent = label;
+    button.dataset['choice'] = theme;
+    button.addEventListener('click', () => choose(theme));
+    group.append(button);
+    return button;
+  });
+  function choose(theme: WidgetTheme): void {
+    applyTheme(page, doc, theme);
+    for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset['choice'] === theme));
+  }
+  slot.replaceChildren(group);
+  for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset['choice'] === initial));
 }
 
 /** Turns the list of example households into one shown at a time, with a button for each. */
@@ -107,6 +150,7 @@ export function enhance(doc: Document, search: string): void {
     }
   }
 
+  themeSwitch(page, doc, theme);
   examplePicker(page, doc);
   if (doc.defaultView) openDetailsForPrint(page, doc.defaultView);
 }

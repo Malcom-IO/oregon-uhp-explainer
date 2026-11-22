@@ -317,6 +317,55 @@ describe('what scripts add', () => {
     expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe('dark');
   });
 
+  it('switches the page and both calculators between the device setting, light and dark, and stores nothing', () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    const cookies = document.cookie;
+    const root = load();
+    const meta = () => document.querySelector('meta[name="color-scheme"]')?.getAttribute('content');
+    const looks = () => [root, ...root.querySelectorAll<HTMLElement>('.oregon-uhp')].map((el) => el.dataset['uhpTheme']);
+    const group = root.querySelector<HTMLElement>('[data-uhp-theme-switch] [role="group"]')!;
+    expect(group.getAttribute('aria-label')).toBe('Color theme');
+    const buttons = [...group.querySelectorAll<HTMLButtonElement>('button')];
+    expect(buttons.map((b) => [b.textContent, b.getAttribute('aria-pressed')])).toEqual([
+      ['Match my device', 'true'], ['Light', 'false'], ['Dark', 'false'],
+    ]);
+
+    buttons[2].click();
+    expect(looks()).toEqual(['dark', 'dark', 'dark']);
+    expect(meta()).toBe('dark');
+    expect(buttons.map((b) => b.getAttribute('aria-pressed'))).toEqual(['false', 'false', 'true']);
+
+    buttons[1].click();
+    expect(looks()).toEqual(['light', 'light', 'light']);
+    expect(meta()).toBe('light');
+
+    buttons[0].click();
+    expect(looks()).toEqual([undefined, undefined, undefined]);
+    expect(meta()).toBe('light dark');
+
+    // The choice is not remembered anywhere.
+    expect(localStorage.length).toBe(0);
+    expect(sessionStorage.length).toBe(0);
+    expect(document.cookie).toBe(cookies);
+    expect(location.search).toBe('');
+    expect(location.hash).toBe('');
+    expect(history.state).toBeNull();
+  });
+
+  it('starts the switch on the theme the address names, and leaves it out where the page has no slot', () => {
+    const pressed = (root: HTMLElement) =>
+      root.querySelector('[data-uhp-theme-switch] [aria-pressed="true"]')?.textContent;
+    expect(pressed(load('?theme=dark'))).toBe('Dark');
+    expect(pressed(load('?theme=light'))).toBe('Light');
+    const body = /<body>([\s\S]*)<\/body>/.exec(renderBlocks(page))![1]
+      .replace(/<script[^>]*><\/script>/, '')
+      .replace(/<div class="xp-theme-switch" data-uhp-theme-switch><\/div>/, '');
+    document.body.innerHTML = body;
+    enhance(document, '');
+    expect(document.querySelectorAll('.xp-theme-buttons')).toHaveLength(0);
+  });
+
   it('shows one board example at a time, starting with the private employer', () => {
     const root = load();
     const buttons = [...root.querySelectorAll<HTMLButtonElement>('.xp-picker button')];

@@ -140,6 +140,7 @@
 .uhp-page .xp-official li span { display: block; color: var(--_muted); font-size: .9em; }
 .uhp-page .xp-jump { display: flex; flex-wrap: wrap; gap: .4em 1.25em; margin-block: 1.75em .75em; }
 .uhp-page .xp-snapshot { margin: 0; color: var(--_muted); font-size: .85em; }
+.uhp-page .xp-theme-buttons { display: flex; flex-wrap: wrap; gap: .4em; margin-block: .75em 0; font-size: .85em; }
 @media (min-width: 62em) {
   .uhp-page .xp-hero-grid { grid-template-columns: minmax(0, 1fr) 20em; }
 }
@@ -265,7 +266,7 @@
 /* ------------------------------------------------- the board's examples */
 .uhp-page .xp-example-title { margin-block-start: 1.75em; }
 .uhp-page .xp-picker { display: flex; flex-wrap: wrap; gap: .4em; margin-block: 1em; }
-.uhp-page .xp-picker button {
+.uhp-page :is(.xp-picker, .xp-theme-buttons) button {
   padding: .45em .9em;
   border: 1px solid var(--_control-line);
   border-radius: 4px;
@@ -274,7 +275,7 @@
   font: inherit;
   cursor: pointer;
 }
-.uhp-page .xp-picker button[aria-pressed="true"] { background: var(--_ink); color: var(--_surface); border-color: var(--_ink); }
+.uhp-page :is(.xp-picker, .xp-theme-buttons) button[aria-pressed="true"] { background: var(--_ink); color: var(--_surface); border-color: var(--_ink); }
 .uhp-page .xp-example.xp-off { display: none; }
 .uhp-page .xp-picked .xp-example-title { margin-block-start: .5em; }
 
@@ -355,7 +356,7 @@
     --_series-4: var(--uhp-series-4, #835196);
     --_series-5: var(--uhp-series-5, #855c0b);
   }
-  .uhp-page .xp-jump, .uhp-page .xp-picker, .uhp-page .xp-skip { display: none; }
+  .uhp-page .xp-jump, .uhp-page .xp-picker, .uhp-page .xp-skip, .uhp-page .xp-theme-switch { display: none; }
   .uhp-page .xp-example.xp-off { display: block; }
   .uhp-page .xp-print-only { display: block; }
   .uhp-page .xp-section { padding-block: 1.5em; }
