@@ -1,5 +1,5 @@
 .oregon-uhp {
-  color-scheme: light dark;
+  color-scheme: light;
   --surface: #f1f5f7;
   --paper: #fff;
   --ink: #142938;
@@ -15,19 +15,23 @@
   --series-3: #21715c;
   --series-4: #835196;
   --series-5: #855c0b;
-  max-inline-size: 72rem;
+  max-inline-size: 72em;
   margin-inline: auto;
-  padding: clamp(.75rem, 3vw, 2rem);
-  border-radius: 1rem;
+  padding: clamp(.75em, 3vw, 2em);
+  border-radius: 1em;
   background: var(--surface);
   color: var(--ink);
-  font: 400 1rem/1.5 system-ui, sans-serif;
+  position: relative;
+  font: 400 1em/1.5 system-ui, sans-serif;
+  letter-spacing: normal;
   text-align: start;
+  text-transform: none;
   overflow-wrap: anywhere;
 }
 
 @media (prefers-color-scheme: dark) {
-  .oregon-uhp {
+  .oregon-uhp:not([data-uhp-theme="light"]) {
+    color-scheme: dark;
     --surface: #111c25;
     --paper: #1b2b37;
     --ink: #eaf2f7;
@@ -46,82 +50,114 @@
   }
 }
 
-.oregon-uhp, .oregon-uhp * { box-sizing: border-box; }
-.oregon-uhp [hidden] { display: none !important; }
+.oregon-uhp[data-uhp-theme="dark"] {
+  color-scheme: dark;
+  --surface: #111c25;
+  --paper: #1b2b37;
+  --ink: #eaf2f7;
+  --muted: #b7c9d5;
+  --line: #496274;
+  --control-line: #7f99ab;
+  --grid: #3a4e5d;
+  --accent: #a6d0fc;
+  --status: #243b50;
+  --error: #ffacaf;
+  --series-1: #86bef9;
+  --series-2: #ffa987;
+  --series-3: #72d5b0;
+  --series-4: #d5aaf1;
+  --series-5: #e8c075;
+}
 
-.oregon-uhp :where(h1, h2, h3, h4, p, dl, dd, figure, ul) { margin: 0; }
-.oregon-uhp :where(h1, h2, h3, h4) {
+.oregon-uhp, .oregon-uhp * { box-sizing: border-box; }
+.oregon-uhp.uhp-root [hidden] { display: none !important; }
+
+.oregon-uhp.uhp-root :is(h1, h2, h3, h4, h5, h6, p, dl, dd, figure, ul, label) { margin: 0; }
+/* Text takes its color and size from the calculator, not from a host rule for the same element. */
+.oregon-uhp.uhp-root :is(p, li, dt, dd, th, td, caption, figcaption, label, summary, span) {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+.oregon-uhp.uhp-root :is(h1, h2, h3, h4, h5, h6) {
   color: var(--ink);
   font-family: inherit;
   font-weight: 700;
   line-height: 1.15;
+  letter-spacing: normal;
+  text-transform: none;
 }
-.oregon-uhp h1 {
+.oregon-uhp.uhp-root .uhp-title {
   max-inline-size: 24ch;
-  font-size: clamp(1.7rem, 6vw, 3rem);
+  font-size: clamp(1.7em, 6vw, 3em);
   letter-spacing: -.035em;
 }
-.oregon-uhp h2 { font-size: clamp(1.25rem, 4vw, 1.65rem); }
-.oregon-uhp h3 { font-size: 1.12rem; }
-.oregon-uhp h4 { font-size: 1rem; }
+.oregon-uhp.uhp-root .uhp-section-title { font-size: clamp(1.25em, 4vw, 1.65em); }
+.oregon-uhp.uhp-root .uhp-results-title { font-size: 1.12em; }
+.oregon-uhp.uhp-root .uhp-bill-title { font-size: 1em; }
 
-.oregon-uhp .widget-header { display: grid; gap: .65rem; padding: .35rem .15rem 1.35rem; }
-.oregon-uhp .snapshot { color: var(--accent); font-size: .87rem; font-weight: 700; }
-.oregon-uhp .intro { max-inline-size: 65ch; color: var(--muted); }
+.oregon-uhp.uhp-root .uhp-header { display: grid; gap: .65em; padding: .35em .15em 1.35em; }
+.oregon-uhp.uhp-root .uhp-snapshot { color: var(--accent); font-size: .87em; font-weight: 700; }
+.oregon-uhp.uhp-root .uhp-intro { max-inline-size: 65ch; color: var(--muted); }
 
-.oregon-uhp .calculator-section {
+.oregon-uhp.uhp-root .uhp-section {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
+  gap: 1em;
   min-inline-size: 0;
-  margin-block-end: 1rem;
-  padding: clamp(.8rem, 3vw, 1.5rem);
+  margin-block-end: 1em;
+  padding: clamp(.8em, 3vw, 1.5em);
   border: 1px solid var(--line);
-  border-radius: .8rem;
+  border-radius: .8em;
   background: var(--paper);
 }
 
-.oregon-uhp .fields {
+.oregon-uhp.uhp-root .uhp-fields {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21em), 1fr));
   align-items: start;
-  gap: 1rem 1.35rem;
+  gap: 1em 1.35em;
 }
 
-.oregon-uhp .field-group { display: grid; gap: .65rem; }
-.oregon-uhp .field { display: grid; gap: .3rem; min-inline-size: 0; }
-.oregon-uhp .field label { display: block; color: var(--ink); font-size: .92rem; font-weight: 650; }
-.oregon-uhp .field :is(input, select) {
+.oregon-uhp.uhp-root .uhp-field-group { display: grid; gap: .65em; }
+.oregon-uhp.uhp-root .uhp-field { display: grid; gap: .3em; min-inline-size: 0; }
+.oregon-uhp.uhp-root .uhp-field label { display: block; color: var(--ink); font-size: .92em; font-weight: 650; }
+.oregon-uhp.uhp-root .uhp-field :is(input, select) {
   inline-size: 100%;
   min-inline-size: 0;
   font: inherit;
   color: var(--ink);
 }
-.oregon-uhp .field :is(input[type="number"], select) {
-  min-block-size: 2.75rem;
+.oregon-uhp.uhp-root .uhp-field :is(input[type="text"], select) {
+  min-block-size: 2.75em;
   margin: 0;
-  padding: .4rem .65rem;
+  padding: .4em .65em;
   border: 1px solid var(--control-line);
-  border-radius: .35rem;
+  border-radius: .35em;
   background: var(--paper);
+  box-shadow: none;
+  block-size: auto;
+  appearance: auto;
 }
-.oregon-uhp .field input[type="range"] {
-  min-block-size: 1.75rem;
+.oregon-uhp.uhp-root .uhp-field input[type="range"] {
+  min-block-size: 1.75em;
   margin: 0;
   accent-color: var(--accent);
+  appearance: auto;
 }
-.oregon-uhp :focus-visible { outline: .15rem solid var(--accent); outline-offset: .15rem; }
-.oregon-uhp .hint { color: var(--muted); font-size: .9rem; }
-.oregon-uhp .field-error { color: var(--error); font-size: .9rem; }
-.oregon-uhp .field input[aria-invalid="true"] { border-color: var(--error); }
+.oregon-uhp.uhp-root :focus-visible { outline: .15em solid var(--accent); outline-offset: .15em; }
+.oregon-uhp.uhp-root .uhp-hint { color: var(--muted); font-size: .9em; }
+.oregon-uhp.uhp-root .uhp-field-error { color: var(--muted); font-size: .9em; }
+.oregon-uhp.uhp-root .uhp-field input[aria-invalid="true"] ~ .uhp-field-error { color: var(--error); font-weight: 650; }
+.oregon-uhp.uhp-root .uhp-field input[aria-invalid="true"] { border-color: var(--error); }
 
-.oregon-uhp .result-status {
-  padding: .65rem .8rem;
-  border-radius: .35rem;
+.oregon-uhp.uhp-root .uhp-result-status {
+  padding: .65em .8em;
+  border-radius: .35em;
   background: var(--status);
   font-weight: 650;
 }
-.oregon-uhp .visually-hidden {
+.oregon-uhp.uhp-root .uhp-visually-hidden {
   position: absolute;
   inline-size: 1px;
   block-size: 1px;
@@ -129,81 +165,84 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.oregon-uhp .bills {
+.oregon-uhp.uhp-root .uhp-bills {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  gap: .7rem;
-  margin-block: .65rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15em), 1fr));
+  gap: .7em;
+  margin-block: .65em;
 }
-.oregon-uhp .series-1 { --series: var(--series-1); --dash: none; }
-.oregon-uhp .series-2 { --series: var(--series-2); --dash: 9 3; }
-.oregon-uhp .series-3 { --series: var(--series-3); --dash: 4 3; }
-.oregon-uhp .series-4 { --series: var(--series-4); --dash: 10 3 2 3; }
-.oregon-uhp .series-5 { --series: var(--series-5); --dash: 2 3; }
-.oregon-uhp .bill {
+.oregon-uhp.uhp-root .uhp-series-1 { --series: var(--series-1); --dash: none; }
+.oregon-uhp.uhp-root .uhp-series-2 { --series: var(--series-2); --dash: 9 3; }
+.oregon-uhp.uhp-root .uhp-series-3 { --series: var(--series-3); --dash: 4 3; }
+.oregon-uhp.uhp-root .uhp-series-4 { --series: var(--series-4); --dash: 10 3 2 3; }
+.oregon-uhp.uhp-root .uhp-series-5 { --series: var(--series-5); --dash: 2 3; }
+.oregon-uhp.uhp-root .uhp-bill {
   min-inline-size: 0;
-  padding: .85rem;
+  padding: .85em;
   border: 1px solid var(--line);
-  border-block-start: .22rem solid var(--series);
-  border-radius: .44rem;
+  border-block-start: .22em solid var(--series);
+  border-radius: .44em;
 }
-.oregon-uhp .bill-name { margin-block: .18rem .5rem; color: var(--muted); font-size: .9rem; }
-.oregon-uhp .bill-amount { font-size: 1.55rem; font-weight: 750; font-variant-numeric: tabular-nums; }
-.oregon-uhp .bill-amount span { color: var(--muted); font-size: .86rem; font-weight: 400; }
-.oregon-uhp .bill dl { display: grid; gap: .2rem; margin-block-start: .55rem; font-size: .86rem; }
-.oregon-uhp .bill dl div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 .5rem; }
-.oregon-uhp .bill dt { color: var(--muted); }
-.oregon-uhp .bill dd { font-variant-numeric: tabular-nums; font-weight: 650; }
+.oregon-uhp.uhp-root .uhp-bill-name { margin-block: .18em .5em; color: var(--muted); font-size: .9em; }
+.oregon-uhp.uhp-root .uhp-bill-amount { font-size: 1.55em; font-weight: 750; font-variant-numeric: tabular-nums; }
+.oregon-uhp.uhp-root .uhp-bill-amount span { color: var(--muted); font-size: .555em; font-weight: 400; }
+.oregon-uhp.uhp-root .uhp-bill dl { display: grid; gap: .2em; margin-block-start: .55em; font-size: .86em; }
+.oregon-uhp.uhp-root .uhp-bill dl div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 .5em; }
+.oregon-uhp.uhp-root .uhp-bill dt { color: var(--muted); }
+.oregon-uhp.uhp-root .uhp-bill dd { font-variant-numeric: tabular-nums; font-weight: 650; }
 
-.oregon-uhp .chart {
+.oregon-uhp.uhp-root .uhp-chart {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: .4rem;
+  gap: .4em;
   min-inline-size: 0;
-  margin-block-start: 1.2rem;
-  padding-block-start: .8rem;
+  margin-block-start: 1.2em;
+  padding-block-start: .8em;
   border-block-start: 1px solid var(--line);
 }
-.oregon-uhp figcaption { font-size: 1.06rem; font-weight: 700; }
-.oregon-uhp .chart-legend {
+.oregon-uhp.uhp-root figcaption { font-size: 1.06em; font-weight: 700; }
+.oregon-uhp.uhp-root .uhp-chart-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: .35rem 1rem;
+  gap: .35em 1em;
   padding: 0;
   list-style: none;
-  font-size: .88rem;
+  font-size: .88em;
 }
-.oregon-uhp .chart-legend li { display: flex; gap: .35rem; align-items: center; }
-.oregon-uhp .key { inline-size: 1.8rem; block-size: .55rem; }
-.oregon-uhp .uhp-plot { min-inline-size: 0; }
-.oregon-uhp .uhp-plot svg { display: block; inline-size: 100%; block-size: auto; }
-.oregon-uhp .grid-line { stroke: var(--grid); }
-.oregon-uhp .tick, .oregon-uhp .axis-title { fill: var(--muted); font-size: 12px; }
-.oregon-uhp .axis-title { font-weight: 650; }
-.oregon-uhp .series { fill: none; stroke: var(--series); stroke-width: 2.1; stroke-dasharray: var(--dash); }
-.oregon-uhp .income-line { stroke: var(--muted); stroke-dasharray: 3 3; }
-.oregon-uhp .cost-line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 8 4; }
-.oregon-uhp .dot { fill: var(--series); stroke: var(--paper); }
-.oregon-uhp .chart-lookup { max-inline-size: 20rem; }
-.oregon-uhp .chart-inspection { color: var(--muted); font-size: .87rem; }
-.oregon-uhp details > summary { color: var(--accent); font-weight: 650; cursor: pointer; }
+.oregon-uhp.uhp-root .uhp-chart-legend li { display: flex; gap: .35em; align-items: center; }
+.oregon-uhp.uhp-root .uhp-key { inline-size: 1.8em; block-size: .55em; }
+.oregon-uhp.uhp-root .uhp-plot { min-inline-size: 0; }
+.oregon-uhp.uhp-root .uhp-plot svg { display: block; inline-size: 100%; block-size: auto; }
+.oregon-uhp.uhp-root .uhp-grid-line { stroke: var(--grid); }
+.oregon-uhp.uhp-root .uhp-tick, .oregon-uhp.uhp-root .uhp-axis-title { fill: var(--muted); font-size: 12px; }
+.oregon-uhp.uhp-root .uhp-axis-title { font-weight: 650; }
+.oregon-uhp.uhp-root .uhp-series { fill: none; stroke: var(--series); stroke-width: 2.1; stroke-dasharray: var(--dash); }
+.oregon-uhp.uhp-root .uhp-income-line { stroke: var(--muted); stroke-dasharray: 3 3; }
+.oregon-uhp.uhp-root .uhp-cost-line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 8 4; }
+.oregon-uhp.uhp-root .uhp-dot { fill: var(--series); stroke: var(--paper); }
+.oregon-uhp.uhp-root .uhp-chart-lookup { max-inline-size: 20em; }
+.oregon-uhp.uhp-root .uhp-chart-inspection { color: var(--muted); font-size: .87em; }
+.oregon-uhp.uhp-root details > summary { color: var(--accent); font-weight: 650; cursor: pointer; }
 
-.oregon-uhp .table-scroll { min-inline-size: 0; overflow-x: auto; }
-.oregon-uhp details .table-scroll { margin-block-start: .4rem; }
-.oregon-uhp table {
+.oregon-uhp.uhp-root .uhp-table-scroll { min-inline-size: 0; overflow-x: auto; }
+.oregon-uhp.uhp-root details .uhp-table-scroll { margin-block-start: .4em; }
+.oregon-uhp.uhp-root table {
   inline-size: 100%;
   border-collapse: collapse;
   background: var(--paper);
   color: var(--ink);
   font: inherit;
-  font-size: .9rem;
+  font-size: .9em;
   font-variant-numeric: tabular-nums;
 }
-.oregon-uhp :is(th, td) {
-  padding: .38rem .45rem;
+.oregon-uhp.uhp-root :is(th, td) {
+  padding: .38em .45em;
+  border: 0;
   border-block-end: 1px solid var(--line);
   text-align: start;
 }
-.oregon-uhp :is(th, td):not(:first-child) { text-align: end; }
-.oregon-uhp td { white-space: nowrap; }
-.oregon-uhp .privacy { color: var(--muted); font-size: .9rem; }
+.oregon-uhp.uhp-root :is(th, td):not(:first-child) { text-align: end; }
+.oregon-uhp.uhp-root th { background: transparent; color: inherit; font-weight: 650; }
+.oregon-uhp.uhp-root td { white-space: nowrap; }
+.oregon-uhp.uhp-root .uhp-privacy { color: var(--muted); font-size: .9em; }
+.oregon-uhp.uhp-root .uhp-employer-note { margin-block-start: -.2em; }
