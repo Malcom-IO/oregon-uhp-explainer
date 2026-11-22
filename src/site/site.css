@@ -184,7 +184,34 @@
   text-transform: uppercase;
 }
 .uhp-page .xp-bar-name { overflow: hidden; font-size: .95em; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
-.uhp-page .xp-theme-switch { flex: none; margin-inline-start: auto; }
+.uhp-page .xp-bar-check {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: .4em;
+  min-block-size: 2.5em;
+  margin-inline-start: auto;
+  padding: .35em .85em;
+  border: 1px solid var(--_accent);
+  border-radius: 999px;
+  color: var(--_accent);
+  font-size: .9em;
+  font-weight: 600;
+  text-decoration: none;
+}
+.uhp-page .xp-bar-check:hover { background: var(--_status); }
+/* On a phone the link reads "Check"; "this page" stays in its name for assistive technology. */
+@media (max-width: 40em) {
+  .uhp-page .xp-bar-more {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+.uhp-page .xp-theme-switch { flex: none; }
 .uhp-page .xp-theme-button {
   display: inline-flex;
   align-items: center;
@@ -597,6 +624,27 @@
 .uhp-page .xp-raised-partb { background: var(--_series-3); border-inline-start: 2px solid var(--_surface); }
 .uhp-page .xp-stack-total { text-align: end; }
 
+/* ------------------------------------------------ how to check this page */
+/* Set apart from the sections above: a tinted band, and each promise as its own card. */
+.uhp-page .xp-check { background: var(--_status); }
+.uhp-page .xp-checks { display: grid; gap: .9em; list-style: none; margin-block: 1.5em 0; }
+@media (min-width: 48em) {
+  .uhp-page .xp-checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .uhp-page .xp-checks li:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+.uhp-page .xp-checks li {
+  padding: 1.1em 1.25em;
+  border: 1px solid var(--_line);
+  border-block-start: 3px solid var(--_accent);
+  border-radius: .75em;
+  background: var(--_paper);
+  color: var(--_muted);
+  font-size: .95em;
+  line-height: 1.55;
+}
+.uhp-page .xp-checks li > strong:first-child { display: block; margin-block-end: .3em; color: var(--_ink); font-size: 1.08em; }
+.uhp-page .xp-check .xp-note { max-inline-size: 60em; }
+
 /* -------------------------------------------------------------- footer */
 .uhp-page .xp-footer { padding-block: 2.5em; border-block-start: 1px solid var(--_line); color: var(--_muted); font-size: .875em; }
 
@@ -626,5 +674,5 @@
   .uhp-page .xp-example.xp-off { display: block; }
   .uhp-page .xp-print-only { display: block; }
   .uhp-page .xp-section { padding-block: 1.5em; }
-  .uhp-page :is(.xp-card, .xp-fact, .xp-model, .xp-est-card, .xp-figure, .xp-table tr) { break-inside: avoid; }
+  .uhp-page :is(.xp-card, .xp-fact, .xp-model, .xp-est-card, .xp-figure, .xp-table tr, .xp-checks li) { break-inside: avoid; }
 }

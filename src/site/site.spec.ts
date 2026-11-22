@@ -389,6 +389,19 @@ describe('what scripts add', () => {
     }
   });
 
+  it('links from the top bar to how to check this page, with or without scripts', () => {
+    const doc = new DOMParser().parseFromString(renderBlocks(page), 'text/html');
+    const link = doc.querySelector<HTMLAnchorElement>('[data-uhp-bar] a.xp-bar-check')!;
+    expect(link.getAttribute('href')).toBe('#about');
+    // Its name, with the decorative check mark left out, is the same at every width.
+    const name = [...link.childNodes].filter((node) => !(node instanceof Element && node.getAttribute('aria-hidden') === 'true'))
+      .map((node) => node.textContent).join('').trim();
+    expect(name).toBe('Check this page');
+    const target = doc.getElementById('about')!;
+    expect(target.querySelector('h2')?.textContent).toBe('How to check this page');
+    expect(target.querySelectorAll('.xp-checks > li > strong:first-child')).toHaveLength(target.querySelectorAll('.xp-checks > li').length);
+  });
+
   it('leaves the bar title shown where the browser cannot watch the page title', () => {
     const original = window.IntersectionObserver;
     (window as { IntersectionObserver?: unknown }).IntersectionObserver = undefined;
