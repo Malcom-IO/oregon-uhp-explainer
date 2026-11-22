@@ -33,6 +33,33 @@ describe('figures in the prose', () => {
     expect([...new Set(found.map((f) => f.key))].sort()).toEqual(Object.keys(figures).sort());
   });
 
+  it('keeps every span of a figure that appears more than once', () => {
+    // A key used in several places stays "used" if one of its spans is unwrapped,
+    // so the number of spans is pinned: removing a guard has to be done on purpose.
+    const counts: Record<string, number> = {};
+    for (const { key } of found) counts[key] = (counts[key] ?? 0) + 1;
+    expect(found).toHaveLength(90);
+    expect(Object.fromEntries(Object.entries(counts).filter(([, n]) => n > 1).sort())).toEqual({
+      'household.exemption200Family': 2,
+      'household.model1ReportRate': 3,
+      'household.model1TopRate': 3,
+      'household.topShareRange': 2,
+      'household.workerCreditShare': 3,
+      'payroll.examplePrivateRate': 2,
+      'payroll.exemption': 9,
+      'payroll.firstPrivateRate': 4,
+      'payroll.publicRateModel1': 2,
+      'payroll.publicRateOtherModels': 2,
+      'payroll.topPrivateRate': 2,
+      'payroll.upperTier': 3,
+      'statewide.bestRevenueTarget': 3,
+      'statewide.boardRevenueTarget': 3,
+      'statewide.lowStatusQuo': 2,
+      'statewide.rateResetBest': 2,
+      'statewide.revenueIncrease': 3,
+    });
+  });
+
   it('computes each figure from the model, as the source page did', () => {
     expect(figures['statewide.highPlan']).toBe(String(HIGH_PLAN));
     expect(figures['statewide.rateResetBest']).toBe(`${Number((RATE_RESET.best * 100).toFixed(0))}%`);
