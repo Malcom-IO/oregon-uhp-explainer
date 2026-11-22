@@ -149,6 +149,13 @@ The supplementary PDFs below were fetched November 22, 2026 (Pacific time).
   model payments using the same schedules as the engine. The 9% rate for private employers
   in those comparisons comes from the Board's worked example. The engine can separately
   calculate the effective rate from annual payroll.
+- The calculator's starting values. The household calculator opens with the Board's
+  Table S2 couple: $85,000 of income, a private employer with an $8.5 million payroll,
+  and $4,700 a year today. Its "How you are covered today" choices fill in the largest
+  "today" figure in the Board's matching worked example: $6,900 for buying your own plan
+  (Table S1) and $9,600 for Medicare (Table S4), or $0 for the Oregon Health Plan and no
+  insurance. The employer calculator's $1.1 million payroll and $110,000 of benefit
+  spending are this project's example, not Board figures, and the calculator says so.
 - The statewide bridge, provider-rate adjustment, per-person figures, private spending
   comparisons, and the two sensitivities without a provider-rate change are project
   calculations from the report's inputs. The report's published scenarios supply the

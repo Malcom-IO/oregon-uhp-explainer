@@ -76,10 +76,15 @@
 
 .oregon-uhp, .oregon-uhp * { box-sizing: border-box; }
 .oregon-uhp.uhp-root [hidden] { display: none !important; }
+.oregon-uhp.uhp-root {
+  /* Size containment ignores content width, so give a shrink-to-fit host a floor. */
+  container: uhp / inline-size;
+  min-inline-size: min(20em, 100vw - 2em);
+}
 
-.oregon-uhp.uhp-root :is(h1, h2, h3, h4, h5, h6, p, dl, dd, figure, ul, label) { margin: 0; }
+.oregon-uhp.uhp-root :is(h1, h2, h3, h4, h5, h6, p, dl, dd, figure, ul, label, legend, fieldset) { margin: 0; }
 /* Text takes its color and size from the calculator, not from a host rule for the same element. */
-.oregon-uhp.uhp-root :is(p, li, dt, dd, th, td, caption, figcaption, label, summary, span) {
+.oregon-uhp.uhp-root :is(p, li, dt, dd, th, td, caption, figcaption, label, legend, summary, span, strong, b) {
   color: inherit;
   font-size: inherit;
   line-height: inherit;
@@ -99,7 +104,6 @@
 }
 .oregon-uhp.uhp-root .uhp-section-title { font-size: clamp(1.25em, 4vw, 1.65em); }
 .oregon-uhp.uhp-root .uhp-results-title { font-size: 1.12em; }
-.oregon-uhp.uhp-root .uhp-bill-title { font-size: 1em; }
 
 .oregon-uhp.uhp-root .uhp-header { display: grid; gap: .65em; padding: .35em .15em 1.35em; }
 .oregon-uhp.uhp-root .uhp-snapshot { color: var(--_accent); font-size: .87em; font-weight: 700; }
@@ -110,53 +114,136 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 1em;
   min-inline-size: 0;
-  margin-block-end: 1em;
-  padding: clamp(.8em, 3vw, 1.5em);
+  margin-block-end: 2em;
+}
+
+/* Inputs beside the results on a wide calculator, stacked above them on a narrow one. */
+.oregon-uhp.uhp-root .uhp-calc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5em;
+  align-items: start;
+}
+@container uhp (min-width: 60em) {
+  .oregon-uhp.uhp-root .uhp-calc { grid-template-columns: minmax(0, 21em) minmax(0, 1fr); gap: 2em; }
+  .oregon-uhp.uhp-root .uhp-sticky { display: none !important; }
+}
+
+.oregon-uhp.uhp-root .uhp-inputs {
+  display: grid;
+  gap: 1.4em;
+  min-inline-size: 0;
+  padding: clamp(1em, 3vw, 1.5em);
   border: 1px solid var(--_line);
-  border-radius: .8em;
+  border-radius: .75em;
   background: var(--_paper);
 }
-
-.oregon-uhp.uhp-root .uhp-fields {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21em), 1fr));
-  align-items: start;
-  gap: 1em 1.35em;
+.oregon-uhp.uhp-root .uhp-field { display: grid; gap: .45em; min-inline-size: 0; padding: 0; border: 0; }
+.oregon-uhp.uhp-root .uhp-field :is(label, legend) {
+  display: block;
+  float: none;
+  padding: 0;
+  margin-block-end: .1em;
+  color: var(--_ink);
+  font-size: .95em;
+  font-weight: 650;
 }
-
-.oregon-uhp.uhp-root .uhp-field-group { display: grid; gap: .65em; }
-.oregon-uhp.uhp-root .uhp-field { display: grid; gap: .3em; min-inline-size: 0; }
-.oregon-uhp.uhp-root .uhp-field label { display: block; color: var(--_ink); font-size: .92em; font-weight: 650; }
-.oregon-uhp.uhp-root .uhp-field :is(input, select) {
+.oregon-uhp.uhp-root .uhp-subfield { margin-block-start: .5em; }
+.oregon-uhp.uhp-root .uhp-subfield label { font-weight: 500; }
+.oregon-uhp.uhp-root .uhp-field select {
   inline-size: 100%;
   min-inline-size: 0;
-  font: inherit;
-  color: var(--_ink);
-}
-.oregon-uhp.uhp-root .uhp-field :is(input[type="text"], select) {
   min-block-size: 2.75em;
   margin: 0;
-  padding: .4em .65em;
+  padding: .45em .7em;
   border: 1px solid var(--_control-line);
-  border-radius: .35em;
-  background: var(--_paper);
+  border-radius: .5em;
+  background-color: var(--_surface);
   box-shadow: none;
-  block-size: auto;
+  color: var(--_ink);
+  font: inherit;
   appearance: auto;
 }
-.oregon-uhp.uhp-root .uhp-field input[type="range"] {
-  min-block-size: 1.75em;
+.oregon-uhp.uhp-root .uhp-money {
+  display: flex;
+  align-items: center;
+  gap: .4em;
+  padding: 0 .85em;
+  border: 1px solid var(--_control-line);
+  border-radius: .5em;
+  background: var(--_surface);
+  color: var(--_muted);
+}
+.oregon-uhp.uhp-root .uhp-money:focus-within { border-color: var(--_accent); outline: .15em solid var(--_accent); outline-offset: .1em; }
+.oregon-uhp.uhp-root .uhp-money input {
+  flex: 1;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 2.6em;
   margin: 0;
+  padding: .45em 0;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--_ink);
+  font: inherit;
+  font-size: 1.1em;
+  font-variant-numeric: tabular-nums;
+}
+.oregon-uhp.uhp-root .uhp-slider {
+  inline-size: 100%;
+  min-block-size: 1.75em;
+  margin: .2em 0 0;
   accent-color: var(--_accent);
   appearance: auto;
+}
+.oregon-uhp.uhp-root .uhp-seg { display: flex; flex-wrap: wrap; gap: .4em; }
+.oregon-uhp.uhp-root .uhp-seg button {
+  min-inline-size: 2.75em;
+  min-block-size: 2.75em;
+  margin: 0;
+  padding: .4em .85em;
+  border: 1px solid var(--_control-line);
+  border-radius: .5em;
+  background: var(--_surface);
+  box-shadow: none;
+  color: var(--_ink);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+.oregon-uhp.uhp-root .uhp-seg button:hover { border-color: var(--_ink); }
+/* Fields tabbed into view stay clear of the sticky range bar. */
+.oregon-uhp.uhp-root .uhp-inputs :is(input, select, button) { scroll-margin-block-end: 5em; }
+@media (forced-colors: active) {
+  .oregon-uhp.uhp-root .uhp-seg button.uhp-active { outline: .2em solid; outline-offset: .1em; }
+}
+.oregon-uhp.uhp-root .uhp-seg button.uhp-active {
+  border-color: var(--_accent);
+  background: var(--_accent);
+  color: var(--_surface);
 }
 .oregon-uhp.uhp-root :focus-visible { outline: .15em solid var(--_accent); outline-offset: .15em; }
 .oregon-uhp.uhp-root .uhp-hint { color: var(--_muted); font-size: .9em; }
 .oregon-uhp.uhp-root .uhp-field-error { color: var(--_muted); font-size: .9em; }
-.oregon-uhp.uhp-root .uhp-field input[aria-invalid="true"] ~ .uhp-field-error { color: var(--_error); font-weight: 650; }
-.oregon-uhp.uhp-root .uhp-field input[aria-invalid="true"] { border-color: var(--_error); }
+.oregon-uhp.uhp-root .uhp-money:has(input[aria-invalid="true"]) { border-color: var(--_error); }
+.oregon-uhp.uhp-root .uhp-money:has(input[aria-invalid="true"]) ~ .uhp-field-error { color: var(--_error); font-weight: 650; }
 
-.oregon-uhp.uhp-root .uhp-result-status {
+.oregon-uhp.uhp-root .uhp-results { display: grid; gap: 1em; min-inline-size: 0; container: uhp-results / inline-size; }
+.oregon-uhp.uhp-root .uhp-callout {
+  display: grid;
+  gap: .6em;
+  padding: .9em 1.1em;
+  border-inline-start: .2em solid var(--_accent);
+  border-radius: 0 .5em .5em 0;
+  background: var(--_status);
+  font-size: .95em;
+}
+.oregon-uhp.uhp-root .uhp-callout strong,
+.oregon-uhp.uhp-root .uhp-result-status strong { color: var(--_ink); font-weight: 700; }
+.oregon-uhp.uhp-root .uhp-business .uhp-result-status {
   padding: .65em .8em;
   border-radius: .35em;
   background: var(--_status);
@@ -170,63 +257,142 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.oregon-uhp.uhp-root .uhp-bills {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15em), 1fr));
-  gap: .7em;
-  margin-block: .65em;
+
+/* Five cards: one column when narrow; three across then two, so no card is left alone. */
+.oregon-uhp.uhp-root .uhp-bills { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1em; }
+@container uhp-results (min-width: 36em) {
+  .oregon-uhp.uhp-root .uhp-bills { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .oregon-uhp.uhp-root .uhp-bills > * { grid-column: span 2; }
+  .oregon-uhp.uhp-root .uhp-bills > :nth-child(n + 4) { grid-column: span 3; }
+  .oregon-uhp.uhp-root .uhp-bills-few { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .oregon-uhp.uhp-root .uhp-bills-few > *, .oregon-uhp.uhp-root .uhp-bills-few > :nth-child(n + 4) { grid-column: auto; }
 }
-.oregon-uhp.uhp-root .uhp-series-1 { --series: var(--_series-1); --dash: none; }
-.oregon-uhp.uhp-root .uhp-series-2 { --series: var(--_series-2); --dash: 9 3; }
-.oregon-uhp.uhp-root .uhp-series-3 { --series: var(--_series-3); --dash: 4 3; }
-.oregon-uhp.uhp-root .uhp-series-4 { --series: var(--_series-4); --dash: 10 3 2 3; }
-.oregon-uhp.uhp-root .uhp-series-5 { --series: var(--_series-5); --dash: 2 3; }
+.oregon-uhp.uhp-root .uhp-series-1 { --series: var(--_series-1); }
+.oregon-uhp.uhp-root .uhp-series-2 { --series: var(--_series-2); }
+.oregon-uhp.uhp-root .uhp-series-3 { --series: var(--_series-3); }
+.oregon-uhp.uhp-root .uhp-series-4 { --series: var(--_series-4); }
+.oregon-uhp.uhp-root .uhp-series-5 { --series: var(--_series-5); }
 .oregon-uhp.uhp-root .uhp-bill {
+  display: grid;
+  align-content: start;
+  gap: .25em;
   min-inline-size: 0;
-  padding: .85em;
+  padding: 1.05em 1.2em;
   border: 1px solid var(--_line);
-  border-block-start: .22em solid var(--series);
-  border-radius: .44em;
+  border-radius: .75em;
+  background: var(--_paper);
 }
-.oregon-uhp.uhp-root .uhp-bill-name { margin-block: .18em .5em; color: var(--_muted); font-size: .9em; }
-.oregon-uhp.uhp-root .uhp-bill-amount { font-size: 1.55em; font-weight: 750; font-variant-numeric: tabular-nums; }
-.oregon-uhp.uhp-root .uhp-bill-amount span { color: var(--_muted); font-size: .555em; font-weight: 400; }
-.oregon-uhp.uhp-root .uhp-bill dl { display: grid; gap: .2em; margin-block-start: .55em; font-size: .86em; }
-.oregon-uhp.uhp-root .uhp-bill dl div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 .5em; }
-.oregon-uhp.uhp-root .uhp-bill dt { color: var(--_muted); }
-.oregon-uhp.uhp-root .uhp-bill dd { font-variant-numeric: tabular-nums; font-weight: 650; }
+.oregon-uhp.uhp-root .uhp-bill-title { font-size: .95em; font-weight: 650; }
+.oregon-uhp.uhp-root .uhp-bill-rate { color: var(--_muted); font-weight: 400; }
+.oregon-uhp.uhp-root .uhp-bill-name { color: var(--_muted); font-size: .85em; }
+.oregon-uhp.uhp-root .uhp-bill-amount {
+  margin-block: .15em .05em;
+  font-size: 1.9em;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.oregon-uhp.uhp-root .uhp-bill-amount span { color: var(--_muted); font-size: .5em; font-weight: 400; letter-spacing: 0; }
+.oregon-uhp.uhp-root .uhp-verdict { font-size: .95em; }
+.oregon-uhp.uhp-root .uhp-arrow { margin-inline-end: .35em; color: var(--_muted); font-weight: 700; }
+.oregon-uhp.uhp-root .uhp-bill-detail { font-size: .88em; }
+.oregon-uhp.uhp-root .uhp-key {
+  display: inline-block;
+  inline-size: .7em;
+  block-size: .7em;
+  margin-inline-end: .45em;
+  border-radius: 50%;
+  background: var(--series);
+  vertical-align: .02em;
+}
+.oregon-uhp.uhp-root .uhp-key.uhp-key-now {
+  inline-size: 1.1em;
+  block-size: 0;
+  border-radius: 0;
+  border-block-start: 2px dashed var(--_muted);
+  background: none;
+  vertical-align: middle;
+}
+
+/* The sticky range bar, on narrow calculators only. */
+.oregon-uhp.uhp-root .uhp-sticky {
+  position: sticky;
+  inset-block-end: .6em;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75em;
+  padding: .7em 1em;
+  border-radius: .75em;
+  background: var(--_accent);
+  box-shadow: 0 .6em 1.8em rgb(0 0 0 / 25%);
+  color: var(--_surface);
+  font-size: .95em;
+  line-height: 1.3;
+  text-decoration: none;
+}
+.oregon-uhp.uhp-root .uhp-sticky strong { color: inherit; white-space: nowrap; }
+.oregon-uhp.uhp-root .uhp-sticky-go { font-weight: 650; white-space: nowrap; }
 
 .oregon-uhp.uhp-root .uhp-chart {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: .4em;
+  gap: .5em;
   min-inline-size: 0;
-  margin-block-start: 1.2em;
-  padding-block-start: .8em;
-  border-block-start: 1px solid var(--_line);
+  padding: 1.2em 1.2em 1em;
+  border: 1px solid var(--_line);
+  border-radius: .75em;
+  background: var(--_paper);
 }
-.oregon-uhp.uhp-root figcaption { font-size: 1.06em; font-weight: 700; }
+.oregon-uhp.uhp-root figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .25em 1em;
+  font-size: .95em;
+}
+.oregon-uhp.uhp-root .uhp-chart-context { color: var(--_muted); }
 .oregon-uhp.uhp-root .uhp-chart-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: .35em 1em;
+  gap: .35em 1.25em;
   padding: 0;
   list-style: none;
-  font-size: .88em;
+  font-size: .87em;
 }
-.oregon-uhp.uhp-root .uhp-chart-legend li { display: flex; gap: .35em; align-items: center; }
-.oregon-uhp.uhp-root .uhp-key { inline-size: 1.8em; block-size: .55em; }
-.oregon-uhp.uhp-root .uhp-plot { min-inline-size: 0; }
-.oregon-uhp.uhp-root .uhp-plot svg { display: block; inline-size: 100%; block-size: auto; }
+.oregon-uhp.uhp-root .uhp-chart-legend li { display: flex; align-items: center; }
+.oregon-uhp.uhp-root .uhp-plot { position: relative; min-inline-size: 0; }
+.oregon-uhp.uhp-root .uhp-plot svg { display: block; inline-size: 100%; block-size: auto; overflow: visible; touch-action: pan-y; }
 .oregon-uhp.uhp-root .uhp-grid-line { stroke: var(--_grid); }
-.oregon-uhp.uhp-root .uhp-tick, .oregon-uhp.uhp-root .uhp-axis-title { fill: var(--_muted); font-size: 12px; }
+.oregon-uhp.uhp-root :is(.uhp-tick, .uhp-axis-title, .uhp-end-label, .uhp-you) { fill: var(--_muted); font-size: 12px; font-variant-numeric: tabular-nums; }
 .oregon-uhp.uhp-root .uhp-axis-title { font-weight: 650; }
-.oregon-uhp.uhp-root .uhp-series { fill: none; stroke: var(--series); stroke-width: 2.1; stroke-dasharray: var(--dash); }
-.oregon-uhp.uhp-root .uhp-income-line { stroke: var(--_muted); stroke-dasharray: 3 3; }
-.oregon-uhp.uhp-root .uhp-cost-line { stroke: var(--_muted); stroke-width: 1.5; stroke-dasharray: 8 4; }
-.oregon-uhp.uhp-root .uhp-dot { fill: var(--series); stroke: var(--_paper); }
-.oregon-uhp.uhp-root .uhp-chart-lookup { max-inline-size: 20em; }
-.oregon-uhp.uhp-root .uhp-chart-inspection { color: var(--_muted); font-size: .87em; }
+.oregon-uhp.uhp-root .uhp-end-label { fill: var(--_ink); }
+.oregon-uhp.uhp-root .uhp-you { fill: var(--_ink); font-weight: 650; }
+.oregon-uhp.uhp-root .uhp-series { fill: none; stroke: var(--series); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.oregon-uhp.uhp-root .uhp-income-line { stroke: var(--_ink); stroke-width: 1; }
+.oregon-uhp.uhp-root .uhp-cross { stroke: var(--_muted); stroke-width: 1; }
+.oregon-uhp.uhp-root .uhp-cost-line { stroke: var(--_muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.oregon-uhp.uhp-root .uhp-dot { fill: var(--series); stroke: var(--_paper); stroke-width: 2; }
+.oregon-uhp.uhp-root .uhp-tip {
+  position: absolute;
+  inset-block-start: .5em;
+  display: grid;
+  gap: .15em;
+  inline-size: 184px;
+  padding: .6em .8em;
+  border: 1px solid var(--_line);
+  border-radius: .5em;
+  background: var(--_surface);
+  box-shadow: 0 .5em 1.5em rgb(0 0 0 / 20%);
+  font-size: .83em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.oregon-uhp.uhp-root .uhp-tip > span { display: flex; align-items: center; color: var(--_muted); }
+.oregon-uhp.uhp-root .uhp-tip b { margin-inline-start: auto; padding-inline-start: 1em; color: var(--_ink); font-variant-numeric: tabular-nums; }
+.oregon-uhp.uhp-root details { font-size: .9em; }
 .oregon-uhp.uhp-root details > summary { color: var(--_accent); font-weight: 650; cursor: pointer; }
 
 .oregon-uhp.uhp-root .uhp-table-scroll { min-inline-size: 0; overflow-x: auto; }
@@ -237,7 +403,6 @@
   background: var(--_paper);
   color: var(--_ink);
   font: inherit;
-  font-size: .9em;
   font-variant-numeric: tabular-nums;
 }
 .oregon-uhp.uhp-root :is(th, td) {
@@ -250,11 +415,14 @@
 .oregon-uhp.uhp-root th { background: transparent; color: inherit; font-weight: 650; }
 .oregon-uhp.uhp-root td { white-space: nowrap; }
 .oregon-uhp.uhp-root .uhp-privacy { color: var(--_muted); font-size: .9em; }
-.oregon-uhp.uhp-root .uhp-employer-note { margin-block-start: -.2em; }
+
+@media print {
+  .oregon-uhp.uhp-root .uhp-sticky, .oregon-uhp.uhp-root .uhp-tip { display: none !important; }
+}
 
 /* Paper is light, whatever theme is on screen. */
 @media print {
-  .oregon-uhp, .oregon-uhp[data-uhp-theme="dark"] {
+  .oregon-uhp:not([data-uhp-theme="light"]), .oregon-uhp[data-uhp-theme] {
     color-scheme: light;
     --_surface: var(--uhp-surface, #fff);
     --_paper: var(--uhp-paper, #fff);

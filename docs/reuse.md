@@ -51,7 +51,15 @@ optional:
 | `headingLevel` | `1`, `2` or `3`: the heading level of the calculator's title. The default is `2`. Headings inside the calculator follow from it. |
 | `show` | `'all'` (the default), `'household'` or `'employer'`: which calculator to show. |
 | `header` | `false` leaves out the title, the source snapshot line and the “unofficial” note. The page around the calculator must then state all three itself. |
-| `initialIncome`, `initialHouseholdSize`, `initialEmployer`, `initialPayroll` | Starting values. A value the matching field would not accept is ignored. |
+| `initialCoverage` | `'employer'` (the default), `'own'`, `'medicare'`, `'ohp'` or `'none'`: how the household is covered today. It sets the starting “what you pay now” to the Board's example for that coverage, and the employer it implies. |
+| `initialIncome`, `initialHouseholdSize`, `initialEmployer`, `initialPayroll`, `initialCurrentCost` | Starting values. A value the matching field would not accept is ignored. |
+
+The calculator opens with results already showing: the Board's example couple,
+with $85,000 of income, a private employer with an $8.5 million payroll, and the
+$4,700 a year the Board says such a couple pays today. The employer calculator
+opens with an example $1.1 million payroll and $110,000 of benefit spending,
+labeled as an example. Readers change any of it and the results follow as they
+type.
 
 ## Colors and font
 
@@ -60,7 +68,8 @@ Every color is a CSS custom property that a host can set on the calculator's
 element or anywhere above it: `--uhp-surface`, `--uhp-paper`, `--uhp-ink`,
 `--uhp-muted`, `--uhp-line`, `--uhp-control-line`, `--uhp-grid`,
 `--uhp-accent`, `--uhp-status`, `--uhp-error`, `--uhp-series-1` to
-`--uhp-series-5`, and `--uhp-font` for the font family. Unset properties keep
+`--uhp-series-5`, and `--uhp-font` for the font family. The explainer page also
+reads `--uhp-font-mono` for its small labels. Unset properties keep
 their defaults. If you set colors, also pass `theme: 'light'` or `'dark'`, so
 the reader's system setting does not swap in the other defaults, and check the
 contrast of what you choose. `demo/` shows an example.
@@ -71,7 +80,10 @@ Every style rule is scoped under the `.oregon-uhp` class and every inner class
 starts with `uhp-`, so the calculator's styles do not reach the host page. The
 reverse is not complete: a host rule that uses an id or `!important`, or that
 sets a property the calculator leaves alone, still applies inside it. Check the
-result on your page, or use the iframe. Text and spacing follow the host
+result on your page, or use the iframe. The calculator lays itself out by the
+width of its host element, so give the host a width: an ordinary block element
+works, and so do `flex: 1` or `width: 100%` inside a flex or grid layout. In a
+host that shrinks to fit its content, it falls back to 20em. Text and spacing follow the host
 element's font size, except the chart's axis labels, which are a fixed 12
 pixels. The calculator sends nothing over the network and stores nothing:
 entries stay in the reader's browser.

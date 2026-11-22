@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { incomeAt, SLIDER_POSITIONS } from '../model/income-scale';
-import { bill, employerRate, MODELS, payrollTax } from '../model/uhp-model';
+import { bill, employerRate, MODELS, payrollTax, SCENARIOS, schedule } from '../model/uhp-model';
 import type { EmployerKind } from '../model/uhp-model';
 import { ANNOUNCE_DELAY, ANNOUNCE_LINGER, parseAmount } from './dom';
 import { mount } from './index';
@@ -10,20 +10,26 @@ const usd = new Intl.NumberFormat('en-US', {
   currency: 'USD',
   maximumFractionDigits: 0,
 });
+const words = new Intl.ListFormat('en-US', { style: 'long', type: 'conjunction' });
 const pct = new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 });
 const compact = new Intl.NumberFormat('en-US', {
   style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1,
 });
-const words = new Intl.ListFormat('en-US', { style: 'long', type: 'conjunction' });
-const LOOKUP = 'Look up yearly income on the chart ($, optional)';
 const BAD_AMOUNT = 'Enter a dollar amount in digits, such as 85,000 or 85000.50.';
 const named = (label: string, message: string) => `${label}: ${message}`;
+const DRAFTS = 'a year, in today’s dollars. None has been chosen, and all of them are drafts that may change.';
 
-const INCOME = 'Yearly household income ($, required)';
-const PAYROLL = 'Employer’s total yearly payroll ($, required)';
-const CURRENT_COST = 'What you pay for health care now ($ per year, optional)';
-const BUSINESS_PAYROLL = 'Total yearly payroll ($, required)';
-const BUSINESS_SPEND = 'Current yearly spending on employee health benefits ($, optional)';
+const COVERAGE = 'How you are covered today';
+const INCOME = 'Household income per year';
+const EMPLOYER = 'Who pays your wages';
+const PAYROLL = 'Its total payroll per year, roughly';
+const CURRENT_COST = 'What you pay for health care now, per year';
+const BUSINESS_KIND = 'Type of employer';
+const BUSINESS_PAYROLL = 'Total payroll per year';
+const BUSINESS_SPEND = 'What you spend on employee health benefits now, per year';
+
+/** The Board's examples of what households pay today (report Tables S1, S2 and S4). */
+const boardToday = (id: string) => Math.max(...SCENARIOS.find(s => s.id === id)!.rows.map(row => row.now));
 
 let host: HTMLDivElement;
 let destroy: () => void;
@@ -51,27 +57,71 @@ function change(name: string, value: string, event = 'input') {
   input.dispatchEvent(new Event(event, { bubbles: true }));
 }
 
+const slider = () => host.querySelector<HTMLInputElement>('.uhp-slider')!;
+const householdCards = () => [...host.querySelectorAll('.uhp-section:not(.uhp-business) .uhp-bill')];
+const businessCards = () => [...host.querySelectorAll('.uhp-business .uhp-bill')];
+const rangeLine = () => host.querySelector('.uhp-section:not(.uhp-business) .uhp-result-status')?.textContent;
+
+function setSize(size: number) {
+  host.querySelector<HTMLButtonElement>(`button[data-size="${size}"]`)!.click();
+}
+
+function topRate(index: number) {
+  const model = MODELS[index];
+  return `${model.rates.length > 1 ? 'up to ' : ''}${pct.format(model.topRate)}`;
+}
+
+/** Every household card against the engine: title, amount, and the lines beneath it. */
 function expectBills(income: number, size: number, employer: EmployerKind, payroll?: number) {
-  const cards = [...host.querySelectorAll('.uhp-bill')];
+  const cards = householdCards();
   expect(cards).toHaveLength(MODELS.length);
   MODELS.forEach((model, i) => {
     const expected = bill(model, income, size, employer, payroll);
     const card = cards[i];
-    expect(card.querySelector('.uhp-bill-title')?.textContent).toBe(`Model ${model.id}`);
+    expect(card.querySelector('.uhp-bill-title')?.textContent).toBe(`Model ${model.id} · ${topRate(i)}`);
+    expect(card.querySelector('.uhp-bill-name')?.textContent).toBe(model.name);
     expect(card.querySelector('.uhp-bill-amount')?.textContent).toBe(`${usd.format(expected.household)} / year`);
-    expect([...card.querySelectorAll('dd')].map(node => node.textContent)).toEqual(
-      [expected.gross, expected.credit, expected.employer].map(value => usd.format(value)),
-    );
+    const details = [...card.querySelectorAll('.uhp-bill-detail')].map(node => node.textContent);
+    const want: string[] = [];
+    if (expected.household < 0.5) {
+      want.push(expected.gross < 0.5
+        ? 'Your income is within this model’s exemption.'
+        : 'The worker credit covers the whole bill, if your employer pays the payroll tax shown.');
+    } else if (expected.credit >= 0.5) {
+      want.push(`${usd.format(expected.gross)} before a ${usd.format(expected.credit)} worker credit.`);
+    }
+    if (expected.employer >= 0.5) want.push(`Your employer would pay about ${usd.format(expected.employer)} on your wages.`);
+    expect(details).toEqual(want);
   });
 }
 
+function expectRange(income: number, size: number, employer: EmployerKind, payroll?: number) {
+  const totals = MODELS.map(model => bill(model, income, size, employer, payroll).household);
+  const [low, high] = [usd.format(Math.min(...totals)), usd.format(Math.max(...totals))];
+  expect(rangeLine()).toBe(low === high
+    ? `Your range across the five models: ${low} a year in every model, in today’s dollars. None has been chosen, and all of them are drafts that may change.`
+    : `Your range across the five models: ${low} to ${high} ${DRAFTS}`);
+  expect(host.querySelector('.uhp-sticky strong')?.textContent).toBe(low === high ? low : `${low} to ${high}`);
+}
+
 function expectNoResults(prompt: RegExp) {
-  expect(host.querySelector('.uhp-result-status')?.textContent).toMatch(prompt);
-  expect(host.querySelectorAll('.uhp-bill')).toHaveLength(0);
+  expect(rangeLine()).toMatch(prompt);
+  expect(householdCards()).toHaveLength(0);
   expect(host.querySelector('figure')?.hidden).toBe(true);
+  expect(host.querySelector<HTMLElement>('.uhp-sticky')?.hidden).toBe(true);
   // Nothing computed earlier may linger in the hidden chart.
   expect(host.querySelector('figure')?.textContent).not.toMatch(/\$\d/);
   expect(host.querySelector('.uhp-plot svg')?.childElementCount).toBe(0);
+}
+
+/** Model IDs a card title names: "Model 1", "Models 2 to 5", "Models 4 and 5". */
+function idsIn(title: string): string[] {
+  const text = title.replace(/^Models? /, '');
+  const run = text.match(/^(\d+) to (\d+)$/);
+  if (run) {
+    return Array.from({ length: Number(run[2]) - Number(run[1]) + 1 }, (_, i) => String(Number(run[1]) + i));
+  }
+  return text.split(/,\s*(?:and\s+)?|\s+and\s+/).filter(Boolean);
 }
 
 /**
@@ -141,6 +191,29 @@ describe('typed dollar amounts', () => {
 });
 
 describe('calculator widget', () => {
+  it('shows results for the Board’s example couple as soon as it loads', () => {
+    destroy = mount(host);
+    // The couple insured through an $8.5 million private employer, Table S2.
+    expect(control(COVERAGE).value).toBe('employer');
+    expect(control(INCOME).value).toBe('85,000');
+    expect(control(EMPLOYER).value).toBe('private');
+    expect(control(PAYROLL).value).toBe('8,500,000');
+    expect(control(CURRENT_COST).value).toBe(new Intl.NumberFormat('en-US').format(boardToday('private')));
+    expect(boardToday('private')).toBe(4_700);
+    expect(host.querySelector('button[aria-pressed="true"]')?.textContent).toBe('2');
+    expectBills(85_000, 2, 'private', 8_500_000);
+    expectRange(85_000, 2, 'private', 8_500_000);
+    expect(host.querySelector<HTMLElement>('figure')?.hidden).toBe(false);
+    expect(host.querySelectorAll('.uhp-plot path.uhp-series')).toHaveLength(MODELS.length);
+    expect(host.querySelector('.uhp-callout')?.textContent).toContain('Two assumptions behind the comparison below:');
+
+    // The employer calculator opens with its labeled example, also with results.
+    expect(control(BUSINESS_PAYROLL).value).toBe('1,100,000');
+    expect(control(BUSINESS_SPEND).value).toBe('110,000');
+    expect(businessCards().length).toBeGreaterThan(0);
+    expect(host.querySelector('.uhp-business')?.textContent).toContain('The figures shown are an example.');
+  });
+
   it.each([
     { income: 0, size: 1, employer: 'none' },
     { income: 485_000, size: 3, employer: 'none' },
@@ -148,7 +221,8 @@ describe('calculator widget', () => {
     { income: 85_000, size: 2, employer: 'private', payroll: 8_500_000 },
     { income: 300_000, size: 5, employer: 'private', payroll: 20_000_000 },
     { income: 125_000, size: 2, employer: 'private', payroll: 400_000 },
-  ] as const)('matches all four bill amounts for all models at $income ($employer)', ({
+    { income: 61_000, size: 1, employer: 'private', payroll: 600_000 },
+  ] as const)('matches every card for all models at $income ($employer)', ({
     income, size, employer, ...options
   }) => {
     const payroll = 'payroll' in options ? options.payroll : undefined;
@@ -158,12 +232,14 @@ describe('calculator widget', () => {
       initialEmployer: employer,
       initialPayroll: payroll,
     });
-    expectBills(income, size, employer, payroll);
+    const used = employer === 'private' ? payroll : undefined;
+    expectBills(income, size, employer, used);
+    expectRange(income, size, employer, used);
     expect(host.querySelectorAll('.uhp-plot path.uhp-series')).toHaveLength(MODELS.length);
     const sampleRow = [...host.querySelectorAll('figure tbody tr')]
       .find(row => row.firstElementChild?.textContent === usd.format(income));
     expect([...sampleRow!.querySelectorAll('td')].map(cell => cell.textContent)).toEqual(
-      MODELS.map(model => usd.format(bill(model, income, size, employer, payroll).household)),
+      MODELS.map(model => usd.format(bill(model, income, size, employer, used).household)),
     );
   });
 
@@ -198,8 +274,8 @@ describe('calculator widget', () => {
       expect(path.getAttribute('class')).toBe(`uhp-series uhp-series-${i + 1}`);
     });
 
-    // The "your income" marker: one dot per model at the bill shown on its card.
-    const dots = [...host.querySelectorAll('.uhp-plot .uhp-dot')].slice(0, MODELS.length);
+    // The "you" marker: one dot per model at the bill shown on its card.
+    const dots = [...host.querySelectorAll('.uhp-plot .uhp-dot')];
     expect(dots).toHaveLength(MODELS.length);
     dots.forEach((dot, i) => {
       expect(Number(dot.getAttribute('cx'))).toBeCloseTo(scale.x(income), 6);
@@ -210,15 +286,28 @@ describe('calculator widget', () => {
     const costLine = host.querySelector('.uhp-plot .uhp-cost-line')!;
     expect(Number(costLine.getAttribute('y1'))).toBeCloseTo(scale.y(currentCost), 6);
     expect(Number(costLine.getAttribute('y2'))).toBeCloseTo(scale.y(currentCost), 6);
-    expect(host.querySelector('figure details .uhp-hint')?.textContent).toBe(
-      `Current yearly health care cost for comparison is ${usd.format(currentCost)}.`,
+    expect(host.querySelector('figcaption')?.textContent).toBe(
+      `Household contribution by incomeHousehold of ${size}, ${usd.format(currentCost)} a year today`,
     );
+
+    // End labels name every model once, each beside the end of its own line.
+    const ends = [...host.querySelectorAll('.uhp-plot .uhp-end-label')];
+    const labeled = ends.flatMap(node => idsIn(node.textContent!.replace(' & ', ' and ')));
+    expect(labeled.sort()).toEqual(MODELS.map(model => String(model.id)).sort());
+    for (const node of ends) {
+      for (const id of idsIn(node.textContent!.replace(' & ', ' and '))) {
+        const i = MODELS.findIndex(model => String(model.id) === id);
+        const lastIncome = scale.incomeAt(Number(paths[i].getAttribute('d')!.match(/L([\d.]+),[\d.]+$/)![1]));
+        const endY = scale.y(bill(MODELS[i], lastIncome, size, employer, payroll).household);
+        expect(Math.abs(Number(node.getAttribute('y')) - 4 - endY)).toBeLessThan(15 * MODELS.length);
+      }
+    }
 
     // The legend lists the models in the order of the lines, then the comparison line.
     const legend = [...host.querySelectorAll('.uhp-chart-legend li')];
     expect(legend.map(item => item.textContent)).toEqual([...MODELS.map(model => `Model ${model.id}`), 'What you pay now']);
-    expect(legend.map(item => item.querySelector('line')?.getAttribute('class'))).toEqual(
-      [...MODELS.map((_, i) => `uhp-series uhp-series-${i + 1}`), 'uhp-cost-line'],
+    expect(legend.map(item => item.querySelector('.uhp-key')?.getAttribute('class'))).toEqual(
+      [...MODELS.map((_, i) => `uhp-key uhp-series-${i + 1}`), 'uhp-key uhp-key-now'],
     );
 
     // The table under the chart: every row is the engine's figure for the income it is labeled with.
@@ -231,104 +320,125 @@ describe('calculator widget', () => {
       );
     }
     expect(new Set(rows.map(row => row.querySelector('th')!.textContent)).size).toBe(rows.length);
-
-    // Looking up another income uses the same household size, employer and payroll.
-    change(LOOKUP, '123,456');
-    const readout = host.querySelector('.uhp-chart-inspection')?.textContent;
-    expect(readout).toBe(['At $123,456 in yearly income:', ...MODELS.map(model =>
-      `Model ${model.id} ${usd.format(bill(model, 123_456, size, employer, payroll).household)}.`)].join(' '));
   });
 
-  it('labels each card, option and count from the data', () => {
-    destroy = mount(host, { initialPayroll: 8_500_000 });
-    expect(host.querySelector('.uhp-intro')?.textContent).toContain(`calculated from the ${MODELS.length} financing models`);
-    expect(host.querySelector('.uhp-intro')?.textContent).toContain('Unofficial: not published, reviewed or endorsed');
-    expect(host.querySelector('.uhp-title')?.textContent).toContain('(unofficial)');
-    const cards = [...host.querySelectorAll('.uhp-bill')];
-    cards.forEach((card, i) => {
-      expect(card.classList.contains(`uhp-series-${i + 1}`)).toBe(true);
-      expect(card.querySelector('.uhp-bill-name')?.textContent).toBe(MODELS[i].name);
-      expect([...card.querySelectorAll('dt')].map(node => node.textContent)).toEqual([
-        'Before credit', 'Worker credit used', 'Payroll tax paid by your employer on your wages',
-      ]);
-    });
-    const sizes = [...control<HTMLSelectElement>('People in your household').options];
-    expect(sizes.map(option => option.text)).toEqual(sizes.map(option => option.value));
-    expect(sizes.map(option => option.value)).toEqual(['1', '2', '3', '4', '5']);
+  it('fills in the Board’s example cost and the employer for each kind of coverage', () => {
+    destroy = mount(host);
+    const cases = [
+      { kind: 'own', cost: boardToday('self'), employer: 'none', note: undefined },
+      { kind: 'medicare', cost: boardToday('medicare'), employer: 'none', note: 'Medicare:' },
+      { kind: 'ohp', cost: 0, employer: 'none', note: 'Oregon Health Plan:' },
+      { kind: 'none', cost: 0, employer: 'none', note: 'No insurance:' },
+      { kind: 'employer', cost: boardToday('private'), employer: 'private', note: undefined },
+    ] as const;
+    expect([boardToday('self'), boardToday('medicare')]).toEqual([6_900, 9_600]);
+    for (const { kind, cost, employer, note } of cases) {
+      change(COVERAGE, kind, 'change');
+      expect(control(CURRENT_COST).value).toBe(new Intl.NumberFormat('en-US').format(cost));
+      expect(control(EMPLOYER).value).toBe(employer);
+      const hint = host.querySelector(`#${control(CURRENT_COST).id}-hint`)!.textContent!;
+      if (cost > 0) expect(hint).toContain(usd.format(cost));
+      const callout = host.querySelector('.uhp-callout')!;
+      const shownNotes = [...callout.querySelectorAll('p')].filter(p => !p.hidden).map(p => p.textContent!);
+      if (note) expect(shownNotes[0]).toMatch(new RegExp(`^${note}`));
+      expect(shownNotes.some(text => text.startsWith('Two assumptions'))).toBe(kind === 'employer');
+      expectBills(85_000, 2, employer, employer === 'private' ? 8_500_000 : undefined);
+
+      // Each card compares with what the household pays now; an uninsured household is told what it gets instead.
+      const verdicts = householdCards().map(card => card.querySelector('.uhp-verdict')?.textContent);
+      const expected = MODELS.map(model => {
+        const owed = bill(model, 85_000, 2, employer, employer === 'private' ? 8_500_000 : undefined).household;
+        if (kind === 'none') return owed < 0.5 ? 'You would owe nothing and be covered' : 'You would pay this and be covered';
+        if (owed < 0.5 && cost < 0.5) return 'You would owe nothing';
+        const delta = Math.round(owed) - cost;
+        if (delta === 0) return 'About what you pay now';
+        return delta < 0 ? `↓${usd.format(-delta)} less than you pay now` : `↑${usd.format(delta)} more than you pay now`;
+      });
+      expect(verdicts).toEqual(expected);
+    }
   });
 
-  it('keeps one table row per income when the income has cents', () => {
-    destroy = mount(host, { initialEmployer: 'none', initialIncome: 50_000.4 });
-    const labels = [...host.querySelectorAll('figure tbody th')].map(node => node.textContent);
-    expect(new Set(labels).size).toBe(labels.length);
-    expect(labels).toContain('$50,000');
-  });
-
-  it('summarizes the lowest and highest bill and compares each card with current spending', () => {
+  it('compares each card with what the reader types for current spending', () => {
     const [income, size, payroll] = [85_000, 2, 8_500_000];
-    destroy = mount(host, { initialIncome: income, initialHouseholdSize: size, initialPayroll: payroll });
-    const bills = MODELS.map(model => bill(model, income, size, 'private', payroll));
-    const totals = bills.map(result => result.household);
-    expect(Math.min(...totals)).not.toBe(Math.max(...totals));
+    destroy = mount(host);
+    const totals = MODELS.map(model => bill(model, income, size, 'private', payroll).household);
     // A current cost between the lowest and highest bill, so some models cost more and some less.
     const currentCost = Math.round((Math.min(...totals) + Math.max(...totals)) / 2);
     change(CURRENT_COST, String(currentCost));
-    expect(host.querySelector('.uhp-result-status')?.textContent).toBe(
-      `Estimated household contribution across the ${MODELS.length} models is ` +
-      `${usd.format(Math.min(...totals))} to ${usd.format(Math.max(...totals))} per year.`,
-    );
-
-    // The credit makes the bill differ from the amount before credit, so the two cannot be confused.
-    expect(bills.some(result => Math.round(result.gross) !== Math.round(result.household))).toBe(true);
-    const shown = [...host.querySelectorAll('.uhp-bill-difference')].map(node => node.textContent);
-    expect(shown).toEqual(bills.map(result => {
-      const delta = Math.round(result.household) - currentCost;
-      if (delta === 0) return 'Same as today';
-      return `${usd.format(Math.abs(delta))} ${delta > 0 ? 'more' : 'less'} than today`;
+    const shown = householdCards().map(card => card.querySelector('.uhp-verdict')?.textContent);
+    expect(shown).toEqual(totals.map(total => {
+      const delta = Math.round(total) - currentCost;
+      if (delta === 0) return 'About what you pay now';
+      return delta < 0 ? `↓${usd.format(-delta)} less than you pay now` : `↑${usd.format(delta)} more than you pay now`;
     }));
     expect(shown.some(text => text?.includes('more'))).toBe(true);
     expect(shown.some(text => text?.includes('less'))).toBe(true);
+    // The arrows are decoration; the words carry the meaning.
+    for (const arrow of host.querySelectorAll('.uhp-arrow')) expect(arrow.getAttribute('aria-hidden')).toBe('true');
+
+    change(CURRENT_COST, '');
+    expect(householdCards().every(card => card.querySelector('.uhp-verdict') === null)).toBe(true);
+    expect(host.querySelector('.uhp-chart-legend')?.textContent).not.toContain('What you pay now');
+  });
+
+  it('picks the household size with buttons and says where each model starts taxing', () => {
+    destroy = mount(host, { initialEmployer: 'none' });
+    for (const size of [1, 3, 5, 2]) {
+      setSize(size);
+      const pressed = [...host.querySelectorAll('button[data-size]')]
+        .filter(button => button.getAttribute('aria-pressed') === 'true').map(button => button.textContent);
+      expect(pressed).toEqual([String(size)]);
+      expectBills(85_000, size, 'none');
+      const hint = host.querySelector('fieldset .uhp-hint')!.textContent!;
+      expect(hint).toMatch(/^Not taxed: /);
+      // Every model's own exemption for this size appears, attached to that model.
+      for (const model of MODELS) {
+        const start = usd.format(schedule(model, size)[0].from);
+        const part = hint.split(/, and |,? and the |Not taxed: /).find(text => text.includes(start));
+        expect(part, `${start} for model ${model.id}`).toBeDefined();
+        expect(idsIn(part!.replace(/^.*income in /, '').replace(/\.$/, '').replace(/^Models?/, m => m))).toContain(String(model.id));
+      }
+    }
+    expect(host.querySelector('fieldset')?.getAttribute('aria-describedby')).toBe(host.querySelector('fieldset .uhp-hint')!.id);
   });
 
   it('requires a private payroll above zero and clears old results when it is removed', () => {
     destroy = mount(host);
     const field = control<HTMLInputElement>(PAYROLL);
     const fieldError = () => host.querySelector(`#${field.id}-error`) as HTMLElement;
-    expectNoResults(/enter your employer’s total yearly payroll/i);
     expect(field.required).toBe(true);
-    expect(fieldError().hidden).toBe(false);
-    expect(field.getAttribute('aria-describedby')).toContain(fieldError().id);
-    expect(field.hasAttribute('aria-invalid')).toBe(false);
-
-    change(PAYROLL, '$8,500,000');
-    expectBills(85_000, 2, 'private', 8_500_000);
     expect(fieldError().hidden).toBe(true);
+    expectBills(85_000, 2, 'private', 8_500_000);
 
     for (const invalid of ['', '-1', 'abc', '0', '0.0', ' ']) {
       change(PAYROLL, invalid);
       expectNoResults(/enter your employer’s total yearly payroll/i);
       expect(fieldError().hidden).toBe(false);
+      expect(field.getAttribute('aria-describedby')).toContain(fieldError().id);
     }
+    change(PAYROLL, '');
     expect(field.getAttribute('aria-invalid')).toBeNull();
     change(PAYROLL, '0');
     expect(field.getAttribute('aria-invalid')).toBe('true');
     expect(fieldError().textContent).toBe('Enter a payroll above $0.');
 
-    change('Who pays your wages', 'public', 'change');
+    change(PAYROLL, '$20,000,000');
+    expectBills(85_000, 2, 'private', 20_000_000);
+    expect(fieldError().hidden).toBe(true);
+
+    change(EMPLOYER, 'public', 'change');
     expectBills(85_000, 2, 'public');
     expect(field.disabled).toBe(true);
   });
 
   it('explains the payroll tax rate behind the worker credit', () => {
-    destroy = mount(host, { initialPayroll: 8_500_000 });
-    const note = () => host.querySelector('.uhp-employer-note') as HTMLElement;
-    const rates = (kind: EmployerKind, payroll?: number) =>
-      [...new Set(MODELS.map(model => pct.format(employerRate(kind, model, payroll))))];
-
-    for (const rate of rates('private', 8_500_000)) expect(note().textContent).toContain(rate);
-    expect(note().textContent).toMatch(/^On that payroll the tax works out to /);
-
-    // Where the models differ, each rate is attached to its own models.
+    destroy = mount(host);
+    // Each rate with the models it belongs to, written the way the note writes a group of models.
+    const label = (ids: string[]) => {
+      if (ids.length === 1) return `Model ${ids[0]}`;
+      const run = ids.length >= 3 && ids.every((id, i) => i === 0 || Number(id) === Number(ids[i - 1]) + 1);
+      return run ? `Models ${ids[0]} to ${ids[ids.length - 1]}` : `Models ${words.format(ids)}`;
+    };
     const inWords = (kind: EmployerKind, payroll?: number) => {
       const groups = new Map<string, string[]>();
       for (const model of MODELS) {
@@ -336,13 +446,24 @@ describe('calculator widget', () => {
         groups.set(rate, [...(groups.get(rate) ?? []), String(model.id)]);
       }
       expect(groups.size).toBeGreaterThan(1);
-      return words.format([...groups].map(([rate, ids]) =>
-        `${rate} of wages under ${ids.length > 1 ? 'Models' : 'Model'} ${words.format(ids)}`));
+      return words.format([...groups].map(([rate, ids]) => `${rate} of wages under ${label(ids)}`));
     };
+    const note = () => host.querySelector('.uhp-employer-note') as HTMLElement;
+    for (const rate of new Set(MODELS.map(model => pct.format(employerRate('private', model, 8_500_000))))) {
+      expect(note().textContent).toContain(rate);
+    }
+    expect(note().textContent).toMatch(/^On that payroll the tax works out to /);
+
+    // Where the models differ, each rate is attached to its own models.
     change(PAYROLL, '20,000,000');
-    expect(note().textContent).toBe(`On that payroll the tax works out to ${inWords('private', 20_000_000)}.`);
-    const first = pct.format(employerRate('private', MODELS[0], 20_000_000));
-    expect(note().textContent).toContain(`${first} of wages under Model ${MODELS[0].id} `);
+    const text = note().textContent!;
+    const groups = new Map<string, string[]>();
+    for (const model of MODELS) {
+      const rate = pct.format(employerRate('private', model, 20_000_000));
+      groups.set(rate, [...(groups.get(rate) ?? []), String(model.id)]);
+    }
+    expect(groups.size).toBeGreaterThan(1);
+    expect(text).toBe(`On that payroll the tax works out to ${inWords('private', 20_000_000)}.`);
 
     // A rate too small to print is never shown as 0%.
     change(PAYROLL, '500,001');
@@ -357,15 +478,15 @@ describe('calculator widget', () => {
     );
     expectBills(85_000, 2, 'private', 400_000);
 
-    change('Who pays your wages', 'public', 'change');
+    change(EMPLOYER, 'public', 'change');
     expect(note().textContent).toBe(
       `Public employers would pay the top payroll rate from the first dollar: ${inWords('public')}.`,
     );
 
-    change('Who pays your wages', 'none', 'change');
+    change(EMPLOYER, 'none', 'change');
     expect(note().textContent).toMatch(/no worker credit/);
 
-    change('Who pays your wages', 'private', 'change');
+    change(EMPLOYER, 'private', 'change');
     change(PAYROLL, '');
     expect(note().hidden).toBe(true);
     expect(note().textContent).toBe('');
@@ -373,24 +494,24 @@ describe('calculator widget', () => {
 
   it('updates the results for income, slider and household size changes', () => {
     destroy = mount(host, { initialEmployer: 'none' });
-    const slider = control<HTMLInputElement>('Adjust yearly household income');
-
     change(INCOME, '6,100,000');
     expectBills(6_100_000, 2, 'none');
-    expect(slider.valueAsNumber).toBe(SLIDER_POSITIONS);
+    expect(slider().valueAsNumber).toBe(SLIDER_POSITIONS);
     // The slider stops at its top position, but it announces the income the results use.
-    expect(slider.getAttribute('aria-valuetext')).toBe('$6,100,000');
+    expect(slider().getAttribute('aria-valuetext')).toBe('$6,100,000');
 
     change(INCOME, '85500');
-    expect(slider.getAttribute('aria-valuetext')).toBe('$85,500');
+    expect(slider().getAttribute('aria-valuetext')).toBe('$85,500');
     expectBills(85_500, 2, 'none');
 
-    change('Adjust yearly household income', '150');
-    expect(control<HTMLInputElement>(INCOME).value).toBe(String(incomeAt(150)));
-    expect(slider.getAttribute('aria-valuetext')).toBe(usd.format(incomeAt(150)));
+    slider().value = '150';
+    slider().dispatchEvent(new Event('input', { bubbles: true }));
+    expect(control<HTMLInputElement>(INCOME).value).toBe(new Intl.NumberFormat('en-US').format(incomeAt(150)));
+    expect(slider().getAttribute('aria-valuetext')).toBe(usd.format(incomeAt(150)));
     expectBills(incomeAt(150), 2, 'none');
+    expect(slider().getAttribute('aria-label')).toBe('Adjust household income');
 
-    change('People in your household', '5', 'change');
+    setSize(5);
     expectBills(incomeAt(150), 5, 'none');
     for (const invalid of ['', '-5', 'lots']) {
       change(INCOME, invalid);
@@ -398,18 +519,23 @@ describe('calculator widget', () => {
     }
   });
 
-  it('leaves what the reader typed in the field', () => {
+  it('leaves what the reader is typing, and writes the commas in when the field is left', () => {
     destroy = mount(host, { initialEmployer: 'none' });
     for (const typed of ['8', '85', '85,4', '85,43', '85,432', '$85,432.10']) {
       change(INCOME, typed);
       expect(control<HTMLInputElement>(INCOME).value).toBe(typed);
     }
     expectBills(85_432.1, 2, 'none');
+    change(INCOME, '123456', 'change');
+    expect(control<HTMLInputElement>(INCOME).value).toBe('123,456');
+    // A rejected entry is left as typed, for the reader to fix.
+    change(INCOME, '12.3.4', 'change');
+    expect(control<HTMLInputElement>(INCOME).value).toBe('12.3.4');
   });
 
   it('announces a result once typing pauses, not on every keystroke', () => {
     vi.useFakeTimers();
-    destroy = mount(host, { initialEmployer: 'private', initialPayroll: 8_500_000 });
+    destroy = mount(host);
     const [live] = host.querySelectorAll<HTMLElement>('[role="status"]');
     expect(live.getAttribute('aria-live')).toBe('polite');
     // What is on the page at load is not announced.
@@ -425,23 +551,18 @@ describe('calculator widget', () => {
     // 90,500 is between slider stops, so this is the typed income, not the slider's.
     const totals = MODELS.map(model => bill(model, 90_500, 2, 'private', 8_500_000).household);
     expect(live.textContent).toBe(
-      `Estimated household contribution across the ${MODELS.length} models is ` +
-      `${usd.format(Math.min(...totals))} to ${usd.format(Math.max(...totals))} per year. ` +
-      'Yearly income $90,500, household size 2. A private employer. Employer payroll $8,500,000.',
+      `Your range across the five models: ${usd.format(Math.min(...totals))} to ${usd.format(Math.max(...totals))} ${DRAFTS} ` +
+      'Yearly income $90,500, household size 2. A private employer. Employer payroll $8,500,000. ' +
+      'Compared with $4,700 in yearly spending today.',
     );
     // The rate note is said when the payroll changes, not again with every income.
     change(PAYROLL, '20,000,000');
     vi.advanceTimersByTime(ANNOUNCE_DELAY);
-    expect(host.querySelector('.uhp-employer-note')!.textContent).toMatch(/^On that payroll/);
     expect(live.textContent).toContain(host.querySelector('.uhp-employer-note')!.textContent);
     change(INCOME, '91,000');
     vi.advanceTimersByTime(ANNOUNCE_DELAY);
     expect(live.textContent).toContain('Yearly income $91,000');
     expect(live.textContent).not.toContain('On that payroll');
-    change(PAYROLL, '8,500,000');
-    change(INCOME, '90500');
-    vi.advanceTimersByTime(ANNOUNCE_DELAY);
-    expect(live.textContent).toContain('Yearly income $90,500');
 
     // The region empties afterward so the visible summary is not read twice.
     vi.advanceTimersByTime(ANNOUNCE_LINGER);
@@ -457,7 +578,6 @@ describe('calculator widget', () => {
       vi.advanceTimersByTime(ANNOUNCE_DELAY);
       expect(live.textContent).toBe(named(PAYROLL, heard));
     }
-    // A second rejected field is announced too, and so is the first once the second is fixed.
     change(INCOME, 'xyz');
     vi.advanceTimersByTime(ANNOUNCE_DELAY);
     expect(live.textContent).toBe(named(INCOME, BAD_AMOUNT));
@@ -469,132 +589,198 @@ describe('calculator widget', () => {
     change(CURRENT_COST, 'x');
     vi.advanceTimersByTime(ANNOUNCE_DELAY);
     expect(live.textContent).toContain('no comparison is shown');
-    change(CURRENT_COST, '4,700');
+
+    // Clicking a household size is announced too.
+    setSize(4);
     vi.advanceTimersByTime(ANNOUNCE_DELAY);
-    expect(live.textContent).toContain('Compared with $4,700');
+    expect(live.textContent).toContain('household size 4');
   });
 
-  it('uses the private and public employer payroll calculations for every model', () => {
+  it('groups models that charge an employer the same tax, for private and public employers', () => {
     destroy = mount(host);
-    const payroll = 14_500_000;
-    change(BUSINESS_PAYROLL, String(payroll));
-    const displayed = () => [...host.querySelectorAll('.uhp-business tbody tr')]
-      .map(row => row.querySelector('td')?.textContent);
-    expect(displayed()).toEqual(MODELS.map(model => usd.format(payrollTax(payroll, model))));
-
-    change('Type of employer', 'public', 'change');
-    expect(displayed()).toEqual(MODELS.map(model => usd.format(employerRate('public', model, payroll) * payroll)));
+    change(BUSINESS_SPEND, '');
+    for (const kind of ['private', 'public'] as const) {
+      change(BUSINESS_KIND, kind, 'change');
+      for (const payroll of [1_100_000, 14_500_000, 500_100, 20_000_000]) {
+        change(BUSINESS_PAYROLL, String(payroll));
+        const seen: string[] = [];
+        for (const card of businessCards()) {
+          const ids = idsIn(card.querySelector('.uhp-bill-title')!.textContent!);
+          for (const id of ids) {
+            const model = MODELS.find(m => String(m.id) === id)!;
+            const owed = kind === 'public' ? employerRate('public', model, payroll) * payroll : payrollTax(payroll, model);
+            expect(card.querySelector('.uhp-bill-amount')?.textContent).toBe(`${usd.format(owed)} / year`);
+            const share = owed / payroll;
+            expect(card.querySelector('.uhp-bill-detail')?.textContent).toBe(
+              `${share > 0 && share < 0.00005 ? 'less than 0.01%' : pct.format(share)} of payroll.`);
+          }
+          seen.push(...ids);
+        }
+        // Every model is on exactly one card.
+        expect(seen.sort()).toEqual(MODELS.map(model => String(model.id)).sort());
+      }
+    }
+    // Where the models differ there is more than one card, and each compares its own tax with the spending.
+    change(BUSINESS_SPEND, '1,000,000');
+    for (const [kind, payroll] of [['private', 20_000_000], ['public', 1_100_000]] as const) {
+      change(BUSINESS_KIND, kind, 'change');
+      change(BUSINESS_PAYROLL, String(payroll));
+      expect(businessCards().length).toBeGreaterThan(1);
+      for (const card of businessCards()) {
+        const model = MODELS.find(m => String(m.id) === idsIn(card.querySelector('.uhp-bill-title')!.textContent!)[0])!;
+        const owed = Math.round(kind === 'public' ? employerRate('public', model, payroll) * payroll : payrollTax(payroll, model));
+        const delta = owed - 1_000_000;
+        expect(card.querySelector('.uhp-verdict')?.textContent).toBe(delta === 0 ? 'About what you spend now'
+          : delta < 0 ? `↓${usd.format(-delta)} less than you spend now` : `↑${usd.format(delta)} more than you spend now`);
+      }
+    }
   });
 
-  it('requires business payroll and updates comparisons and effective rates', () => {
+  it('requires business payroll and compares the tax with current benefit spending', () => {
     vi.useFakeTimers();
-    destroy = mount(host, { initialEmployer: 'none', initialIncome: 0 });
+    destroy = mount(host, { show: 'employer' });
     const business = host.querySelector('.uhp-business')!;
     const live = business.querySelector('[role="status"]')!;
     const payrollError = () => business.querySelector(`#${control(BUSINESS_PAYROLL).id}-error`) as HTMLElement;
-    expect(business.querySelector('table')).toBeNull();
-    expect(payrollError().textContent).toBe('Enter a total yearly payroll to see results.');
-    change(CURRENT_COST, '0.50');
-    expect(host.querySelector('.uhp-bill-difference')?.textContent).toBe('$1 less than today');
 
     change(BUSINESS_PAYROLL, '1,100,000');
     change(BUSINESS_SPEND, '0');
-    const first = business.querySelector('tbody tr')!;
     const tax = payrollTax(1_100_000, MODELS[0]);
     expect(tax).toBeGreaterThan(0);
-    expect([...first.querySelectorAll('td')].map(cell => cell.textContent)).toEqual([
-      usd.format(tax), pct.format(tax / 1_100_000), `${usd.format(tax)} more than today`,
-    ]);
-    expect(business.querySelector('caption')?.textContent).toBe('Estimated yearly employer payroll tax');
+    expect(businessCards()[0].querySelector('.uhp-verdict')?.textContent).toBe(`↑${usd.format(tax)} more than you spend now`);
+    change(BUSINESS_SPEND, String(Math.round(tax) + 10_000));
+    expect(businessCards()[0].querySelector('.uhp-verdict')?.textContent).toBe('↓$10,000 less than you spend now');
+    change(BUSINESS_SPEND, String(Math.round(tax)));
+    expect(businessCards()[0].querySelector('.uhp-verdict')?.textContent).toBe('About what you spend now');
+
+    change(BUSINESS_SPEND, '0');
     vi.advanceTimersByTime(ANNOUNCE_DELAY);
-    expect(live.textContent).toBe(['Estimated yearly payroll tax.', ...MODELS.map(model =>
-      `Model ${model.id} ${usd.format(payrollTax(1_100_000, model))}.`), 'Compared with $0 in yearly spending today.'].join(' '));
+    const cards = businessCards().map(card =>
+      `${card.querySelector('.uhp-bill-title')!.textContent} ${card.querySelector('.uhp-bill-amount')!.textContent!.replace(' / year', '')}.`);
+    expect(live.textContent).toBe(['Estimated yearly payroll tax.', ...cards, 'Compared with $0 in yearly spending today.'].join(' '));
 
-    // Every row has its own model's tax and share of payroll, for both kinds of employer.
-    for (const kind of ['private', 'public'] as const) {
-      change('Type of employer', kind, 'change');
-      for (const payroll of [1_100_000, 14_500_000, 500_100]) {
-        change(BUSINESS_PAYROLL, String(payroll));
-        const shown = [...business.querySelectorAll('tbody tr')]
-          .map(row => [...row.querySelectorAll('td')].slice(0, 2).map(cell => cell.textContent));
-        expect(shown).toEqual(MODELS.map(model => {
-          const owed = kind === 'public' ? employerRate('public', model, payroll) * payroll : payrollTax(payroll, model);
-          const share = owed / payroll;
-          return [usd.format(owed), share > 0 && share < 0.00005 ? 'less than 0.01%' : pct.format(share)];
-        }));
-      }
-    }
-    expect(MODELS.some(model => payrollTax(500_100, model) > 0)).toBe(true);
-
-    // The announcement carries each model's own amount, at a payroll where the models differ.
-    change('Type of employer', 'private', 'change');
-    change(BUSINESS_PAYROLL, '20,000,000');
-    const owed = MODELS.map(model => payrollTax(20_000_000, model));
-    expect(new Set(owed.map(amount => usd.format(amount))).size).toBeGreaterThan(1);
-    vi.advanceTimersByTime(ANNOUNCE_DELAY);
-    expect(live.textContent).toBe(['Estimated yearly payroll tax.', ...MODELS.map((model, i) =>
-      `Model ${model.id} ${usd.format(owed[i])}.`), 'Compared with $0 in yearly spending today.'].join(' '));
-
-    for (const [typed, heard] of [['-1', BAD_AMOUNT], ['0', 'Enter a payroll above $0.']]) {
+    for (const [typed, heard] of [['-1', BAD_AMOUNT], ['0', 'Enter a payroll above $0.'], ['', 'Enter a total yearly payroll to see results.']]) {
       change(BUSINESS_PAYROLL, typed);
-      expect(business.querySelector('table')).toBeNull();
+      expect(businessCards()).toHaveLength(0);
       expect(payrollError().textContent).toBe(heard);
+      expect(business.querySelector('.uhp-result-status')?.textContent).toBe('Enter a total yearly payroll to see results.');
       vi.advanceTimersByTime(ANNOUNCE_DELAY);
       expect(live.textContent).toBe(named(BUSINESS_PAYROLL, heard));
     }
   });
 
-  it('looks up a separate chart income with the same calculation assumptions', () => {
-    destroy = mount(host, { initialEmployer: 'public' });
-    change(LOOKUP, '140,123');
-    const readout = () => host.querySelector('.uhp-chart-inspection')?.textContent;
-    expect(readout()).toContain('$140,123');
-    for (const model of MODELS) {
-      expect(readout()).toContain(`Model ${model.id} ${usd.format(bill(model, 140_123, 2, 'public').household)}.`);
-    }
-    expectBills(85_000, 2, 'public');
+  it('reads every model at the income under the pointer, with the same household, employer and payroll', () => {
+    destroy = mount(host, { initialHouseholdSize: 3, initialPayroll: 20_000_000 });
+    const svg = host.querySelector<SVGSVGElement>('.uhp-plot svg')!;
+    const [width] = svg.getAttribute('viewBox')!.split(' ').slice(2).map(Number);
+    svg.getBoundingClientRect = () => ({ left: 0, top: 0, width, height: 360, right: width, bottom: 360, x: 0, y: 0, toJSON: () => ({}) });
+    const scale = axes();
+    const at = (income: number) => {
+      svg.dispatchEvent(new PointerEvent('pointermove', { clientX: scale.x(income), pointerType: 'mouse' }));
+      const tip = host.querySelector<HTMLElement>('.uhp-tip')!;
+      expect(tip.hidden).toBe(false);
+      expect(tip.getAttribute('aria-hidden')).toBe('true');
+      expect(tip.querySelector('strong')?.textContent).toBe(`${usd.format(income)} income`);
+      expect([...tip.querySelectorAll('span:has(> b)')].map(row => row.textContent)).toEqual(
+        MODELS.map(model => `Model ${model.id}${usd.format(bill(model, income, 3, 'private', 20_000_000).household)}`));
+      // One dot per model on the crosshair, at the amount in the readout.
+      const dots = [...host.querySelectorAll('.uhp-hover .uhp-dot')];
+      expect(dots.map(dot => Number(dot.getAttribute('cy')))).toEqual(
+        MODELS.map(model => expect.closeTo(scale.y(bill(model, income, 3, 'private', 20_000_000).household), 6)));
+    };
+    at(125_000);
+    at(40_000);
+    at(212_000);
+    // Off the plot, the readout goes away.
+    svg.dispatchEvent(new PointerEvent('pointermove', { clientX: 1, pointerType: 'mouse' }));
+    expect(host.querySelector<HTMLElement>('.uhp-tip')!.hidden).toBe(true);
+  });
 
-    // Past the end of the axis, or not an amount: fall back to the reader's own income.
-    const lookup = control<HTMLInputElement>(LOOKUP);
-    const lookupError = () => host.querySelector(`#${lookup.id}-error`) as HTMLElement;
-    expect(lookupError().hidden).toBe(true);
-    for (const invalid of ['99999999', 'abc', '250,000.01']) {
-      change(LOOKUP, invalid);
-      expect(lookup.getAttribute('aria-invalid')).toBe('true');
-      expect(lookupError().hidden).toBe(false);
-      expect(lookupError().textContent).toBe(
-        'Enter a dollar amount from $0 to $250,000. The figures shown here are for your own income.',
-      );
-      expect(lookup.getAttribute('aria-describedby')).toBe(lookupError().id);
-      expect(readout()).toContain('At $85,000 in yearly income');
-    }
-    change(LOOKUP, '250,000');
-    expect(lookupError().hidden).toBe(true);
-    expect(lookup.hasAttribute('aria-invalid')).toBe(false);
-    expect(readout()).toContain('At $250,000 in yearly income');
+  it('announces a change of coverage, even when the amounts stay the same', () => {
+    vi.useFakeTimers();
+    destroy = mount(host, { initialCoverage: 'ohp' });
+    const [live] = host.querySelectorAll<HTMLElement>('[role="status"]');
+    change(COVERAGE, 'none', 'change');
+    vi.advanceTimersByTime(ANNOUNCE_DELAY);
+    expect(live.textContent).toMatch(/^How you are covered today: No insurance\. You would be covered\./);
+    change(COVERAGE, 'ohp', 'change');
+    vi.advanceTimersByTime(ANNOUNCE_DELAY);
+    expect(live.textContent).toMatch(/^How you are covered today: Oregon Health Plan\. You would keep your coverage\./);
+    // Not repeated while the coverage stays the same.
+    change(INCOME, '90,000');
+    vi.advanceTimersByTime(ANNOUNCE_DELAY);
+    expect(live.textContent).toMatch(/^Your range across the five models/);
+  });
+
+  it('describes the payroll field with its guidance, and drops it when the field is hidden', () => {
+    destroy = mount(host);
+    const field = control<HTMLInputElement>(PAYROLL);
+    const hint = host.querySelector(`#${field.id}-hint`)!;
+    expect(hint.textContent).toMatch(/^A rough guess is fine/);
+    expect(field.getAttribute('aria-describedby')).toBe(hint.id);
+    change(EMPLOYER, 'none', 'change');
+    expect(host.querySelector<HTMLElement>(`#${field.id}-hint`)!.hidden).toBe(true);
+    change(EMPLOYER, 'private', 'change');
+    expect(field.getAttribute('aria-describedby')).toBe(hint.id);
+  });
+
+  it('never calls a bill that prints as $1 nothing', () => {
+    // Just past Model 3's exemption the bill is under a dollar but rounds up to $1.
+    const income = schedule(MODELS[2], 1)[0].from + 9;
+    const owed = bill(MODELS[2], income, 1, 'none').household;
+    expect(owed).toBeGreaterThan(0.5);
+    expect(owed).toBeLessThan(1);
+    destroy = mount(host, { initialIncome: income, initialHouseholdSize: 1, initialCoverage: 'ohp' });
+    expectBills(income, 1, 'none');
+    const card = householdCards()[2];
+    expect(card.querySelector('.uhp-bill-amount')?.textContent).toBe('$1 / year');
+    expect(card.querySelector('.uhp-verdict')?.textContent).toBe('↑$1 more than you pay now');
+    expect(card.textContent).not.toContain('exemption');
   });
 
   it('falls back to defaults for options a host passes out of range', () => {
     destroy = mount(host, {
       initialHouseholdSize: 9,
       initialEmployer: 'union' as EmployerKind,
+      initialCoverage: 'gold' as 'own',
       initialIncome: -4,
       initialPayroll: 0,
+      initialCurrentCost: -1,
       headingLevel: 7 as 1,
       theme: 'sepia' as 'auto',
     });
-    expect(control<HTMLSelectElement>('People in your household').value).toBe('2');
-    expect(control<HTMLSelectElement>('Who pays your wages').value).toBe('private');
-    expect(control<HTMLInputElement>(INCOME).value).toBe('85000');
-    expect(control<HTMLInputElement>(PAYROLL).value).toBe('');
+    expect(host.querySelector('button[aria-pressed="true"]')?.textContent).toBe('2');
+    expect(control(COVERAGE).value).toBe('employer');
+    expect(control(EMPLOYER).value).toBe('private');
+    expect(control(INCOME).value).toBe('85,000');
+    expect(control(PAYROLL).value).toBe('8,500,000');
+    expect(control(CURRENT_COST).value).toBe('4,700');
     expect(host.querySelector('.uhp-title')?.tagName).toBe('H2');
     expect(host.querySelector<HTMLElement>('.oregon-uhp')?.dataset['uhpTheme']).toBeUndefined();
 
     for (const initialIncome of [1e21, 1e-7, Number.NaN, Infinity]) {
       destroy = mount(host, { initialIncome, initialEmployer: 'none' });
-      expect(control<HTMLInputElement>(INCOME).value).toBe('85000');
+      expect(control(INCOME).value).toBe('85,000');
       expectBills(85_000, 2, 'none');
     }
+  });
+
+  it('takes a starting coverage, employer and current cost from the host', () => {
+    destroy = mount(host, { initialCoverage: 'medicare', initialIncome: 75_000 });
+    expect(control(EMPLOYER).value).toBe('none');
+    expect(control(CURRENT_COST).value).toBe('9,600');
+    expectBills(75_000, 2, 'none');
+    // The Board's Medicare couple at $75,000 (Table S4), within the engine's tested tolerance.
+    const row = SCENARIOS.find(s => s.id === 'medicare')!.rows.find(r => r.income === 75_000)!;
+    householdCards().forEach((card, i) => {
+      const shown = Number(card.querySelector('.uhp-bill-amount')!.textContent!.replace(/[^\d]/g, ''));
+      expect(Math.abs(shown - row.models[i])).toBeLessThanOrEqual(4);
+    });
+
+    destroy = mount(host, { initialCoverage: 'own', initialEmployer: 'private', initialPayroll: 2_000_000, initialCurrentCost: 3_000 });
+    expect(control(EMPLOYER).value).toBe('private');
+    expect(control(CURRENT_COST).value).toBe('3,000');
+    expectBills(85_000, 2, 'private', 2_000_000);
   });
 
   it('takes its heading level and color theme from the host', () => {
@@ -622,27 +808,35 @@ describe('calculator widget', () => {
     expect(host.querySelector('.uhp-header')).not.toBeNull();
     expect(host.querySelectorAll('.uhp-section')).toHaveLength(1);
     expect(host.querySelector('.uhp-business .uhp-section-title')?.textContent).toBe('Employer payroll tax calculator');
-    expect(host.querySelectorAll('.uhp-bill')).toHaveLength(0);
-    change(BUSINESS_PAYROLL, '14,500,000');
-    expect(host.querySelectorAll('.uhp-business tbody tr')).toHaveLength(MODELS.length);
+    expect(householdCards()).toHaveLength(0);
+    expect(businessCards().length).toBeGreaterThan(0);
 
     destroy = mount(host, { show: 'everything' as 'all', initialEmployer: 'none' });
     expect(host.querySelectorAll('.uhp-section')).toHaveLength(2);
   });
 
-  it('associates each control with its own visible label across mounts', () => {
+  it('names every control and keeps ids unique across mounts', () => {
     destroy = mount(host);
     const otherHost = document.createElement('div');
     document.body.append(otherHost);
     const destroyOther = mount(otherHost);
     try {
       for (const widget of [host, otherHost]) {
-        const controls = widget.querySelectorAll('input, select');
-        for (const input of controls) {
+        for (const input of widget.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select')) {
           const label = widget.querySelector<HTMLLabelElement>(`label[for="${input.id}"]`);
-          expect(label?.control).toBe(input);
-          expect(label?.textContent).toBeTruthy();
+          if (input.type === 'range') expect(input.getAttribute('aria-label')).toBeTruthy();
+          else {
+            expect(label?.control).toBe(input);
+            expect(label?.textContent).toBeTruthy();
+          }
         }
+        // The size buttons sit in a fieldset whose legend names them.
+        expect(widget.querySelector('fieldset legend')?.textContent).toBe('People in your household');
+        // The sticky range bar repeats what is on the page, so it is hidden from assistive technology and the tab order.
+        const sticky = widget.querySelector<HTMLAnchorElement>('.uhp-sticky')!;
+        expect(sticky.getAttribute('aria-hidden')).toBe('true');
+        expect(sticky.tabIndex).toBe(-1);
+        expect(sticky.getAttribute('href')).toBe(`#${widget.querySelector('.uhp-results')!.id}`);
       }
       expect(new Set([...document.querySelectorAll('[id]')].map(node => node.id)).size)
         .toBe(document.querySelectorAll('[id]').length);

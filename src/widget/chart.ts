@@ -1,7 +1,7 @@
 import { bill, MODELS, schedule } from '../model/uhp-model';
 import type { Bill, EmployerKind } from '../model/uhp-model';
-import { announcer, element, parseAmount, scrollRegion, status, table } from './dom';
-import { compactDollars, copy, dollars } from './strings';
+import { element, scrollRegion, table } from './dom';
+import { compactDollars, copy, dollars, modelsLabel } from './strings';
 
 interface ChartInput {
   income: number;
@@ -13,6 +13,11 @@ interface ChartInput {
 }
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
+const HEIGHT = 360;
+/** Below this plot width the end labels are left out and the axes get fewer ticks. */
+const NARROW = 520;
+/** Width of the hover readout, in pixels. */
+const TIP_WIDTH = 184;
 
 function svgNode<K extends keyof SVGElementTagNameMap>(
   doc: Document,
@@ -37,67 +42,59 @@ export function seriesClass(index: number): string {
   return `uhp-series-${index + 1}`;
 }
 
-export function createChart(doc: Document, lookupId: string) {
+/** A small colored dot naming a series, or the dashed key for what you pay now. */
+export function key(doc: Document, className: string): HTMLSpanElement {
+  const node = element(doc, 'span', undefined, `uhp-key ${className}`);
+  node.setAttribute('aria-hidden', 'true');
+  return node;
+}
+
+export function createChart(doc: Document) {
   const figure = element(doc, 'figure', undefined, 'uhp-chart');
-  const caption = element(doc, 'figcaption', copy.chart);
+  const caption = element(doc, 'figcaption');
+  const captionTitle = element(doc, 'strong', copy.chart);
+  const captionContext = element(doc, 'span', undefined, 'uhp-chart-context');
+  caption.append(captionTitle, captionContext);
   const legend = element(doc, 'ul', undefined, 'uhp-chart-legend');
-  legend.setAttribute('role', 'list');
+  legend.setAttribute('aria-hidden', 'true');
   const plot = element(doc, 'div', undefined, 'uhp-plot');
   const svg = svgNode(doc, 'svg', { role: 'img' });
-  const inspection = element(doc, 'p', undefined, 'uhp-chart-inspection');
-  const lookupField = element(doc, 'div', undefined, 'uhp-field uhp-chart-lookup');
-  const label = element(doc, 'label', copy.inspectIncome);
-  label.htmlFor = lookupId;
-  const lookup = element(doc, 'input');
-  lookup.id = lookupId;
-  lookup.type = 'text';
-  lookup.inputMode = 'decimal';
-  lookup.autocomplete = 'off';
-  const lookupHint = element(doc, 'p', undefined, 'uhp-hint');
-  lookupHint.id = `${lookupId}-hint`;
-  lookup.setAttribute('aria-describedby', lookupHint.id);
-  const lookupStatus = status(doc);
-  const lookupAnnouncer = announcer(lookupStatus);
-  const lookupError = element(doc, 'p', undefined, 'uhp-field-error');
-  lookupError.id = `${lookupId}-error`;
-  lookupError.hidden = true;
-  lookupField.append(label, lookup, lookupHint, lookupError);
+  const tip = element(doc, 'div', undefined, 'uhp-tip');
+  tip.setAttribute('aria-hidden', 'true');
+  tip.hidden = true;
   const details = element(doc, 'details');
   const scroller = scrollRegion(doc, copy.chart);
-  const comparison = element(doc, 'p', undefined, 'uhp-hint');
-  details.append(element(doc, 'summary', copy.chartTable), comparison, scroller);
-  plot.append(svg);
-  figure.append(caption, legend, plot, lookupField, inspection, lookupStatus, details);
+  details.append(element(doc, 'summary', copy.chartTable), scroller);
+  plot.append(svg, tip);
+  figure.append(caption, legend, plot, details);
   figure.hidden = true;
 
   let input: ChartInput | undefined;
   let width = 720;
   let inspect: ((event: PointerEvent) => void) | undefined;
-  let restoreInspection: ((announce?: boolean) => void) | undefined;
 
   function seriesValues(income: number, values: ChartInput) {
     return MODELS.map(model => bill(model, income, values.size, values.employer, values.payroll).household);
   }
 
-  function showInspection(income: number, amounts: readonly number[]) {
-    inspection.textContent = [
-      copy.chartSample(dollars.format(income)),
-      ...MODELS.map((model, index) => copy.modelAmount(copy.model(model.id), dollars.format(amounts[index]))),
-    ].join(' ');
+  function hideTip() {
+    tip.hidden = true;
+    tip.replaceChildren();
+    svg.querySelector('.uhp-hover')?.replaceChildren();
   }
 
   function draw(values: ChartInput, xMax: number) {
-    const height = 310;
-    const left = width < 380 ? 58 : 68;
-    const right = width - 25;
-    const top = 24;
-    const bottom = height - 54;
+    const narrow = width < NARROW;
+    const left = 66;
+    const right = width - (narrow ? 14 : 128);
+    const top = 22;
+    const bottom = HEIGHT - 54;
     const plotHeight = bottom - top;
     const plotWidth = right - left;
     const peak = Math.max(1, values.currentCost ?? 0, ...seriesValues(xMax, values));
-    const yStep = displayStep(peak, 5);
-    const yMax = Math.ceil(peak / yStep) * yStep;
-    const xStep = displayStep(xMax, width < 480 ? 4 : 6);
+    const yStep = displayStep(peak * 1.05, 4);
+    const yMax = Math.ceil((peak * 1.05) / yStep) * yStep;
+    const xStep = displayStep(xMax, narrow ? 4 : 5);
     const x = (income: number) => left + (income / xMax) * plotWidth;
     const y = (amount: number) => bottom - (amount / yMax) * plotHeight;
     const line = (x1: number, y1: number, x2: number, y2: number, className: string) =>
@@ -105,7 +102,7 @@ export function createChart(doc: Document, lookupId: string) {
     const text = (value: string, px: number, py: number, className: string, anchor = 'middle') =>
       svgNode(doc, 'text', { x: px, y: py, class: className, 'text-anchor': anchor }, value);
 
-    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    svg.setAttribute('viewBox', `0 0 ${width} ${HEIGHT}`);
     svg.setAttribute('aria-label', copy.chartDescription(dollars.format(xMax), MODELS.length));
     const content = doc.createDocumentFragment();
     for (let step = 0; step <= Math.round(yMax / yStep); step++) {
@@ -113,7 +110,7 @@ export function createChart(doc: Document, lookupId: string) {
       const gridLine = line(left, y(amount), right, y(amount), 'uhp-grid-line');
       gridLine.setAttribute('data-amount', String(amount));
       content.append(gridLine);
-      const label = text(compactDollars.format(amount), left - 6, y(amount) + 4, 'uhp-tick', 'end');
+      const label = text(compactDollars.format(amount), left - 8, y(amount) + 4, 'uhp-tick', 'end');
       label.setAttribute('data-amount', String(amount));
       content.append(label);
     }
@@ -123,9 +120,9 @@ export function createChart(doc: Document, lookupId: string) {
       tick.setAttribute('data-income', String(income));
       content.append(tick);
     }
-    content.append(text(copy.chartIncome, (left + right) / 2, height - 8, 'uhp-axis-title'));
+    content.append(text(copy.chartIncome, (left + right) / 2, HEIGHT - 8, 'uhp-axis-title'));
     const vertical = text(copy.chartContribution, 0, 0, 'uhp-axis-title');
-    vertical.setAttribute('transform', `translate(13 ${(top + bottom) / 2}) rotate(-90)`);
+    vertical.setAttribute('transform', `translate(14 ${(top + bottom) / 2}) rotate(-90)`);
     content.append(vertical);
 
     if (values.currentCost !== undefined) {
@@ -133,6 +130,7 @@ export function createChart(doc: Document, lookupId: string) {
       content.append(line(left, currentY, right, currentY, 'uhp-cost-line'));
     }
 
+    const ends: { id: string; y: number }[] = [];
     MODELS.forEach((model, index) => {
       // Include schedule boundaries so short brackets remain visible on a wide income axis.
       const incomes = new Set(Array.from({ length: 241 }, (_, step) => xMax * (step / 240)));
@@ -144,57 +142,61 @@ export function createChart(doc: Document, lookupId: string) {
         return `${i ? 'L' : 'M'}${x(income).toFixed(2)},${y(amount).toFixed(2)}`;
       });
       content.append(svgNode(doc, 'path', { d: points.join(' '), class: `uhp-series ${seriesClass(index)}` }));
+      ends.push({ id: String(model.id), y: y(bill(model, xMax, values.size, values.employer, values.payroll).household) });
     });
 
-    function addMarker(group: Node, income: number, amounts: readonly number[]) {
-      const at = x(income);
-      group.appendChild(line(at, top, at, bottom, 'uhp-income-line'));
-      amounts.forEach((amount, index) => group.appendChild(svgNode(doc, 'circle', {
-        cx: at, cy: y(amount), r: 4, class: `uhp-dot ${seriesClass(index)}`,
-      })));
+    // Lines that finish within a text height of each other share one label.
+    if (!narrow) {
+      const groups: { ids: string[]; y: number }[] = [];
+      for (const end of ends.sort((a, b) => a.y - b.y)) {
+        const last = groups[groups.length - 1];
+        if (last && end.y - last.y < 15) last.ids.push(end.id);
+        else groups.push({ ids: [end.id], y: end.y });
+      }
+      for (const group of groups) {
+        const ids = [...group.ids].sort((a, b) => Number(a) - Number(b) || a.localeCompare(b));
+        const label = ids.length === 2 ? copy.models(`${ids[0]} & ${ids[1]}`) : modelsLabel(ids);
+        content.append(text(label, right + 8, group.y + 4, 'uhp-end-label', 'start'));
+      }
     }
 
-    addMarker(content, values.income, values.bills.map(result => result.household));
-    const markerX = x(values.income);
-    const anchor = markerX > right - 58 ? 'end' : 'start';
-    content.append(text(copy.selectedIncome, markerX + (anchor === 'end' ? -4 : 4), top - 8, 'uhp-tick', anchor));
-    const marker = svgNode(doc, 'g');
-    content.append(marker);
+    const youX = x(values.income);
+    content.append(line(youX, top, youX, bottom, 'uhp-income-line'));
+    content.append(text(copy.selectedIncome, Math.min(Math.max(youX, left + 12), right - 12), top - 7, 'uhp-you'));
+    values.bills.forEach((result, index) => content.append(svgNode(doc, 'circle', {
+      cx: youX, cy: y(result.household), r: 5, class: `uhp-dot ${seriesClass(index)}`,
+    })));
+    const hover = svgNode(doc, 'g', { class: 'uhp-hover' });
+    content.append(hover);
     svg.replaceChildren(content);
-
-    lookupHint.textContent = copy.inspectHint(dollars.format(xMax));
-    restoreInspection = (announce = false) => {
-      const typed = parseAmount(lookup.value);
-      const valid = typed === undefined || typed <= xMax;
-      const income = valid && typed !== undefined ? typed : values.income;
-      if (valid) lookup.removeAttribute('aria-invalid');
-      else lookup.setAttribute('aria-invalid', 'true');
-      // Say in words that the entry was not used; the readout below falls back to the reader's own income.
-      lookupError.textContent = valid ? '' : copy.lookupNotUsed(lookupHint.textContent ?? '');
-      lookupError.hidden = valid;
-      lookupHint.hidden = !valid;
-      lookup.setAttribute('aria-describedby', valid ? lookupHint.id : lookupError.id);
-      const amounts = seriesValues(income, values);
-      marker.replaceChildren();
-      if (income !== values.income) addMarker(marker, income, amounts);
-      showInspection(income, amounts);
-      if (announce) lookupAnnouncer.say((valid ? inspection.textContent : lookupError.textContent) ?? '');
-    };
-    restoreInspection();
+    tip.hidden = true;
 
     inspect = event => {
       const bounds = svg.getBoundingClientRect();
       if (!bounds.width) return;
       const px = (event.clientX - bounds.left) / bounds.width * width;
       if (px < left || px > right) {
-        restoreInspection?.();
+        hideTip();
         return;
       }
-      const income = Math.min(xMax, Math.round(((px - left) / plotWidth) * xMax));
+      const income = Math.min(xMax, Math.round(((px - left) / plotWidth) * xMax / 1000) * 1000);
       const amounts = seriesValues(income, values);
-      marker.replaceChildren();
-      addMarker(marker, income, amounts);
-      showInspection(income, amounts);
+      const at = x(income);
+      hover.replaceChildren(line(at, top, at, bottom, 'uhp-cross'));
+      amounts.forEach((amount, index) => hover.append(svgNode(doc, 'circle', {
+        cx: at, cy: y(amount), r: 4, class: `uhp-dot ${seriesClass(index)}`,
+      })));
+      tip.replaceChildren(element(doc, 'strong', copy.tipIncome(dollars.format(income))));
+      MODELS.forEach((model, index) => {
+        const row = element(doc, 'span');
+        row.append(key(doc, seriesClass(index)), copy.model(model.id), element(doc, 'b', dollars.format(amounts[index])));
+        tip.append(row);
+      });
+      // The readout sits right of the crosshair when it fits, else left, never off the plot.
+      const scale = bounds.width / width;
+      const room = at + 12 + TIP_WIDTH <= width;
+      tip.style.left = `${(room ? at + 12 : Math.max(0, at - 12 - TIP_WIDTH)) * scale}px`;
+      tip.hidden = false;
     };
   }
 
@@ -215,9 +217,9 @@ export function createChart(doc: Document, lookupId: string) {
 
   svg.addEventListener('pointermove', event => inspect?.(event));
   svg.addEventListener('pointerdown', event => inspect?.(event));
-  svg.addEventListener('pointerleave', () => restoreInspection?.());
-  svg.addEventListener('pointercancel', () => restoreInspection?.());
-  lookup.addEventListener('input', () => restoreInspection?.(true));
+  // A finger lifting should not dismiss the readout it just opened.
+  svg.addEventListener('pointerleave', event => { if (event.pointerType !== 'touch') hideTip(); });
+  svg.addEventListener('pointercancel', () => hideTip());
 
   return {
     figure,
@@ -227,29 +229,27 @@ export function createChart(doc: Document, lookupId: string) {
       if (!values) {
         // Leave no figures behind in the hidden chart.
         inspect = undefined;
-        restoreInspection = undefined;
         svg.replaceChildren();
         legend.replaceChildren();
         scroller.replaceChildren();
-        inspection.textContent = '';
-        comparison.textContent = '';
-        lookupHint.textContent = '';
-        lookupError.textContent = '';
+        captionContext.textContent = '';
+        hideTip();
         return;
       }
       const xMax = limit(values.income);
       draw(values, xMax);
-      function legendItem(label: string, className: string) {
-        const item = element(doc, 'li', label);
-        const key = svgNode(doc, 'svg', { class: 'uhp-key', viewBox: '0 0 30 8', 'aria-hidden': 'true' });
-        key.append(svgNode(doc, 'line', { x1: 0, x2: 30, y1: 4, y2: 4, class: className }));
-        item.prepend(key);
+      captionContext.textContent = copy.chartContext(
+        values.size, values.currentCost === undefined ? undefined : dollars.format(values.currentCost));
+
+      const legendItems = MODELS.map((model, index) => {
+        const item = element(doc, 'li', copy.model(model.id));
+        item.prepend(key(doc, seriesClass(index)));
         return item;
-      }
-      const legendItems = MODELS.map((model, index) =>
-        legendItem(copy.model(model.id), `uhp-series ${seriesClass(index)}`));
+      });
       if (values.currentCost !== undefined) {
-        legendItems.push(legendItem(copy.currentLine, 'uhp-cost-line'));
+        const item = element(doc, 'li', copy.currentLine);
+        item.prepend(key(doc, 'uhp-key-now'));
+        legendItems.push(item);
       }
       legend.replaceChildren(...legendItems);
 
@@ -260,14 +260,10 @@ export function createChart(doc: Document, lookupId: string) {
       }
       const rows = [...samples].sort(([, a], [, b]) => a - b).map(([label, income]) =>
         [label, ...seriesValues(income, values).map(amount => dollars.format(amount))]);
-      scroller.replaceChildren(table(doc, copy.chart, [copy.chartIncome, ...MODELS.map(model => copy.model(model.id))], rows));
-      comparison.hidden = values.currentCost === undefined;
-      comparison.textContent = values.currentCost === undefined ? '' :
-        copy.chartComparison(dollars.format(values.currentCost));
+      scroller.replaceChildren(table(doc, copy.chart, [copy.tableIncome, ...MODELS.map(model => copy.model(model.id))], rows));
     },
     destroy() {
       observer?.disconnect();
-      lookupAnnouncer.stop();
     },
   };
 }
