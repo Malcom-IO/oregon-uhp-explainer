@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Embedding the Oregon Universal Health Plan calculator (unofficial)</title>
+    <link rel="stylesheet" href="../lib/oregon-uhp.css">
+    <style>
+      body { margin: 0; font: 400 1rem/1.55 system-ui, sans-serif; }
+      .demo { max-width: 72rem; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 4rem; }
+      .demo h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); line-height: 1.15; margin: 0 0 .5rem; }
+      .demo h2 { font-size: 1.35rem; margin: 3rem 0 .5rem; padding-top: 1.5rem; border-top: 1px solid #8884; }
+      .demo p { max-width: 68ch; }
+      .demo pre { overflow-x: auto; padding: .9rem 1rem; border: 1px solid #8886; border-radius: .4rem; font-size: .88rem; line-height: 1.45; }
+      .demo iframe { display: block; width: 100%; height: 44rem; border: 1px solid #8886; border-radius: .4rem; }
+      .demo .frame { margin: 1rem 0; border: 1px dashed #8888; border-radius: .4rem; }
+      .demo .choices { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+      .demo button { font: inherit; padding: .45rem .9rem; border: 1px solid #767676; border-radius: .35rem; background: transparent; color: inherit; cursor: pointer; }
+      .demo button[aria-pressed="true"] { background: #1a5fb4; border-color: #1a5fb4; color: #fff; }
+      /* A sample host look for the third example: the host sets only the tokens it cares about. */
+      .sample-brand {
+        --uhp-font: Georgia, 'Times New Roman', serif;
+        --uhp-accent: #0b6e4f;
+        --uhp-surface: #f7f4ec;
+        --uhp-paper: #fffdf8;
+        --uhp-status: #e6efe6;
+        --uhp-line: #cfc8b4;
+        --uhp-series-1: #0b6e4f;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="demo">
+      <h1>Embedding the calculator</h1>
+      <p>This page shows three ways to put the Oregon Universal Health Plan calculator on another site.
+        The calculator is unofficial: it is not published, reviewed or endorsed by the Universal Health Plan
+        Governance Board or the State of Oregon. It uses the figures in the Board’s October 2026 draft report.
+        Entries stay in the reader’s browser.</p>
+      <p><a href="../">The explainer page</a> · <a href="../calculator/">The calculator alone</a> ·
+        <a href="https://github.com/Malcom-IO/oregon-uhp-explainer">Source and instructions</a></p>
+
+      <h2 id="iframe">1. An iframe, with no script on your page</h2>
+      <p>Point an iframe at the calculator page. It follows the reader’s light or dark setting; add
+        <code>?theme=light</code> or <code>?theme=dark</code> to fix its look.</p>
+      <pre><code>&lt;iframe src="https://YOUR-HOST/calculator/?theme=light"
+  title="Oregon Universal Health Plan calculator (unofficial)"
+  style="width: 100%; height: 44rem; border: 0"&gt;&lt;/iframe&gt;</code></pre>
+      <iframe src="../calculator/?theme=light" title="Oregon Universal Health Plan calculator (unofficial)"></iframe>
+
+      <h2 id="mount">2. Mounted in the page, default colors</h2>
+      <p>Copy <code>oregon-uhp.js</code> and <code>oregon-uhp.css</code> to your site and call
+        <code>mount</code>. The defaults are a white background with dark text, or the dark equivalent.</p>
+      <pre><code>&lt;link rel="stylesheet" href="/your-path/oregon-uhp.css"&gt;
+&lt;div id="uhp-calculator"&gt;&lt;/div&gt;
+&lt;script type="module"&gt;
+  import { mount } from '/your-path/oregon-uhp.js';
+  mount(document.getElementById('uhp-calculator'), { theme: 'light', headingLevel: 3 });
+&lt;/script&gt;</code></pre>
+      <div class="choices" role="group" aria-label="Color theme for example 2">
+        <button type="button" data-theme="light" aria-pressed="true">Light</button>
+        <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
+        <button type="button" data-theme="auto" aria-pressed="false">Follow my system</button>
+      </div>
+      <div class="frame"><div id="default-mount"></div></div>
+
+      <h2 id="colors">3. Mounted in the page, your colors and font</h2>
+      <p>Every color is a CSS custom property. Set the ones you want on the calculator’s element or
+        anywhere above it, and name a theme so the reader’s system setting does not swap in the other
+        defaults. Check the contrast of the colors you choose.</p>
+      <pre><code>.sample-brand {
+  --uhp-font: Georgia, 'Times New Roman', serif;
+  --uhp-accent: #0b6e4f;   /* links, focus ring, slider */
+  --uhp-surface: #f7f4ec;  /* behind the calculator */
+  --uhp-paper: #fffdf8;    /* panels, fields, tables */
+  --uhp-status: #e6efe6;   /* the result summary bar */
+  --uhp-line: #cfc8b4;     /* borders */
+  --uhp-series-1: #0b6e4f; /* Model 1's line and card */
+}</code></pre>
+      <p>The full list: <code>--uhp-surface</code>, <code>--uhp-paper</code>, <code>--uhp-ink</code>,
+        <code>--uhp-muted</code>, <code>--uhp-line</code>, <code>--uhp-control-line</code>,
+        <code>--uhp-grid</code>, <code>--uhp-accent</code>, <code>--uhp-status</code>,
+        <code>--uhp-error</code>, <code>--uhp-series-1</code> to <code>--uhp-series-5</code>, and
+        <code>--uhp-font</code>.</p>
+      <div class="frame sample-brand"><div id="brand-mount"></div></div>
+    </main>
+    <script type="module">
+      import { mount } from '../lib/oregon-uhp.js';
+
+      const defaultHost = document.getElementById('default-mount');
+      const show = theme => mount(defaultHost, { theme, headingLevel: 3, initialPayroll: 8500000 });
+      show('light');
+      for (const button of document.querySelectorAll('button[data-theme]')) {
+        button.addEventListener('click', () => {
+          for (const other of document.querySelectorAll('button[data-theme]')) {
+            other.setAttribute('aria-pressed', String(other === button));
+          }
+          show(button.dataset.theme);
+        });
+      }
+      mount(document.getElementById('brand-mount'), { theme: 'light', headingLevel: 3, initialPayroll: 8500000 });
+    </script>
+  </body>
+</html>

@@ -241,7 +241,9 @@ describe('calculator widget', () => {
 
   it('labels each card, option and count from the data', () => {
     destroy = mount(host, { initialPayroll: 8_500_000 });
-    expect(host.querySelector('.uhp-intro')?.textContent).toContain(`Board’s ${MODELS.length} draft financing models`);
+    expect(host.querySelector('.uhp-intro')?.textContent).toContain(`calculated from the ${MODELS.length} financing models`);
+    expect(host.querySelector('.uhp-intro')?.textContent).toContain('Unofficial: not published, reviewed or endorsed');
+    expect(host.querySelector('.uhp-title')?.textContent).toContain('(unofficial)');
     const cards = [...host.querySelectorAll('.uhp-bill')];
     cards.forEach((card, i) => {
       expect(card.classList.contains(`uhp-series-${i + 1}`)).toBe(true);

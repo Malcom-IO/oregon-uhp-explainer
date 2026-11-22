@@ -51,11 +51,17 @@ With Node 24, run `npm ci` and `npm run dev`. For a static build, run
 `BASE_PATH`, for example `BASE_PATH=/oregon-uhp-explainer/ npm run build`.
 Use `npm run preview` to check a build locally, with the same `BASE_PATH`.
 
-The build produces the calculator two ways.
+The build produces a small site: the explainer at the root, the calculator
+alone at `calculator/`, and `demo/`, a page that shows each way of embedding
+the calculator with working examples. The demo page loads the built library,
+so open it from a build (`npm run build`, then `npm run preview`), not from
+`npm run dev`.
 
-**As a page, for an iframe.** `dist/index.html` is the calculator alone. Point
-an iframe at it, give the iframe the title “Oregon Universal Health Plan
-calculator” and enough height for the space available. The calculator scrolls
+The calculator can be reused two ways.
+
+**As a page, for an iframe.** `dist/calculator/index.html` is the calculator
+alone. Point an iframe at it, give the iframe the title “Oregon Universal
+Health Plan calculator (unofficial)” and enough height for the space available. The calculator scrolls
 inside the frame as needed. Nothing on the host page has to run a script. The
 page follows the reader's light or dark system setting; add `?theme=light` or
 `?theme=dark` to the iframe's address to fix its look.
@@ -84,6 +90,16 @@ optional:
 | `theme` | `'light'`, `'dark'` or `'auto'`. `auto`, the default, follows the reader's system setting. Name a theme if your page has one fixed look. |
 | `headingLevel` | `1`, `2` or `3`: the heading level of the calculator's title. The default is `2`. Headings inside the calculator follow from it. |
 | `initialIncome`, `initialHouseholdSize`, `initialEmployer`, `initialPayroll` | Starting values. A value the matching field would not accept is ignored. |
+
+**Colors and font.** The defaults are a white background with dark text, and a
+dark equivalent. Every color is a CSS custom property that a host can set on
+the calculator's element or anywhere above it: `--uhp-surface`, `--uhp-paper`,
+`--uhp-ink`, `--uhp-muted`, `--uhp-line`, `--uhp-control-line`, `--uhp-grid`,
+`--uhp-accent`, `--uhp-status`, `--uhp-error`, `--uhp-series-1` to
+`--uhp-series-5`, and `--uhp-font` for the font family. Unset properties keep
+their defaults. If you set colors, also pass `theme: 'light'` or `'dark'`, so
+the reader's system setting does not swap in the other defaults, and check the
+contrast of what you choose. `demo/` shows an example.
 
 Every style rule is scoped under the `.oregon-uhp` class and every inner class
 starts with `uhp-`, so the calculator's styles do not reach the host page. The

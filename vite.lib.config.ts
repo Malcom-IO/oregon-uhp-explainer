@@ -5,6 +5,8 @@ import { banner } from './vite.config.ts';
 // exports `mount`, and dist/lib/oregon-uhp.css holds its styles. Runs after
 // the page build and adds to dist/ without emptying the rest of it.
 export default defineConfig({
+  // The static pages in public/ belong to the site build, not to the library.
+  publicDir: false,
   build: {
     outDir: 'dist/lib',
     emptyOutDir: true,

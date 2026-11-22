@@ -7,10 +7,11 @@
 export const locale = 'en-US';
 
 export const copy = {
-  title: 'Oregon Universal Health Plan calculator',
+  title: 'Oregon Universal Health Plan calculator (unofficial)',
   snapshot: 'Source snapshot · October 2026 drafts',
   intro: (models: number) =>
-    `Independent estimates based on the Universal Health Plan Governance Board’s ${models} draft financing models.`,
+    `Estimates calculated from the ${models} financing models in the Universal Health Plan Governance Board’s ` +
+    'October 2026 draft report. Unofficial: not published, reviewed or endorsed by the Board or the State of Oregon.',
   household: 'Household calculator',
   size: 'People in your household',
   income: 'Yearly household income ($, required)',
