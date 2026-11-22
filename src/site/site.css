@@ -32,6 +32,8 @@
   font: 400 1em/1.65 var(--uhp-font, system-ui, sans-serif);
   text-align: start;
   overflow-wrap: anywhere;
+  /* The page's own layers (the top bar) stack among themselves, not with a host page's. */
+  isolation: isolate;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -147,6 +149,62 @@
   vertical-align: .08em;
 }
 
+/* ------------------------------------------------------- the top bar */
+/* Stays at the top while the page scrolls; its title shows once the page title has gone. */
+.uhp-page .xp-bar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
+  border-block-end: 1px solid var(--_line);
+  background: var(--_surface);
+  background: color-mix(in srgb, var(--_surface) 96%, transparent);
+  backdrop-filter: blur(8px);
+}
+.uhp-page .xp-bar-inner { display: flex; align-items: center; justify-content: space-between; gap: 1em; min-block-size: 3.6em; }
+.uhp-page .xp-bar-title {
+  display: grid;
+  min-inline-size: 0;
+  margin: 0;
+  line-height: 1.25;
+  transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .uhp-page .xp-bar-title { transition: none; }
+}
+.uhp-page .xp-bar-quiet .xp-bar-title { opacity: 0; transform: translateY(-.3em); visibility: hidden; }
+.uhp-page .xp-bar-eyebrow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--_accent);
+  font-family: var(--_mono);
+  font-size: .68em;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.uhp-page .xp-bar-name { overflow: hidden; font-size: .95em; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.uhp-page .xp-theme-switch { flex: none; margin-inline-start: auto; }
+.uhp-page .xp-theme-button {
+  display: inline-flex;
+  align-items: center;
+  gap: .45em;
+  min-block-size: 2.5em;
+  padding: .35em .85em;
+  border: 1px solid var(--_control-line);
+  border-radius: .5em;
+  background: transparent;
+  color: var(--_ink);
+  font: inherit;
+  font-size: .9em;
+  cursor: pointer;
+}
+.uhp-page .xp-theme-button:hover { border-color: var(--_ink); }
+.uhp-page .xp-theme-button svg { inline-size: 1.05em; block-size: 1.05em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+/* Anchored sections, and anything focused while scrolling up, land below the bar, not under it. */
+.uhp-page :is(section, h2, h3)[id],
+.uhp-page :is(a, summary, button, input, select, [tabindex]) { scroll-margin-block-start: 4.5em; }
+
 /* ---------------------------------------------------------------- hero */
 .uhp-page .xp-hero {
   padding-block: clamp(2.5em, 8vw, 5em) clamp(2em, 5vw, 3.5em);
@@ -212,7 +270,6 @@
 }
 .uhp-page .xp-jump a:is(:hover, :focus-visible) { border-color: var(--_accent); }
 .uhp-page .xp-snapshot { margin: 0; color: var(--_muted); font-family: var(--_mono); font-size: .8em; }
-.uhp-page .xp-theme-buttons { display: flex; flex-wrap: wrap; gap: .4em; margin-block: .9em 0; font-size: .85em; }
 @media (min-width: 62em) {
   .uhp-page .xp-hero-grid { grid-template-columns: minmax(0, 46em) minmax(15em, 20em); justify-content: space-between; gap: 3em; }
 }
@@ -461,7 +518,7 @@
 /* ------------------------------------------------- the board's examples */
 .uhp-page .xp-example-title { margin-block-start: 1.75em; }
 .uhp-page .xp-picker { display: flex; flex-wrap: wrap; gap: .4em; margin-block: 1.25em 1em; }
-.uhp-page :is(.xp-picker, .xp-theme-buttons) button {
+.uhp-page .xp-picker button {
   padding: .4em .95em;
   border: 1px solid var(--_control-line);
   border-radius: 999px;
@@ -471,8 +528,8 @@
   font-weight: 600;
   cursor: pointer;
 }
-.uhp-page :is(.xp-picker, .xp-theme-buttons) button:hover { border-color: var(--_ink); }
-.uhp-page :is(.xp-picker, .xp-theme-buttons) button[aria-pressed="true"] { background: var(--_accent); color: var(--_surface); border-color: var(--_accent); }
+.uhp-page .xp-picker button:hover { border-color: var(--_ink); }
+.uhp-page .xp-picker button[aria-pressed="true"] { background: var(--_accent); color: var(--_surface); border-color: var(--_accent); }
 .uhp-page .xp-example.xp-off { display: none; }
 .uhp-page .xp-picked .xp-example-title { margin-block-start: .5em; }
 
@@ -564,7 +621,7 @@
     --_series-4: var(--uhp-series-4, #835196);
     --_series-5: var(--uhp-series-5, #855c0b);
   }
-  .uhp-page .xp-jump, .uhp-page .xp-picker, .uhp-page .xp-skip, .uhp-page .xp-theme-switch { display: none; }
+  .uhp-page .xp-jump, .uhp-page .xp-picker, .uhp-page .xp-skip, .uhp-page .xp-bar { display: none; }
   .uhp-page .xp-hero { background: none; }
   .uhp-page .xp-example.xp-off { display: block; }
   .uhp-page .xp-print-only { display: block; }

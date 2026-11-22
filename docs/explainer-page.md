@@ -20,9 +20,11 @@ that reads complete with JavaScript off, inside one element with the class
   wording (captions, column headings, labels) is in `blocks.ts`, and
   `src/site/blocks.spec.ts` checks every cell against the model.
 - **Scripts add** the two calculators, a picker over the Board's example
-  households (all four show without it), a light and dark switch that is not
-  remembered (delete the `data-uhp-theme-switch` element to leave it out), and
-  `?theme=light` or `?theme=dark` (`src/site/main.ts`).
+  households (all four show without it), a light and dark button that is not
+  remembered (delete the `data-uhp-theme-switch` element to leave it out), the
+  page title in the bar at the top once the title scrolls away (delete the
+  `data-uhp-bar` element to leave the bar out), and `?theme=light` or
+  `?theme=dark` (`src/site/main.ts`).
 - **Styles** are in `src/site/site.css`, every rule under `.uhp-page`, with the
   calculator's `--uhp-*` color properties and the same defaults. Set them on
   `.uhp-page` or above it and the page and both calculators follow; set

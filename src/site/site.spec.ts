@@ -317,32 +317,35 @@ describe('what scripts add', () => {
     expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe('dark');
   });
 
-  it('switches the page and both calculators between the device setting, light and dark, and stores nothing', () => {
+  it('flips the page and both calculators between light and dark with one button, and stores nothing', () => {
     localStorage.clear();
     sessionStorage.clear();
     const cookies = document.cookie;
     const root = load();
     const meta = () => document.querySelector('meta[name="color-scheme"]')?.getAttribute('content');
     const looks = () => [root, ...root.querySelectorAll<HTMLElement>('.oregon-uhp')].map((el) => el.dataset['uhpTheme']);
-    const group = root.querySelector<HTMLElement>('[data-uhp-theme-switch] [role="group"]')!;
-    expect(group.getAttribute('aria-label')).toBe('Color theme');
-    const buttons = [...group.querySelectorAll<HTMLButtonElement>('button')];
-    expect(buttons.map((b) => [b.textContent, b.getAttribute('aria-pressed')])).toEqual([
-      ['Match my device', 'true'], ['Light', 'false'], ['Dark', 'false'],
-    ]);
-
-    buttons[2].click();
-    expect(looks()).toEqual(['dark', 'dark', 'dark']);
-    expect(meta()).toBe('dark');
-    expect(buttons.map((b) => b.getAttribute('aria-pressed'))).toEqual(['false', 'false', 'true']);
-
-    buttons[1].click();
-    expect(looks()).toEqual(['light', 'light', 'light']);
-    expect(meta()).toBe('light');
-
-    buttons[0].click();
+    const buttons = root.querySelectorAll<HTMLButtonElement>('[data-uhp-theme-switch] button');
+    expect(buttons).toHaveLength(1);
+    const button = buttons[0];
+    // It sits in the bar at the top, and names the look it switches to.
+    expect(button.closest('[data-uhp-bar]')).not.toBeNull();
+    const device = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const other = device === 'dark' ? 'light' : 'dark';
+    const word = (theme: string) => theme[0].toUpperCase() + theme.slice(1);
     expect(looks()).toEqual([undefined, undefined, undefined]);
-    expect(meta()).toBe('light dark');
+    expect(button.textContent).toBe(word(other));
+    expect(button.getAttribute('aria-label')).toBe(`Switch to ${other} colors`);
+    expect(button.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+
+    button.click();
+    expect(looks()).toEqual([other, other, other]);
+    expect(meta()).toBe(other);
+    expect(button.textContent).toBe(word(device));
+
+    button.click();
+    expect(looks()).toEqual([device, device, device]);
+    expect(meta()).toBe(device);
+    expect(button.textContent).toBe(word(other));
 
     // The choice is not remembered anywhere.
     expect(localStorage.length).toBe(0);
@@ -353,17 +356,93 @@ describe('what scripts add', () => {
     expect(history.state).toBeNull();
   });
 
-  it('starts the switch on the theme the address names, and leaves it out where the page has no slot', () => {
-    const pressed = (root: HTMLElement) =>
-      root.querySelector('[data-uhp-theme-switch] [aria-pressed="true"]')?.textContent;
-    expect(pressed(load('?theme=dark'))).toBe('Dark');
-    expect(pressed(load('?theme=light'))).toBe('Light');
+  it('labels the button from a dark device setting, and follows a change of setting until it is pressed', () => {
+    let dark = true;
+    let changed: (() => void) | undefined;
+    const original = window.matchMedia;
+    window.matchMedia = ((query: string) => ({
+      get matches() { return query.includes('dark') && dark; },
+      media: query,
+      addEventListener: (_: string, listener: () => void) => { changed = listener; },
+      removeEventListener: () => {},
+    })) as unknown as typeof window.matchMedia;
+    try {
+      const root = load();
+      const button = root.querySelector<HTMLButtonElement>('[data-uhp-theme-switch] button')!;
+      expect(button.textContent).toBe('Light');
+      dark = false;
+      changed!();
+      expect(button.textContent).toBe('Dark');
+      button.click();
+      expect(root.dataset['uhpTheme']).toBe('dark');
+      expect(button.textContent).toBe('Light');
+      // Once pressed, the page keeps its look when the device setting changes.
+      dark = true;
+      changed!();
+      expect(button.textContent).toBe('Light');
+      dark = false;
+      changed!();
+      expect(button.textContent).toBe('Light');
+      expect(root.dataset['uhpTheme']).toBe('dark');
+    } finally {
+      window.matchMedia = original;
+    }
+  });
+
+  it('leaves the bar title shown where the browser cannot watch the page title', () => {
+    const original = window.IntersectionObserver;
+    (window as { IntersectionObserver?: unknown }).IntersectionObserver = undefined;
+    try {
+      const root = load();
+      expect(root.querySelector('[data-uhp-bar]')!.classList.contains('xp-bar-quiet')).toBe(false);
+    } finally {
+      window.IntersectionObserver = original;
+    }
+  });
+
+  it('starts the button from the theme the address names, and leaves it out where the page has no slot', () => {
+    const label = (root: HTMLElement) => root.querySelector('[data-uhp-theme-switch] button')?.textContent;
+    expect(label(load('?theme=dark'))).toBe('Light');
+    expect(label(load('?theme=light'))).toBe('Dark');
     const body = /<body>([\s\S]*)<\/body>/.exec(renderBlocks(page))![1]
       .replace(/<script[^>]*><\/script>/, '')
       .replace(/<div class="xp-theme-switch" data-uhp-theme-switch><\/div>/, '');
     document.body.innerHTML = body;
     enhance(document, '');
-    expect(document.querySelectorAll('.xp-theme-buttons')).toHaveLength(0);
+    expect(document.querySelectorAll('.xp-theme-button')).toHaveLength(0);
+  });
+
+  it('keeps a bar at the top whose title repeats the page title and shows once that title scrolls away', () => {
+    let notify: ((entries: Partial<IntersectionObserverEntry>[]) => void) | undefined;
+    let watched: Element | undefined;
+    const original = window.IntersectionObserver;
+    window.IntersectionObserver = class {
+      constructor(callback: (entries: Partial<IntersectionObserverEntry>[]) => void) { notify = callback; }
+      observe(target: Element) { watched = target; }
+      disconnect() {}
+      unobserve() {}
+    } as unknown as typeof IntersectionObserver;
+    try {
+      const root = load();
+      const bar = root.querySelector<HTMLElement>('[data-uhp-bar]')!;
+      const title = bar.querySelector('.xp-bar-title')!;
+      // The same words as the page title, hidden from assistive technology so they are not read twice.
+      expect(title.getAttribute('aria-hidden')).toBe('true');
+      expect(title.querySelector('.xp-bar-name')?.textContent).toBe(root.querySelector('h1')?.textContent);
+      expect(title.querySelector('.xp-bar-eyebrow')?.textContent).toBe(root.querySelector('.xp-eyebrow')?.textContent);
+      expect(title.querySelectorAll('a, button, input, select, [tabindex]')).toHaveLength(0);
+      expect(watched).toBe(root.querySelector('h1'));
+      expect(bar.classList.contains('xp-bar-quiet')).toBe(true);
+      notify!([{ isIntersecting: false, boundingClientRect: { top: -40 } as DOMRectReadOnly }]);
+      expect(bar.classList.contains('xp-bar-quiet')).toBe(false);
+      notify!([{ isIntersecting: true, boundingClientRect: { top: 10 } as DOMRectReadOnly }]);
+      expect(bar.classList.contains('xp-bar-quiet')).toBe(true);
+      // Below the bottom of the screen is not past it.
+      notify!([{ isIntersecting: false, boundingClientRect: { top: 2000 } as DOMRectReadOnly }]);
+      expect(bar.classList.contains('xp-bar-quiet')).toBe(true);
+    } finally {
+      window.IntersectionObserver = original;
+    }
   });
 
   it('shows one board example at a time, starting with the private employer', () => {

@@ -25,6 +25,23 @@
     <div class="uhp-page">
       <a class="xp-skip" href="#short-version">Skip to the short version</a>
 
+      <!--
+        A bar that stays at the top while the page scrolls. Its title repeats the
+        page title, so assistive technology skips it; a script shows it once the
+        page title has scrolled away. The script also puts a light and dark
+        button in the [data-uhp-theme-switch] element. Remove that element to
+        leave the button out, or remove the whole bar.
+      -->
+      <div class="xp-bar" data-uhp-bar>
+        <div class="xp-wrap xp-bar-inner">
+          <p class="xp-bar-title" aria-hidden="true">
+            <span class="xp-bar-eyebrow">Oregon &middot; plain-language explainer</span>
+            <span class="xp-bar-name">Oregon's proposed Universal Health Plan, explained (unofficial)</span>
+          </p>
+          <div class="xp-theme-switch" data-uhp-theme-switch></div>
+        </div>
+      </div>
+
       <!-- ================================================================ hero -->
       <header class="xp-hero">
         <div class="xp-wrap">
@@ -77,8 +94,6 @@
             <a href="#about">How to check this page</a>
           </nav>
           <p class="xp-snapshot">Source snapshot &middot; October 2026 drafts</p>
-          <!-- A script puts a light and dark switch here. Remove this element to leave it out. -->
-          <div class="xp-theme-switch" data-uhp-theme-switch></div>
         </div>
       </header>
 
