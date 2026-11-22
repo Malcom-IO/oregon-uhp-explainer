@@ -1,0 +1,77 @@
+# Reuse the calculator
+
+## Run it locally
+
+With Node 24, run `npm ci` and `npm run dev`. For a static build, run
+`npm run build` and serve `dist/`. To host the page under a subpath, set
+`BASE_PATH`, for example `BASE_PATH=/oregon-uhp-explainer/ npm run build`.
+Use `npm run preview` to check a build locally, with the same `BASE_PATH`.
+
+The build produces a small site: the explainer at the root, the calculator
+alone at `calculator/`, and `demo/`, a page that shows each way of embedding
+the calculator with working examples. The demo page loads the built library,
+so open it from a build (`npm run build`, then `npm run preview`), not from
+`npm run dev`.
+
+The calculator can be reused two ways.
+
+## As a page, for an iframe
+
+`dist/calculator/index.html` is the calculator alone. Point an iframe at it,
+give the iframe the title “Oregon Universal Health Plan calculator
+(unofficial)” and enough height for the space available. The calculator
+scrolls inside the frame as needed. Nothing on the host page has to run a
+script. The page follows the reader's light or dark system setting; add
+`?theme=light` or `?theme=dark` to the iframe's address to fix its look.
+
+## As a module, mounted in your own page
+
+`dist/lib/oregon-uhp.js` exports `mount`, and `dist/lib/oregon-uhp.css` holds
+the styles. Copy both files to your site. The script carries the MIT license
+notice in a comment; keep it. The page build includes the same notice as
+`dist/LICENSE.txt`.
+
+```html
+<link rel="stylesheet" href="/your-path/oregon-uhp.css">
+<div id="uhp-calculator"></div>
+<script type="module">
+  import { mount } from '/your-path/oregon-uhp.js';
+  mount(document.getElementById('uhp-calculator'), { theme: 'light', headingLevel: 2 });
+</script>
+```
+
+`mount(host, options)` replaces the host element's contents and returns a
+function that removes the calculator. A project that bundles TypeScript and
+CSS imports can import `mount` from `src/widget/index.ts` instead. Options, all
+optional:
+
+| Option | Meaning |
+| --- | --- |
+| `theme` | `'light'`, `'dark'` or `'auto'`. `auto`, the default, follows the reader's system setting. Name a theme if your page has one fixed look. |
+| `headingLevel` | `1`, `2` or `3`: the heading level of the calculator's title. The default is `2`. Headings inside the calculator follow from it. |
+| `show` | `'all'` (the default), `'household'` or `'employer'`: which calculator to show. |
+| `header` | `false` leaves out the title, the source snapshot line and the “unofficial” note. The page around the calculator must then state all three itself. |
+| `initialIncome`, `initialHouseholdSize`, `initialEmployer`, `initialPayroll` | Starting values. A value the matching field would not accept is ignored. |
+
+## Colors and font
+
+The defaults are a white background with dark text, and a dark equivalent.
+Every color is a CSS custom property that a host can set on the calculator's
+element or anywhere above it: `--uhp-surface`, `--uhp-paper`, `--uhp-ink`,
+`--uhp-muted`, `--uhp-line`, `--uhp-control-line`, `--uhp-grid`,
+`--uhp-accent`, `--uhp-status`, `--uhp-error`, `--uhp-series-1` to
+`--uhp-series-5`, and `--uhp-font` for the font family. Unset properties keep
+their defaults. If you set colors, also pass `theme: 'light'` or `'dark'`, so
+the reader's system setting does not swap in the other defaults, and check the
+contrast of what you choose. `demo/` shows an example.
+
+## How it fits into a host page
+
+Every style rule is scoped under the `.oregon-uhp` class and every inner class
+starts with `uhp-`, so the calculator's styles do not reach the host page. The
+reverse is not complete: a host rule that uses an id or `!important`, or that
+sets a property the calculator leaves alone, still applies inside it. Check the
+result on your page, or use the iframe. Text and spacing follow the host
+element's font size, except the chart's axis labels, which are a fixed 12
+pixels. The calculator sends nothing over the network and stores nothing:
+entries stay in the reader's browser.
