@@ -37,8 +37,8 @@ taxes are not allocated to income groups.
   $114.4 billion of resident wages. The Board's own wage base is about $107.0 billion
   ($14,441 million at a 13.5% net rate, PDF p. 31). Using it would put the payroll tax per
   wage dollar at the Board's net rate, but wages are a larger share of income in the IRS
-  table (68% against 65%), so every fifth's combined rate would come out about half a point
-  above the Board's published one. The page says which base it uses.
+  table (68% against 65%), so every fifth's combined rate would rise by about another half
+  point, further above the Board's published one. The page says which base it uses.
 - **The groups' starting points**, such as where the top 1% starts (printed on the page, in
   2026 dollars), come from that spread. Within the IRS's open "$1 million or more" bracket,
   the split between the top 0.1% and the rest of the top 1% rests on the Pareto tail.
@@ -77,7 +77,7 @@ The spec also checks:
   recalculated.
 - The lowest fifth comes out a little higher than the Board's, and the share of returns owing
   nothing lower. The rules match; the Board's return file likely holds more low-income
-  returns than the IRS state tables. The top 1%'s share comes out lower: the Board calls its
-  top 1% "roughly" that.
+  returns than the IRS state tables. The top 1%'s share comes out lower: ranked by people,
+  the top 1% is a smaller set of returns.
 - Who really bears the employer payroll tax is an assumption, the Board's: it is counted
   against workers' pay.

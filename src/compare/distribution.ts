@@ -32,8 +32,8 @@ export const APPENDIX_2022: Readonly<Record<number, { hhcc: number; ept: number 
  * EPT on wages at a 13.5% net rate, about $107.0 billion (our arithmetic). Using it would put
  * the payroll tax per wage dollar at the Board's net rate (8.3% for Model 1, 10.6% for
  * Models 2–5), but wages are a larger share of income in the IRS table than in the Board's
- * model (68% against 65%), so every fifth's combined rate would then come out about half a
- * point above the Board's published one. The IRS base comes out closer, so it is used, and
+ * model (68% against 65%), so every fifth's combined rate would then rise by about another
+ * half point, further above the Board's published one. The IRS base comes out closer, so it is used, and
  * the page says so.
  */
 export const WAGE_BASE_2022 = WAGES_2022;
