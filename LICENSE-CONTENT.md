@@ -12,7 +12,7 @@ The written content of this project is licensed under the
   in `src/site/blocks.ts`.
 - The prose of the embedding guide, `public/demo/index.html`. Its code samples are
   software under the MIT license.
-- The documentation: `README.md`, `SOURCES.md`, the files in `docs/` and this file.
+- The documentation: `README.md`, `SOURCES.md`, `CHANGELOG.md`, the files in `docs/` and this file.
   Their code samples are software under the MIT license.
 
 Everything else, including the calculator, the calculation engine, its data files,

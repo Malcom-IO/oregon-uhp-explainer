@@ -1,6 +1,6 @@
 {
   "name": "oregon-uhp-explainer",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Plain-language explainer and household calculator for Oregon's proposed Universal Health Plan, built on the Governance Board's published revenue models.",
   "license": "MIT",
@@ -16,7 +16,8 @@
     "build": "vite build && vite build --config vite.lib.config.ts",
     "preview": "vite preview",
     "pdf": "node scripts/make-pdf.mjs",
-    "numbers": "UPDATE_NUMBERS=1 vitest run src/site/numbers.spec.ts"
+    "numbers": "UPDATE_NUMBERS=1 vitest run src/site/numbers.spec.ts",
+    "release:assets": "node scripts/release-assets.mjs"
   },
   "devDependencies": {
     "happy-dom": "^21.0.4",

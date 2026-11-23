@@ -6,6 +6,8 @@ authors:
   - family-names: Malcom
     given-names: Marcus
     affiliation: Malcom IO LLC
+version: "0.1.0"
+date-released: "2026-11-22"
 repository-code: "https://github.com/Malcom-IO/oregon-uhp-explainer"
 license:
   - MIT

@@ -4,11 +4,13 @@
  * with the engine and the proposal data; a translation would map `kind` and
  * `id` to its own wording there.
  */
+import { version } from '../../package.json';
+
 export const locale = 'en-US';
 
 export const copy = {
   title: 'Oregon Universal Health Plan calculator (unofficial)',
-  snapshot: 'Source snapshot · October 2026 drafts',
+  snapshot: `Version ${version} · Source snapshot · October 2026 drafts`,
   intro: (models: number) =>
     `Estimates calculated from the ${countWord(models)} financing models in the Universal Health Plan Governance Board’s ` +
     'October 2026 draft report. Unofficial: not published, reviewed or endorsed by the Board or the State of Oregon.',

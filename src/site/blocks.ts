@@ -10,6 +10,7 @@
  * Every chart here is a row of bars beside its own figures in text, so the
  * text carries the same data as the drawing.
  */
+import { version } from '../../package.json';
 import { HOUSEHOLD_ROWS } from '../model/uhp-households';
 import { MODELS, SCENARIOS, payrollTax } from '../model/uhp-model';
 import type { RevenueModel, Scenario as BoardExample } from '../model/uhp-model';
@@ -436,6 +437,8 @@ export function raised(groups: readonly RaisedGroup[]): string {
 
 /** Each marker name in index.html and the block that replaces it. */
 export const blocks: Readonly<Record<string, () => string>> = Object.freeze({
+  // The software version, from package.json; the source snapshot is stated beside it.
+  'version': () => `Version ${version}`,
   'model-cards': () => modelCards(MODELS),
   'models-table': () => modelsTable(MODELS),
   'fifths-table': () => fifthsTable(MODELS),

@@ -261,8 +261,10 @@ describe('the stylesheet', () => {
 });
 
 describe('what scripts add', () => {
-  function load(search = ''): HTMLElement {
-    const body = /<body>([\s\S]*)<\/body>/.exec(renderBlocks(page))![1].replace(/<script[^>]*><\/script>/, '');
+  /** Loads the page. With followDevice, as a host that removed the page's light default. */
+  function load(search = '', followDevice = false): HTMLElement {
+    let body = /<body>([\s\S]*)<\/body>/.exec(renderBlocks(page))![1].replace(/<script[^>]*><\/script>/, '');
+    if (followDevice) body = body.replace(' data-uhp-theme="light"', '');
     document.head.innerHTML = '<meta name="color-scheme" content="light dark">';
     document.body.innerHTML = body;
     enhance(document, search);
@@ -306,8 +308,10 @@ describe('what scripts add', () => {
     expect(employer.querySelector('h3')?.textContent).toBe('Employer payroll tax calculator');
     expect(root.querySelectorAll('.oregon-uhp :is(h1, h2)')).toHaveLength(0);
     expect(root.querySelectorAll('h1')).toHaveLength(1);
-    expect(root.dataset['uhpTheme']).toBeUndefined();
-    expect(household.querySelector<HTMLElement>('.oregon-uhp')!.dataset['uhpTheme']).toBeUndefined();
+    // The page opens light, and so do both calculators.
+    expect(root.dataset['uhpTheme']).toBe('light');
+    expect(household.querySelector<HTMLElement>('.oregon-uhp')!.dataset['uhpTheme']).toBe('light');
+    expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe('light');
   });
 
   it('fixes the look of the page and both calculators when the address names a theme', () => {
@@ -321,7 +325,7 @@ describe('what scripts add', () => {
     localStorage.clear();
     sessionStorage.clear();
     const cookies = document.cookie;
-    const root = load();
+    const root = load('', true);
     const meta = () => document.querySelector('meta[name="color-scheme"]')?.getAttribute('content');
     const looks = () => [root, ...root.querySelectorAll<HTMLElement>('.oregon-uhp')].map((el) => el.dataset['uhpTheme']);
     const buttons = root.querySelectorAll<HTMLButtonElement>('[data-uhp-theme-switch] button');
@@ -367,7 +371,12 @@ describe('what scripts add', () => {
       removeEventListener: () => {},
     })) as unknown as typeof window.matchMedia;
     try {
-      const root = load();
+      // The page as published opens light whatever the device prefers.
+      const published = load();
+      expect(published.dataset['uhpTheme']).toBe('light');
+      expect(published.querySelector('[data-uhp-theme-switch] button')?.textContent).toBe('Dark');
+
+      const root = load('', true);
       const button = root.querySelector<HTMLButtonElement>('[data-uhp-theme-switch] button')!;
       expect(button.textContent).toBe('Light');
       dark = false;

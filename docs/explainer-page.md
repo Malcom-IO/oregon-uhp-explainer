@@ -27,8 +27,10 @@ that reads complete with JavaScript off, inside one element with the class
   `?theme=dark` (`src/site/main.ts`).
 - **Styles** are in `src/site/site.css`, every rule under `.uhp-page`, with the
   calculator's `--uhp-*` color properties and the same defaults. Set them on
-  `.uhp-page` or above it and the page and both calculators follow; set
-  `data-uhp-theme="light"` or `"dark"` on `.uhp-page` to fix the look.
+  `.uhp-page` or above it and the page and both calculators follow. The page
+  opens in light colors because `.uhp-page` carries `data-uhp-theme="light"`;
+  set it to `"dark"` to open dark, or remove it to follow the reader's device
+  setting. The light and dark button still switches either way.
 
 The page's text is under [CC BY 4.0](../LICENSE-CONTENT.md); its markup, styles
 and scripts are under the [MIT license](../LICENSE).

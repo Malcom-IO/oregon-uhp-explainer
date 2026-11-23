@@ -1,0 +1,64 @@
+name: Release
+
+# Pushing a tag such as v0.1.0 builds the release files and publishes them as a
+# GitHub Release: the calculator library, the PDF of the explainer, the whole
+# site as a ZIP, and their checksums. scripts/release-assets.mjs assembles them
+# and refuses a tag that does not match the version in package.json,
+# CITATION.cff and CHANGELOG.md. docs/releasing.md has the steps.
+
+on:
+  push:
+    tags: ['v*']
+  # A dry run: builds the same files from the chosen branch and keeps them as a
+  # workflow artifact, without publishing anything.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # A release is built from main: refuse a tag on a commit main does not contain.
+      - if: github.ref_type == 'tag'
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      # Relative paths, so the site in the ZIP works at any address.
+      - run: npm run build
+        env:
+          BASE_PATH: ./
+      - id: pages
+        uses: actions/configure-pages@v5
+      - run: npm run pdf
+        env:
+          PUBLIC_URL: ${{ steps.pages.outputs.base_url }}
+          REQUIRE_PUBLIC_URL: 'true'
+      - run: npm run release:assets
+        env:
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+      - if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-dry-run
+          path: release/
+      - name: Publish the release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" --verify-tag --title "$TAG" --notes-file release/notes.md \
+            $(find release -maxdepth 1 -type f ! -name notes.md | sort)

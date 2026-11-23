@@ -51,13 +51,14 @@ save. [The limits, in full](docs/review.md#what-it-cannot-tell-you)
 | [Reuse the calculator](docs/reuse.md) | Run it locally, embed it in an iframe or as a module, its options, colors and themes |
 | [The explainer page](docs/explainer-page.md) | How the page is built, and how to edit or translate it without breaking a number |
 | [The calculation engine](docs/engine.md) | How the five models are stored as data, and how to add a revised model |
+| [CHANGELOG.md](CHANGELOG.md) and [releases](https://github.com/Malcom-IO/oregon-uhp-explainer/releases) | Each version, the source snapshot it is built on, and its downloadable files: the calculator library, the PDF and the site as a ZIP |
 | [LICENSE](LICENSE) and [LICENSE-CONTENT.md](LICENSE-CONTENT.md) | What you may do with the code and the text, and how to credit it |
 
 ## Cite it
 
 If you publish results, please cite the project and the source snapshot:
 
-> Oregon Universal Health Plan explainer and calculator (unofficial), October 2026
-> drafts snapshot. https://github.com/Malcom-IO/oregon-uhp-explainer
+> Oregon Universal Health Plan explainer and calculator (unofficial), version 0.1.0,
+> October 2026 drafts snapshot. https://github.com/Malcom-IO/oregon-uhp-explainer
 
 Maintained by Marcus Malcom (Malcom IO LLC).
