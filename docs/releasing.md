@@ -4,7 +4,7 @@ A version names the software and the source snapshot it is built on (see
 [CHANGELOG.md](../CHANGELOG.md)). Releases are listed on the repository's
 [Releases page](https://github.com/Malcom-IO/oregon-uhp-explainer/releases), and the
 calculator library is also published to npm as
-[`oregon-uhp-calculator`](https://www.npmjs.com/package/oregon-uhp-calculator). Each
+[`oregon-uhp-explainer`](https://www.npmjs.com/package/oregon-uhp-explainer). Each
 release has:
 
 - `oregon-uhp.js`, `oregon-uhp.css` and `oregon-uhp.d.ts`: the calculator as a module;
@@ -40,7 +40,7 @@ The same workflow stages `release/npm/` on npm, with a provenance statement, whe
 repository variable `NPM_PUBLISH` is `true` and the package's trusted publisher on
 npmjs.com is set to this repository's `release.yml`. No npm token is stored. A staged
 version is not public: approve it on the package's page on npmjs.com, or with
-`npm stage list oregon-uhp-calculator` and `npm stage approve <id>`, which ask for
+`npm stage list oregon-uhp-explainer` and `npm stage approve <id>`, which ask for
 two-factor authentication. Until then `npm install` keeps getting the previous version.
 
 A release cannot be quietly changed afterward, on GitHub or on npm: fix a mistake with a

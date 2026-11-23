@@ -48,7 +48,7 @@ save. [The limits, in full](docs/review.md#what-it-cannot-tell-you)
 | [Check the numbers](docs/numbers.md) | Every input the calculator uses, with its source, and each of the Board's worked examples beside the calculator's result |
 | [How to check this project](docs/review.md) | How the numbers are sourced and tested, how to run the tests, and the limits of the results |
 | [SOURCES.md](SOURCES.md) | Every Board document used, with addresses, page references, checksums and known discrepancies |
-| [Reuse the calculator](docs/reuse.md) | Run it locally, embed it in an iframe or as a module (also on npm as `oregon-uhp-calculator`), its options, colors and themes |
+| [Reuse the calculator](docs/reuse.md) | Run it locally, embed it in an iframe or as a module (also on npm as `oregon-uhp-explainer`), its options, colors and themes |
 | [The explainer page](docs/explainer-page.md) | How the page is built, and how to edit or translate it without breaking a number |
 | [The calculation engine](docs/engine.md) | How the five models are stored as data, and how to add a revised model |
 | [CHANGELOG.md](CHANGELOG.md) and [releases](https://github.com/Malcom-IO/oregon-uhp-explainer/releases) | Each version, the source snapshot it is built on, and its downloadable files: the calculator library, the PDF and the site as a ZIP |

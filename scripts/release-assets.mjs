@@ -78,9 +78,9 @@ cpSync(join(ROOT, 'LICENSE'), join(pkg, 'LICENSE'));
 cpSync(join(ROOT, 'npm/README.md'), join(pkg, 'README.md'));
 const repo = 'https://github.com/Malcom-IO/oregon-uhp-explainer';
 writeFileSync(join(pkg, 'package.json'), `${JSON.stringify({
-  name: 'oregon-uhp-calculator',
+  name: 'oregon-uhp-explainer',
   version,
-  description: `Unofficial calculator for Oregon's proposed Universal Health Plan: what households and employers would pay under the Board's draft financing models (${snapshot} snapshot).`,
+  description: `Unofficial explainer code for Oregon's proposed Universal Health Plan, starting with a calculator of what households and employers would pay under the Board's draft financing models (${snapshot} snapshot).`,
   license: 'MIT',
   author: 'Marcus Malcom (Malcom IO LLC)',
   homepage: 'https://malcom-io.github.io/oregon-uhp-explainer/',
