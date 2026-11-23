@@ -1,0 +1,65 @@
+name: Something on the site is wrong or unclear
+description: A number, a source, or a sentence that misreads a Board document.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        This project explains what the Board's documents say. It takes no position on the plan,
+        it is not run by the Board, and issues here do not reach the Board. To tell the Board what
+        it should decide, use its
+        [public comment process](https://www.oregon.gov/uhpgb/Pages/public-comment.aspx).
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where on the site?
+      description: Pick the closest match. If you can't find it, choose the last option and describe it below.
+      options:
+        - "Explainer: The short version"
+        - "Explainer: Where it stands"
+        - "Explainer: What the plan would cover"
+        - "Explainer: How it would be paid for"
+        - "Explainer: What would your household pay?"
+        - "Explainer: The board's own examples"
+        - "Explainer: If you run a business"
+        - "Explainer: If you work in health care"
+        - "Explainer: What is not settled"
+        - "Explainer: If nothing changes"
+        - "Explainer: The statewide math"
+        - "Explainer: Sources"
+        - "Explainer: How to check this page"
+        - "The calculator page"
+        - "Check the numbers (docs/numbers.md)"
+        - "Another page or document in the project"
+        - "I'm not sure, or I can't find it in this list"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What does it say now?
+      description: >-
+        Quote the sentence or number, or describe where you saw it. A link helps: each section of
+        the explainer has its own address, such as
+        https://malcom-io.github.io/oregon-uhp-explainer/#coverage
+    validations:
+      required: true
+  - type: textarea
+    id: should
+    attributes:
+      label: What should it say, and why?
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: The document, page and table, if you have one. You can attach files here too.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: >-
+            This is about the site's accuracy or clarity, not a recommendation about what the
+            Board should decide.
+          required: true

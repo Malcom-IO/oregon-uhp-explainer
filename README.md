@@ -41,6 +41,18 @@ business, and do it in the open, so anyone can check every number.**
 the payments in those drafts, not a prediction of what anyone will finally pay or
 save. [The limits, in full](docs/review.md#what-it-cannot-tell-you)
 
+## What this project is not
+
+- **Not the Board.** It is not run, reviewed or endorsed by the Universal Health Plan
+  Governance Board or the State of Oregon.
+- **Not a way to reach the Board.** Issues here go to this project, and the Board does not
+  see them. To tell the Board what it should decide, use its
+  [public comment process](https://www.oregon.gov/uhpgb/Pages/public-comment.aspx).
+- **Not a place to argue for or against the plan.** Issues are for making the site
+  accurate and clear: a wrong number, a missing source, a sentence that misreads a
+  document. Requests to recommend a policy, or to favor a model, are closed with a
+  pointer to the Board's public comment process.
+
 ## Go deeper
 
 | Document | What is in it |
