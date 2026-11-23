@@ -161,6 +161,21 @@ The supplementary PDFs below were fetched November 22, 2026 (Pacific time).
   calculations from the report's inputs. The report's published scenarios supply the
   baseline totals for those comparisons.
 
+## Revenue balancer sources
+
+The [revenue balancer](docs/balancer.md) also uses figures from outside the Board's
+documents. These are cited on the page but not yet fingerprinted here.
+
+- IRS Statistics of Income, Historic Table 2, tax year 2022, Oregon (`22in55cmcsv.csv`):
+  returns, filing status, people, AGI, taxable Social Security, wages and capital gains by
+  income bracket.
+- BLS Quarterly Census of Employment and Wages, 2022: Oregon state and local government wages.
+- BLS Consumer Expenditure Survey, 2025 release: spending by income quintile.
+- Oregon Department of Revenue, Oregon Property Tax Statistics, FY 2024-25: net assessed value.
+- ECOnorthwest finance and revenue report, page 72 (the LRO's sales tax estimate), and the
+  report's Tables R1 and R3 and Appendix FR (corporate income and activity tax estimates).
+- Legislative Revenue Office estimate for Measure 108 (2020), via Ballotpedia: cigarette tax revenue.
+
 ## Known discrepancies
 
 - **Table S1, report p. 43.** For $90,000 of income under Model 5, the report prints $3,699.

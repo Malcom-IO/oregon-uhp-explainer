@@ -4,6 +4,14 @@ Each version names two things: the software version, and the source snapshot, th
 set of Universal Health Plan Governance Board documents its numbers come from. A
 change of snapshot changes numbers; read its notes before relying on a figure.
 
+## Unreleased
+
+- **Revenue balancer:** a page at `/balancer/` for trying your own mix of taxes against
+  the money the plan needs, in three steps: the Board's models, five simple choices, and
+  every rate. It shows who pays by income and what a household would pay, and plans can
+  be shared as links. Its household bills are tested against the calculator, and its
+  totals against the Board's 2022 results. [docs/balancer.md](docs/balancer.md)
+
 ## 0.1.0 · October 2026 drafts
 
 The first release. Built on the Board's October 2026 draft legislative report, its
