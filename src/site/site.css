@@ -687,6 +687,13 @@
   /* A heading or label stays with what follows it. */
   .uhp-page :is(h2, h3, h4, .xp-kicker, .xp-band) { break-after: avoid; }
   .uhp-page .xp-calc .uhp-chart { break-inside: avoid; }
-  .uhp-page .xp-section { padding-block: 1.5em; }
+  /* Each major part starts on a fresh page; the smaller sections between them follow on. */
+  .uhp-page :is(#short-version, #coverage, #funding, #calculator, #employers, #providers,
+    #open-questions, #status-quo, #total-cost, #about) { break-before: page; }
+  .uhp-page .xp-print-break { break-before: page; }
+  /* Small sections, cards and boxes are not split across pages. */
+  .uhp-page :is(#status, .xp-open li, .xp-pairs li, .xp-steps li, .xp-callout) { break-inside: avoid; }
+  .uhp-page .xp-calc :is(.uhp-callout, .uhp-bill, .uhp-inputs) { break-inside: avoid; }
+  .uhp-page .xp-section { padding-block: 1.5em 0; }
   .uhp-page :is(.xp-card, .xp-fact, .xp-model, .xp-est-card, .xp-figure, .xp-table tr, .xp-checks li) { break-inside: avoid; }
 }
