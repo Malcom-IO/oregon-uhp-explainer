@@ -36,9 +36,12 @@ release has:
    The Release workflow builds the files again from the tag and publishes the release.
    It refuses a tag that does not match the version in the files.
 
-The same workflow publishes `release/npm/` to npm, with a provenance statement, when the
+The same workflow stages `release/npm/` on npm, with a provenance statement, when the
 repository variable `NPM_PUBLISH` is `true` and the package's trusted publisher on
-npmjs.com is set to this repository's `release.yml`. No npm token is stored.
+npmjs.com is set to this repository's `release.yml`. No npm token is stored. A staged
+version is not public: approve it on the package's page on npmjs.com, or with
+`npm stage list oregon-uhp-calculator` and `npm stage approve <id>`, which ask for
+two-factor authentication. Until then `npm install` keeps getting the previous version.
 
 A release cannot be quietly changed afterward, on GitHub or on npm: fix a mistake with a
 new patch version.

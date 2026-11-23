@@ -66,9 +66,10 @@ jobs:
           gh release create "$TAG" --verify-tag --title "$TAG" --notes-file release/notes.md \
             $(find release -maxdepth 1 -type f ! -name notes.md | sort)
       # The same library files as the release, as the npm package oregon-uhp-calculator,
-      # with a provenance statement linking it to this workflow run. Needs the package's
-      # trusted publisher set to this workflow on npmjs.com, and the repository variable
-      # NPM_PUBLISH set to true (docs/releasing.md).
-      - name: Publish to npm
+      # with a provenance statement linking it to this workflow run. It is staged, not
+      # published: it goes public only when the maintainer approves it on npmjs.com with
+      # two-factor authentication. Needs the package's trusted publisher set to this
+      # workflow, and the repository variable NPM_PUBLISH set to true (docs/releasing.md).
+      - name: Stage the npm package
         if: github.ref_type == 'tag' && vars.NPM_PUBLISH == 'true'
-        run: npm publish ./release/npm --provenance --access public
+        run: npm stage publish ./release/npm --provenance --access public
