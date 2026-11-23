@@ -6,6 +6,7 @@ business, and do it in the open, so anyone can check every number.**
 
 **[Read the explainer](https://malcom-io.github.io/oregon-uhp-explainer/)** ·
 **[Open the calculator](https://malcom-io.github.io/oregon-uhp-explainer/calculator/)** ·
+**[Check the numbers](docs/numbers.md)** ·
 [See how to embed it](https://malcom-io.github.io/oregon-uhp-explainer/demo/)
 
 > **Draft.** Built on the Universal Health Plan Governance Board's October 2026 draft
@@ -21,14 +22,15 @@ business, and do it in the open, so anyone can check every number.**
   shows. [SOURCES.md](SOURCES.md)
 - **The math is tested against the Board's own examples.** The tests reproduce the
   worked household examples in the Board's draft report for all five models.
-  [How to check it yourself](docs/review.md)
+  [Every number, and the Board's examples beside the calculator's](docs/numbers.md)
 - **Corrections are public.** If a number is wrong or a description is unfair,
   [open an issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues). Everyone
   can see the report and the change that answers it.
 - **Impartial.** The project takes no position on the plan. It shows whatever the
   Board's numbers show, whether a model costs a household more than today or less.
-- **Unofficial.** It is not published, reviewed or endorsed by the Board or the State
-  of Oregon.
+- **Unofficial while it is being reviewed.** The Board has asked for the calculator's numbers
+  to be checked before deciding whether to host it. Until then, it is not published,
+  reviewed or endorsed by the Board or the State of Oregon.
 - **It collects nothing.** No accounts, analytics, advertising or cookies. What you
   type stays in your browser.
 - **Free to use.** Anyone may copy, change and republish it, with credit: code under
@@ -43,6 +45,7 @@ save. [The limits, in full](docs/review.md#what-it-cannot-tell-you)
 
 | Document | What is in it |
 | --- | --- |
+| [Check the numbers](docs/numbers.md) | Every input the calculator uses, with its source, and each of the Board's worked examples beside the calculator's result |
 | [How to check this project](docs/review.md) | How the numbers are sourced and tested, how to run the tests, and the limits of the results |
 | [SOURCES.md](SOURCES.md) | Every Board document used, with addresses, page references, checksums and known discrepancies |
 | [Reuse the calculator](docs/reuse.md) | Run it locally, embed it in an iframe or as a module, its options, colors and themes |

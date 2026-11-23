@@ -77,3 +77,50 @@ export const SCENARIOS: readonly Scenario[] = [
     ],
   },
 ];
+
+/**
+ * How each worked example is set up: the household size, the employer payroll tax
+ * rate on its wages by model (index 0 is Model 1), and where the table is. The
+ * engine's specs and the numbers page (docs/numbers.md) both read this, so they
+ * check the same thing.
+ */
+export const EXAMPLE_SETUP: Readonly<Record<string, {
+  size: number;
+  rate: (modelIndex: number) => number;
+  table: string;
+  assumption: string;
+}>> = {
+  self: {
+    size: 1,
+    rate: () => 0,
+    table: 'Table S1, report page 43',
+    assumption: 'No employer pays payroll tax on this income, so there is no worker credit.',
+  },
+  private: {
+    size: 2,
+    rate: () => 0.09,
+    table: 'Table S2, report page 44',
+    assumption:
+      'The employer pays the rounded 9% payroll tax rate the Board shows for an $8.5 million payroll; the wages are the ones that rate implies.',
+  },
+  public: {
+    size: 1,
+    rate: (i) => (i === 0 ? 0.096 : 0.14),
+    table: 'Table S3, report pages 45–46',
+    assumption:
+      'A public employer pays the top payroll rate from the first dollar: 9.6% under Model 1 and 14% under the others.',
+  },
+  medicare: {
+    size: 2,
+    rate: () => 0,
+    table: 'Table S4, report pages 46–47',
+    assumption: 'The income is not wages, so there is no worker credit. Income is adjusted gross income without the federally taxed part of Social Security.',
+  },
+};
+
+/**
+ * Cells that do not fit the report's own schedule. Table S1, $90,000, Model 5
+ * prints 3,699 where the schedule gives 3,669: a likely one-digit misprint, since
+ * the same model at $85,000 and $110,000 in Table S3 fits to the dollar.
+ */
+export const KNOWN_MISPRINTS: ReadonlySet<string> = new Set(['self:90000:5']);

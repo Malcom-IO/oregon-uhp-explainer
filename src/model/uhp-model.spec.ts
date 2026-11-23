@@ -1,3 +1,4 @@
+import { EXAMPLE_SETUP, KNOWN_MISPRINTS } from './proposals/uhpgb-2026-10-examples';
 import {
   FPL_138,
   FPL_200,
@@ -18,18 +19,19 @@ import {
  * board describes.
  */
 describe('all five models reproduce the board examples', () => {
-  /** Household size and employer payroll tax rate (by model index) per scenario. */
-  const setup: Record<string, { size: number; rate: (i: number) => number }> = {
-    self: { size: 1, rate: () => 0 },
-    private: { size: 2, rate: () => 0.09 },
-    public: { size: 1, rate: (i) => (i === 0 ? 0.096 : 0.14) },
-    medicare: { size: 2, rate: () => 0 },
-  };
+  // Household size and employer payroll tax rate per scenario, and the one cell
+  // that does not fit the report's own schedule, are in the examples file.
+  const setup = EXAMPLE_SETUP;
 
-  // One cell in the report does not fit its own schedule: Table S1, $90,000,
-  // Model 5 prints 3,699 where the schedule gives 3,669 (a likely one-digit misprint;
-  // the same model at $85,000 and $110,000 in Table S3 fits to the dollar).
-  const KNOWN_MISPRINTS = new Set(['self:90000:5']);
+  it('treats exactly one cell as a misprint, and sets up every table', () => {
+    expect([...KNOWN_MISPRINTS]).toEqual(['self:90000:5']);
+    expect(Object.keys(setup).sort()).toEqual(SCENARIOS.map((s) => s.id).sort());
+    expect(setup['self'].rate(0)).toBe(0);
+    expect(setup['private'].rate(0)).toBe(0.09);
+    expect([0, 1, 2, 3, 4].map(setup['public'].rate)).toEqual([0.096, 0.14, 0.14, 0.14, 0.14]);
+    expect(setup['medicare'].rate(0)).toBe(0);
+    expect(Object.values(setup).map((s) => s.size)).toEqual([1, 2, 1, 2]);
+  });
 
   for (const scenario of SCENARIOS) {
     it(`Table ${scenario.id}: every published cell within $4`, () => {

@@ -19,6 +19,9 @@ have to trust whoever built the calculator. So everything here is public.
 
 ## How the math is tested
 
+[Check the numbers](numbers.md) lists every input and sets each of the Board's worked
+examples beside the calculator's result.
+
 The tests reproduce the worked household examples in the Board's draft report
 (Tables S1–S4 of the October 2026 legislative report draft) for all five models, each
 cell within $4, apart from one cell the report appears to misprint (Table S1, $90,000,
@@ -34,6 +37,12 @@ npm test
 npm run typecheck
 ```
 
+The calculator's cards also show the amount before the worker credit and the credit
+itself. The Board publishes no credit amounts, so these are the project's arithmetic.
+The card prints the credit as the rounded amount before it minus the rounded bill, so
+the three figures add up; that can differ by $1 from the unrounded credit the engine
+returns, and a credit under 50 cents is not shown.
+
 ## How to report a problem
 
 If a number is wrong or a description is unfair, open an
@@ -48,8 +57,9 @@ more than what people pay today and some cost less, and the calculator shows whi
 it is. The explainer describes what the Board's documents say, including what they
 leave unsettled.
 
-It is unofficial. It is not published, reviewed or endorsed by the Board or the State
-of Oregon.
+It is unofficial while it is being reviewed. The Board has asked for the calculator's numbers
+to be checked before deciding whether to host it. Until then, it is not published,
+reviewed or endorsed by the Board or the State of Oregon.
 
 ## Privacy
 
