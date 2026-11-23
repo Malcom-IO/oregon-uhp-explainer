@@ -212,7 +212,7 @@ describe('the page as a document', () => {
       if (href.startsWith('#')) expect(ids, href).toContain(href.slice(1));
       else if (href.startsWith('https://')) {
         expect(href).toMatch(/^https:\/\/(www\.oregon\.gov\/uhpgb\/|github\.com\/Malcom-IO\/oregon-uhp-explainer(\/|$))/);
-      } else expect(['calculator/', 'demo/', 'oregon-uhp-explainer.pdf']).toContain(href);
+      } else expect(['calculator/', 'compare/', 'demo/', 'oregon-uhp-explainer.pdf']).toContain(href);
     }
   });
 
