@@ -1,0 +1,15 @@
+name: Open an issue
+description: Something on the site is wrong or unclear, or anything else about the project.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        This project is not run by the Universal Health Plan Governance Board, and the Board
+        does not see these issues. To tell the Board what it should decide, use its
+        [public comment process](https://www.oregon.gov/uhpgb/Pages/public-comment.aspx).
+  - type: textarea
+    id: description
+    attributes:
+      label: Add a description
+    validations:
+      required: true
