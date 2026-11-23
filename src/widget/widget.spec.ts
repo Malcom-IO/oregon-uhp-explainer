@@ -87,8 +87,9 @@ function expectBills(income: number, size: number, employer: EmployerKind, payro
       want.push(expected.gross < 0.5
         ? 'Your income is within this model’s exemption.'
         : 'The worker credit covers the whole bill, if your employer pays the payroll tax shown.');
-    } else if (expected.credit >= 0.5) {
-      want.push(`${usd.format(expected.gross)} before a ${usd.format(expected.credit)} worker credit.`);
+    } else if (expected.credit >= 0.5 && Math.round(expected.gross) - Math.round(expected.household) > 0) {
+      const credit = Math.round(expected.gross) - Math.round(expected.household);
+      want.push(`${usd.format(expected.gross)} before a ${usd.format(credit)} worker credit.`);
     }
     if (expected.employer >= 0.5) want.push(`Your employer would pay about ${usd.format(expected.employer)} on your wages.`);
     expect(details).toEqual(want);
@@ -722,6 +723,37 @@ describe('calculator widget', () => {
     expect(host.querySelector<HTMLElement>(`#${field.id}-hint`)!.hidden).toBe(true);
     change(EMPLOYER, 'private', 'change');
     expect(field.getAttribute('aria-describedby')).toBe(hint.id);
+  });
+
+  it('prints a worker credit line that adds up to the bill on the card', () => {
+    // Rounded separately, this case would print $42,948 before an $18,071 credit beside a $24,878 bill.
+    destroy = mount(host, { initialIncome: 400_000, initialHouseholdSize: 4, initialPayroll: 8_500_000 });
+    expectBills(400_000, 4, 'private', 8_500_000);
+    let lines = 0;
+    for (const card of householdCards()) {
+      const line = card.querySelector('.uhp-bill-detail')?.textContent ?? '';
+      const match = line.match(/^\$([\d,]+) before a \$([\d,]+) worker credit\.$/);
+      if (!match) continue;
+      lines++;
+      const amount = (text: string) => Number(text.replace(/,/g, ''));
+      const printedBill = amount(card.querySelector('.uhp-bill-amount')!.textContent!.replace(/[^\d,]/g, ''));
+      expect(amount(match[1]) - amount(match[2])).toBe(printedBill);
+    }
+    // Models 1, 2 and 4 have the worker credit.
+    expect(lines).toBe(3);
+    const model4 = bill(MODELS[3], 400_000, 4, 'private', 8_500_000);
+    expect(Math.round(model4.credit)).not.toBe(Math.round(model4.gross) - Math.round(model4.household));
+  });
+
+  it('does not print a worker credit that rounding would inflate', () => {
+    // Just over $500,000 of payroll the employer's rate, and so the credit, is about a cent,
+    // but the amount before the credit and the bill can still round to different dollars.
+    const result = bill(MODELS[0], 100_020, 1, 'private', 500_001);
+    expect(result.credit).toBeLessThan(0.5);
+    expect(Math.round(result.gross) - Math.round(result.household)).toBe(1);
+    destroy = mount(host, { initialIncome: 100_020, initialHouseholdSize: 1, initialPayroll: 500_001 });
+    expect(householdCards()[0].textContent).not.toContain('worker credit');
+    expectBills(100_020, 1, 'private', 500_001);
   });
 
   it('never calls a bill that prints as $1 nothing', () => {

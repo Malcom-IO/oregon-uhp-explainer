@@ -299,9 +299,14 @@ function billCard(doc: Document, level: number, result: Bill, index: number, cur
   if (line) card.append(verdictLine(doc, line.text, line.tone));
   if (result.household < ZERO) {
     card.append(element(doc, 'p', result.gross < ZERO ? copy.zeroExempt : copy.zeroCredit, 'uhp-hint uhp-bill-detail'));
-  } else if (result.credit >= 0.5) {
-    card.append(element(doc, 'p', copy.creditUsed(dollars.format(result.credit), dollars.format(result.gross)),
-      'uhp-hint uhp-bill-detail'));
+  } else {
+    // Shown as the difference of the two printed amounts, so the line adds up to the bill on the card.
+    // A credit under 50 cents is not shown, so rounding cannot print a credit far larger than the real one.
+    const credit = Math.round(result.gross) - Math.round(result.household);
+    if (result.credit >= 0.5 && credit > 0) {
+      card.append(element(doc, 'p', copy.creditUsed(dollars.format(credit), dollars.format(result.gross)),
+        'uhp-hint uhp-bill-detail'));
+    }
   }
   if (result.employer >= 0.5) {
     card.append(element(doc, 'p', copy.employerOnWages(dollars.format(result.employer)), 'uhp-hint uhp-bill-detail'));
