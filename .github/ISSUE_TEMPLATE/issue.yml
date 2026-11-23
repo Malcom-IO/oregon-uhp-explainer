@@ -7,6 +7,15 @@ body:
         This project is not run by the Universal Health Plan Governance Board, and the Board
         does not see these issues. To tell the Board what it should decide, use its
         [public comment process](https://www.oregon.gov/uhpgb/Pages/public-comment.aspx).
+  - type: dropdown
+    id: category
+    attributes:
+      label: What is it about?
+      options:
+        - A number or calculation
+        - Wording or an explanation
+        - A source or citation
+        - Something else
   - type: textarea
     id: description
     attributes:
