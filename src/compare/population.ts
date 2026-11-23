@@ -55,6 +55,13 @@ function spread(bracket: number, mean: number): number[] {
   return q;
 }
 
+/**
+ * Residents on no Oregon tax return. The Board puts "more than 600,000" of them in the
+ * lowest fifth (Appendix FR, PDF p. 31). The IRS table has no income for them, so they
+ * are counted as people with no income and no contribution, only to place the fifths.
+ */
+export const NONFILERS = 600_000;
+
 export interface Population {
   /** Income (AGI less taxable Social Security), 2022 dollars. */
   readonly income: Float64Array;
@@ -64,6 +71,8 @@ export interface Population {
   readonly size: Uint8Array;
   /** How many real returns this point stands for. */
   readonly weight: Float64Array;
+  /** True for the point standing for residents on no return. */
+  readonly nonfiler: Uint8Array;
 }
 
 /**
@@ -72,7 +81,8 @@ export interface Population {
  * so the model's size-based thresholds apply.
  */
 export const POPULATION: Population = (() => {
-  const rows: { income: number; wages: number; size: number; weight: number }[] = [];
+  const rows: { income: number; wages: number; size: number; weight: number; nonfiler?: boolean }[] = [];
+  if (NONFILERS > 0) rows.push({ income: 0, wages: 0, size: 1, weight: NONFILERS, nonfiler: true });
   for (const [bracket, n, single, joint, hoh, people, agi, ss, wages] of IRS_2022_OR) {
     const base = (agi - ss) * 1e3, mean = base / n;
     const other = n - single - joint - hoh; // mostly married filing separately: one person
@@ -89,12 +99,14 @@ export const POPULATION: Population = (() => {
       }
     }
   }
-  rows.sort((a, b) => a.income - b.income);
+  // Lowest income first; residents on no return go first, as the Board places them.
+  rows.sort((a, b) => Number(!!b.nonfiler) - Number(!!a.nonfiler) || a.income - b.income);
   return {
     income: Float64Array.from(rows, (r) => r.income),
     wages: Float64Array.from(rows, (r) => r.wages),
     size: Uint8Array.from(rows, (r) => r.size),
     weight: Float64Array.from(rows, (r) => r.weight),
+    nonfiler: Uint8Array.from(rows, (r) => Number(!!r.nonfiler)),
   };
 })();
 
@@ -102,7 +114,9 @@ export const POPULATION: Population = (() => {
 export const WAGES_2022 = IRS_2022_OR.reduce((s, r) => s + r[8], 0) * 1e3;
 
 /**
- * Income groups by share of returns, lowest first: four fifths, then the top fifth
+ * Income groups by share of people, lowest first, as the Board defines its fifths: "by
+ * people represented on tax returns" (Appendix FR, PDF p. 31). Each return counts once
+ * per person on it: four fifths, then the top fifth
  * in five parts. `fifth` says which fifth a group belongs to.
  */
 export const GROUPS = [
@@ -117,22 +131,33 @@ export const GROUPS = [
   { label: 'Top 0.1%', short: 'Top 0.1', to: 1, fifth: 4 },
 ] as const;
 
-/** The group each point falls in. */
+/** People each point stands for. */
+const people = (i: number) => POPULATION.weight[i] * POPULATION.size[i];
+
+/** The group each point falls in, by its people's place among all Oregonians counted. */
 export const GROUP_OF: Uint8Array = (() => {
-  const { weight } = POPULATION, total = weight.reduce((a, b) => a + b, 0), g = new Uint8Array(weight.length);
+  const n = POPULATION.weight.length, g = new Uint8Array(n);
+  let total = 0;
+  for (let i = 0; i < n; i++) total += people(i);
   let acc = 0, k = 0;
-  for (let i = 0; i < weight.length; i++) {
-    acc += weight[i];
+  for (let i = 0; i < n; i++) {
+    acc += people(i);
     while (k < GROUPS.length - 1 && acc / total > GROUPS[k].to + 1e-9) k++;
     g[i] = k;
   }
   return g;
 })();
 
-/** Where a 2022 income ranks: the share of returns with less, and its group. */
-export function standing(income2022: number): { below: number; group: number } {
-  const { income, weight } = POPULATION, total = weight.reduce((a, b) => a + b, 0);
-  let below = 0, group = 0;
-  for (let i = 0; i < income.length && income[i] < income2022; i++) { below += weight[i]; group = GROUP_OF[i]; }
-  return { below: below / total, group };
+/** The group a household with this 2022 income falls in. */
+export function groupOf(income2022: number): number {
+  const { income } = POPULATION;
+  let group = 0;
+  for (let i = 0; i < income.length && income[i] < income2022; i++) group = GROUP_OF[i];
+  return group;
 }
+
+/** Where each group starts, in 2022 dollars: the lowest income in it (0 for the lowest). */
+export const GROUP_FLOORS: number[] = GROUPS.map((_, k) => {
+  const i = GROUP_OF.indexOf(k);
+  return k === 0 ? 0 : Math.max(0, POPULATION.income[i]);
+});

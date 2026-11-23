@@ -1,6 +1,7 @@
 import citation from '../../CITATION.cff?raw';
 import changelog from '../../CHANGELOG.md?raw';
 import page from '../../index.html?raw';
+import comparePage from '../../compare/index.html?raw';
 import readme from '../../README.md?raw';
 import { version } from '../../package.json';
 import { copy } from '../widget/strings';
@@ -17,7 +18,9 @@ describe('the version', () => {
   });
 
   it('is shown beside the source snapshot on the page and in the calculator', () => {
-    expect(renderBlocks(page)).toContain(`Version ${version} &middot; Source snapshot &middot; October 2026 drafts`);
+    for (const html of [page, comparePage]) {
+      expect(renderBlocks(html)).toContain(`Version ${version} &middot; Source snapshot &middot; October 2026 drafts`);
+    }
     expect(copy.snapshot).toBe(`Version ${version} · Source snapshot · October 2026 drafts`);
     // The changelog names the same snapshot for this version.
     expect(changelog).toMatch(new RegExp(`^## ${version.replace(/\./g, '\\.')} · October 2026 drafts$`, 'm'));

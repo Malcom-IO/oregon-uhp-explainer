@@ -24,6 +24,21 @@ export const APPENDIX_2022: Readonly<Record<number, { hhcc: number; ept: number 
   5: { hhcc: 8_170, ept: 11_341 },
 });
 
+/**
+ * The wages each model's payroll tax is spread over: the IRS table's 2022 resident wages,
+ * $114.4 billion, so the total counted against wages equals the Board's payroll tax.
+ *
+ * The Board's own base is smaller: Appendix FR, PDF p. 31, has $14,441 million of HHCC and
+ * EPT on wages at a 13.5% net rate, about $107.0 billion (our arithmetic). Using it would put
+ * the payroll tax per wage dollar at the Board's net rate (8.3% for Model 1, 10.6% for
+ * Models 2–5), but wages are a larger share of income in the IRS table than in the Board's
+ * model (68% against 65%), so every fifth's combined rate would then come out about half a
+ * point above the Board's published one. The IRS base comes out closer, so it is used, and
+ * the page says so.
+ */
+export const WAGE_BASE_2022 = WAGES_2022;
+export const BOARD_WAGE_BASE_2022 = 14_441e6 / 0.135;
+
 /** 2022 dollars to 2026 dollars, the factor the model uses for its fixed brackets. */
 const INDEX = INDEX_2022_TO_2026.to / INDEX_2022_TO_2026.from;
 
@@ -49,16 +64,17 @@ export interface Distribution {
 
 /** Who pays under one model. */
 export function distribution(model: RevenueModel): Distribution {
-  const { income, wages, size, weight } = POPULATION;
+  const { income, wages, size, weight, nonfiler } = POPULATION;
   const ept = APPENDIX_2022[Number(model.id)].ept * 1e6;
-  // Payroll tax per dollar of wages, statewide: our estimate of what the worker credit applies to.
-  const eptPerWage = ept / WAGES_2022;
+  // Payroll tax per dollar of wages statewide. The worker credit uses it too.
+  const eptPerWage = ept / WAGE_BASE_2022;
   const G = GROUPS.length, inc = new Array<number>(G).fill(0), hh = new Array<number>(G).fill(0), pay = new Array<number>(G).fill(0);
   let total = 0, none = 0, returns = 0;
   for (let i = 0; i < income.length; i++) {
     const w = weight[i], g = GROUP_OF[i];
     const owed = contribution(model, income[i] * INDEX, wages[i] * INDEX, size[i], eptPerWage) / INDEX;
-    total += owed * w; returns += w; if (owed <= 0) none += w;
+    total += owed * w;
+    if (!nonfiler[i]) { returns += w; if (owed <= 0) none += w; }
     inc[g] += Math.max(0, income[i]) * w; hh[g] += owed * w; pay[g] += eptPerWage * wages[i] * w;
   }
   const sum = (a: number[], ks: number[]) => ks.reduce((s, k) => s + a[k], 0);

@@ -56,9 +56,10 @@
         <section class="xp-section" id="you">
           <div class="xp-wrap xp-narrow">
             <h2>Your household</h2>
-            <form class="xp-cmp-you" data-cmp-form>
+            <!-- The form works only with scripts, so it starts hidden; the script shows it. -->
+            <form class="xp-cmp-you" data-cmp-form hidden>
               <label>Household income (AGI)
-                <input type="text" inputmode="decimal" autocomplete="off" name="income" value="85,000" aria-describedby="cmp-income-error">
+                <input type="text" inputmode="decimal" autocomplete="off" name="income" value="85,000">
               </label>
               <label>People on your tax return
                 <select name="size">
@@ -75,10 +76,14 @@
               </label>
             </form>
             <p class="xp-cmp-error" id="cmp-income-error" data-cmp-error hidden>Type an amount in dollars, like 85000 or 85,000.</p>
+            <p data-cmp-static>
+              The figures below are for the Board's own example household: $85,000 of income, two
+              people, and a private employer with an $8.5 million payroll. With scripts on, you can
+              enter your own.
+            </p>
             <p class="xp-note">
-              Your yearly household contribution under each model, in 2026 dollars, with your
-              income counted as wages. The private employer is the Board's own example. These are
-              the calculator's figures; the
+              The yearly household contribution under each model, in 2026 dollars, with income
+              counted as wages. These are the calculator's figures; the
               <a href="../calculator/">calculator</a> also compares them with what you pay today.
             </p>
           </div>
@@ -97,8 +102,11 @@
               <li><span class="xp-key xp-key-2"></span>Employers</li>
               <li><span class="xp-key xp-key-3"></span>Business taxes</li>
             </ul>
-            <div data-cmp-models></div>
-            <noscript><p class="xp-noscript">This page draws its figures with a script. The <a href="../">explainer</a> shows the same models as tables.</p></noscript>
+            <div data-cmp-models><!-- uhp:compare-models --></div>
+            <details class="xp-details">
+              <summary>The numbers as a table</summary>
+              <!-- uhp:compare-models-table -->
+            </details>
             <p class="xp-note xp-narrow">
               The Board set the rates of Models 2–5 on 2022 tax data to raise the same amount, and
               says final rates would be recalculated with an updated target and current tax data.
@@ -111,27 +119,27 @@
 
         <section class="xp-section" id="who-pays">
           <div class="xp-wrap">
-            <h2>Who pays, by income</h2>
+            <h2 id="who-pays-title" tabindex="-1">Who pays, by income</h2>
             <p class="xp-narrow">
-              New taxes as a share of each group's income. Groups are Oregon tax returns ranked by
-              income, in fifths; the top fifth is also broken down. A married couple filing
-              together is one return.
+              New taxes as a share of each group's income. As the Board does, Oregonians are ranked
+              by the income of the tax return they are on and split into fifths of people, with the
+              more than 600,000 residents on no Oregon return in the lowest fifth. The top fifth is
+              also broken down.
             </p>
-            <div class="xp-picker" role="group" aria-label="Model" data-cmp-picker></div>
+            <div class="xp-picker" role="group" aria-label="Model" data-cmp-picker hidden></div>
             <ul class="xp-legend" aria-hidden="true">
               <li><span class="xp-key"></span>Household contribution</li>
               <li><span class="xp-key xp-key-2"></span>Employer payroll tax, counted against workers' pay</li>
             </ul>
-            <div class="xp-cmp-chart" data-cmp-chart></div>
-            <details class="xp-details">
-              <summary>The numbers as a table</summary>
-              <div data-cmp-table></div>
-            </details>
+            <div data-cmp-who><!-- uhp:compare-who-pays --></div>
             <p class="xp-note xp-narrow">
               As the Board does, the employer payroll tax is counted against workers' pay: employers
               are assumed to pay it out of wages. That is why groups that owe no household
-              contribution still show a share. The corporate taxes are not shown here. Built from
-              the IRS's 2022 Oregon returns, the year the Board's rates were set on.
+              contribution still show a share. Each model's 2022 payroll tax is spread over the IRS
+              table's $114.4 billion of resident wages (our choice; the Board's own base is about
+              $107 billion, which would put every fifth about half a point above the Board's
+              published rates). The corporate taxes are not shown here. Built from the IRS's 2022
+              Oregon returns, the year the Board's rates were set on.
             </p>
           </div>
         </section>
@@ -152,19 +160,18 @@
               <strong>Who pays</strong> applies the same household rules to every Oregon tax return
               in 2022, the year the Board's rates were set on. The IRS publishes returns by income
               bracket, not one by one, so we spread each bracket's returns across it (our method).
-              The payroll tax is the Board's 2022 figure for each model, counted against wages.
+              The IRS table has no income for residents on no return, so they are counted as people
+              with no income, only to place the fifths.
             </p>
-            <p><strong>Checked against the Board.</strong> Run with the project's tests:</p>
-            <ul class="xp-list">
-              <li>Statewide household contributions come within 5% of Appendix FR's 2022 results for every model.</li>
-              <li>Each fifth's combined rate is within a point of the Board's published figures, except the lowest fifth, which comes out up to 1.6 points lower.</li>
-              <li>The top 1%'s share of household contributions and the middle fifth's rate are within about a point of the Board's.</li>
-              <li>The share of returns owing nothing comes out about 6 to 12 points lower than the Board's. The Board's return file likely holds more low-income returns than the IRS state tables.</li>
-            </ul>
+            <p><strong>Checked against the Board.</strong> The project's tests compare these figures with the Board's published ones for every model:</p>
+            <!-- uhp:compare-checks -->
             <p>
-              The income groups' starting points, such as about $630,000 for the top 1%, are our
-              estimates from the same spread of returns. Within the IRS's open "$1 million or more"
-              bracket, the split between the top 0.1% and the rest of the top 1% is an estimate too.
+              The lowest fifth comes out a little higher than the Board's, and the share owing
+              nothing lower: the Board's return file likely holds more low-income returns than the
+              IRS state tables. The income groups' starting points, such as about
+              <!-- uhp:compare-top1-start --> in 2026 dollars for the top 1%, are our estimates from
+              the same spread of returns. Within the IRS's open "$1 million or more" bracket, the
+              split between the top 0.1% and the rest of the top 1% is an estimate too.
             </p>
           </div>
         </section>

@@ -9,7 +9,8 @@ change of snapshot changes numbers; read its notes before relying on a figure.
 - **How the five models compare:** a page at `/compare/` with the five models side by
   side: the Legislative Revenue Office's preliminary 2032 projection for each against the
   $30 billion and $39 billion needs, what a household would pay (the calculator's figure),
-  and who pays across incomes, with the top fifth broken down. Its who-pays figures are
+  and who pays across incomes in fifths of people, as the Board defines them, with the top
+  fifth broken down. The page reads complete without scripts. Its who-pays figures are
   tested against the Board's published ones. The 2032 projections come from the
   October 22 legislative brief, outside the source snapshot. [docs/compare.md](docs/compare.md)
 

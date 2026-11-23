@@ -42,3 +42,10 @@ export function signed(billions: number): string {
 export function moreLess(billions: number): string {
   return `$${Math.abs(billions).toFixed(1)}B ${billions < 0 ? 'less' : 'more'}`;
 }
+
+const ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
+
+/** Text made safe to place in HTML. */
+export function esc(text: string | number): string {
+  return String(text).replace(/[&<>"]/g, (c) => ESCAPES[c]);
+}

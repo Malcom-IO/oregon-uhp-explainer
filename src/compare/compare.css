@@ -4,6 +4,9 @@
  * and are scoped the same way, under .uhp-page with xp-cmp- classes.
  */
 
+/* Parts that need the script start hidden; a display rule must not show them early. */
+.uhp-page :is(.xp-cmp-you, .xp-picker)[hidden] { display: none; }
+
 /* Your household */
 .uhp-page .xp-cmp-you { display: flex; flex-wrap: wrap; gap: 1em 1.5em; align-items: end; margin-block: 1em .5em; }
 .uhp-page .xp-cmp-you label { display: grid; grid-template-columns: minmax(0, 1fr); gap: .3em; font-weight: 600; font-size: .95em; min-inline-size: 0; max-inline-size: 100%; }
@@ -50,6 +53,9 @@
 }
 
 /* Who pays */
+.uhp-page #who-pays-title:focus { outline: none; }
+.uhp-page #who-pays-title:focus-visible { outline: 2px solid var(--_accent); outline-offset: 4px; }
+.uhp-page .xp-cmp-chart-title { font-weight: 650; margin-block: 1em .4em; }
 .uhp-page .xp-cmp-chart { max-inline-size: 46em; }
 /* The chart keeps a readable size on a phone and scrolls sideways; the table holds the same numbers. */
 .uhp-page .xp-cmp-chart svg { display: block; inline-size: 100%; min-inline-size: 34em; block-size: auto; overflow: visible; }
