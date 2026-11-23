@@ -46,7 +46,7 @@ returns, and a credit under 50 cents is not shown.
 ## How to report a problem
 
 If a number is wrong or a description is unfair, open an
-[issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues). Issues and the
+[issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues/new?template=issue.yml). Issues and the
 changes that answer them are visible to everyone. Please use made-up household figures
 in a report, not your own.
 

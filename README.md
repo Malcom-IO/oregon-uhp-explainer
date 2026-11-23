@@ -24,7 +24,7 @@ business, and do it in the open, so anyone can check every number.**
   worked household examples in the Board's draft report for all five models.
   [Every number, and the Board's examples beside the calculator's](docs/numbers.md)
 - **Corrections are public.** If a number is wrong or a description is unfair,
-  [open an issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues). Everyone
+  [open an issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues/new?template=issue.yml). Everyone
   can see the report and the change that answers it.
 - **Impartial.** The project takes no position on the plan. It shows whatever the
   Board's numbers show, whether a model costs a household more than today or less.
@@ -41,6 +41,18 @@ business, and do it in the open, so anyone can check every number.**
 the payments in those drafts, not a prediction of what anyone will finally pay or
 save. [The limits, in full](docs/review.md#what-it-cannot-tell-you)
 
+## What this project is not
+
+- **Not the Board.** It is not run, reviewed or endorsed by the Universal Health Plan
+  Governance Board or the State of Oregon.
+- **Not a way to reach the Board.** Issues here go to this project, and the Board does not
+  see them. To tell the Board what it should decide, use its
+  [public comment process](https://www.oregon.gov/uhpgb/Pages/public-comment.aspx).
+- **Not a place to argue for or against the plan.** Issues are for making the site
+  accurate and clear: a wrong number, a missing source, a sentence that misreads a
+  document. Requests to recommend a policy, or to favor a model, are closed with a
+  pointer to the Board's public comment process.
+
 ## Go deeper
 
 | Document | What is in it |
@@ -49,7 +61,7 @@ save. [The limits, in full](docs/review.md#what-it-cannot-tell-you)
 | [How the five models compare](docs/compare.md) | The comparison page: what each model raises against what the plan needs, what a household would pay, who pays by income, and how it is checked against the Board |
 | [How to check this project](docs/review.md) | How the numbers are sourced and tested, how to run the tests, and the limits of the results |
 | [SOURCES.md](SOURCES.md) | Every Board document used, with addresses, page references, checksums and known discrepancies |
-| [Reuse the calculator](docs/reuse.md) | Run it locally, embed it in an iframe or as a module (also on npm as `oregon-uhp-calculator`), its options, colors and themes |
+| [Reuse the calculator](docs/reuse.md) | Run it locally, embed it in an iframe or as a module (also on npm as `oregon-uhp-explainer`), its options, colors and themes |
 | [The explainer page](docs/explainer-page.md) | How the page is built, and how to edit or translate it without breaking a number |
 | [The calculation engine](docs/engine.md) | How the five models are stored as data, and how to add a revised model |
 | [CHANGELOG.md](CHANGELOG.md) and [releases](https://github.com/Malcom-IO/oregon-uhp-explainer/releases) | Each version, the source snapshot it is built on, and its downloadable files: the calculator library, the PDF and the site as a ZIP |

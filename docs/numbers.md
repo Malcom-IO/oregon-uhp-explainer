@@ -244,7 +244,7 @@ The one cell outside $3, which looks like a misprint in the report: Table S1 at 
 
 ## 5. Found a problem?
 
-Open an [issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues). Say which number, where you saw it (this page, the
+Open an [issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues/new?template=issue.yml). Say which number, where you saw it (this page, the
 calculator or the explainer), what you expected and the document and page you are
 checking against. Please use made-up household figures, not your own. Issues and the
 changes that answer them are public.

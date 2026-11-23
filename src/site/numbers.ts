@@ -9,6 +9,7 @@ import { BOARD_PROPOSALS, INDEX_2022_TO_2026, PAYROLL_EXEMPT } from '../model/pr
 import { EXAMPLE_SETUP, KNOWN_MISPRINTS, SCENARIOS } from '../model/proposals/uhpgb-2026-10-examples';
 import { contribution, MODELS, payrollTax, schedule } from '../model/uhp-model';
 import { BUSINESS_PAYROLLS } from './blocks';
+import { NEW_ISSUE_URL } from './issue';
 
 const REPO = 'https://github.com/Malcom-IO/oregon-uhp-explainer';
 const SIZES = [1, 2, 3, 4, 5] as const;
@@ -218,7 +219,7 @@ ${worked.misprints}
 
 ## 5. Found a problem?
 
-Open an [issue](${REPO}/issues). Say which number, where you saw it (this page, the
+Open an [issue](${NEW_ISSUE_URL}). Say which number, where you saw it (this page, the
 calculator or the explainer), what you expected and the document and page you are
 checking against. Please use made-up household figures, not your own. Issues and the
 changes that answer them are public.
