@@ -65,6 +65,7 @@ to the same file. **2,435,582 bytes.** SHA-256
 | pp. 34–35 | Models 4 and 5 household schedules. For one exemption, Model 5's 12% bracket begins at $200,000 in the appendix schedule. | Marginal rates and bracket thresholds in the appendix's 2022 model | Proposal data `dollars2022`, `STEPS`, and Models 4–5 `household` |
 | Figure AFR4Fb, p. 38 | Single-person wages and current costs by coverage. The $45,000 AGI row gives $42,300 of wages and $2,150 of private-coverage costs. | AGI and wages printed in thousands of dollars, annual costs in dollars | Households `HOUSEHOLD_EXAMPLES`, one-person employee rows |
 | Figure AFR4Fc, p. 40 | Four-person wages and current costs by coverage. The $110,000 AGI row gives $99,000 of wages, with $4,000 of costs under public-employer coverage. | AGI and wages printed in thousands of dollars, annual costs in dollars | Households `HOUSEHOLD_EXAMPLES` and `FAMILY_MARKET` |
+| PDF pp. 31–35, one model per page | 2022 totals by model. HHCC is $10,631 million for Model 1 and $8,167 million for Model 2; EPT is $8,873 million for Model 1 and $11,341 million for Models 2–5. | Millions of dollars in the appendix's 2022 model | Comparison `APPENDIX_2022`: the payroll tax counted against wages, and the test for household totals |
 | Figure AFR4Fi, p. 44 | Combined HHCC and EPT by income fifth. Model 4's middle-fifth rate is 8.6%, matching report Table R8. | Percent of income in the modeled distributions | Proposal data `published.combinedByFifth` |
 
 ## Legislative Brief
@@ -161,20 +162,35 @@ The supplementary PDFs below were fetched November 22, 2026 (Pacific time).
   calculations from the report's inputs. The report's published scenarios supply the
   baseline totals for those comparisons.
 
-## Revenue balancer sources
+## Revised Legislative Brief (outside the snapshot)
 
-The [revenue balancer](docs/balancer.md) also uses figures from outside the Board's
-documents. These are cited on the page but not yet fingerprinted here.
+Dated October 22, 2026, posted with the October 29 meeting materials. It is later than the
+October 15 brief above and is used only by the [comparison page](docs/compare.md), for the
+Legislative Revenue Office's 2032 projections, which the October 15 brief leaves as a
+placeholder ("LRO Assessment Here"). **986,291 bytes.** SHA-256
+`4899e3adf89da1e8c9533452bef6e2a0f2ac90bf6d7521c82aac78b0c23d553d`, fetched November 22, 2026.
+[October 22 Legislative Brief PDF](https://www.oregon.gov/uhpgb/Documents/board-meetings/2026/20261029/20261022-legislative-brief.pdf)
 
-- IRS Statistics of Income, Historic Table 2, tax year 2022, Oregon (`22in55cmcsv.csv`):
-  returns, filing status, people, AGI, taxable Social Security, wages and capital gains by
-  income bracket.
-- BLS Quarterly Census of Employment and Wages, 2022: Oregon state and local government wages.
-- BLS Consumer Expenditure Survey, 2025 release: spending by income quintile.
-- Oregon Department of Revenue, Oregon Property Tax Statistics, FY 2024-25: net assessed value.
-- ECOnorthwest finance and revenue report, page 72 (the LRO's sales tax estimate), and the
-  report's Tables R1 and R3 and Appendix FR (corporate income and activity tax estimates).
-- Legislative Revenue Office estimate for Measure 108 (2020), via Ballotpedia: cigarette tax revenue.
+| Location | What it provides and spot check | Units and year | Use in this repo |
+| --- | --- | --- | --- |
+| p. 10 (PDF p. 11), "Legislative Revenue Office 2032 Revenue Projections" | Preliminary, static 2032 revenue by mechanism for each model. Model 1 totals $32.35 billion; Models 3–5 total $34.84 billion. CIT/CET is $1.15 billion and CAT $0.39 billion in every model. | Billions of dollars projected for 2032 | Comparison `LRO_2032` |
+
+The brief does not say which rates each model uses. Model 1's $15.5 billion payroll tax
+matches 9.89%, the rate in report Table R1, rather than the 9.6% schedule: that reading is ours.
+
+## IRS state data
+
+IRS Statistics of Income, Historic Table 2, tax year 2022, all states (`22in55cmcsv.csv`),
+Oregon rows. **749,827 bytes.** SHA-256
+`f72f83339c36af889cf0ba98acdfab8e3d18051f88cb181f46db2ddc4ae498bb`, fetched November 22, 2026.
+[22in55cmcsv.csv](https://www.irs.gov/pub/irs-soi/22in55cmcsv.csv)
+
+| Location | What it provides and spot check | Units and year | Use in this repo |
+| --- | --- | --- | --- |
+| Oregon, AGI_STUB 1–10: N1, MARS1, MARS2, MARS4, N2, A00100, A02500, A00200, A01000 | Returns, single, joint and head-of-household returns, people, AGI, taxable Social Security, wages and net capital gain by income bracket. 2,030,990 returns in all. | Counts, and thousands of dollars, tax year 2022 | Comparison `IRS_2022_OR` in `src/compare/population.ts` |
+
+The spread of each bracket's returns across it, and the split of each filing status into
+household sizes, are our method, not IRS figures.
 
 ## Known discrepancies
 
@@ -262,7 +278,8 @@ note that the Board has not approved it. This catalog treats the October report 
 Draft minutes for the October 15 and October 29 meetings are posted with the November 19
 materials and were not reviewed here. The October 22 brief and executive summary are newer
 versions of those briefing materials. The newer brief repeats the model comparison figures
-used here and adds preliminary 2032 revenue projections that are outside this snapshot.
+used here and adds preliminary 2032 revenue projections that are outside this snapshot. Only the
+comparison page uses them; they are cataloged above under Revised Legislative Brief.
 The newer executive summary's $81.2 billion estimate matches the report's $77.7 billion
 plan estimate plus $3.5 billion for Part B. The November 19 meeting presentation addresses
 report delivery without supplying a replacement set of rates or statewide estimates.

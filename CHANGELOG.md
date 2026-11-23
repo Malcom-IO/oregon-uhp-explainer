@@ -6,11 +6,12 @@ change of snapshot changes numbers; read its notes before relying on a figure.
 
 ## Unreleased
 
-- **Revenue balancer:** a page at `/balancer/` for trying your own mix of taxes against
-  the money the plan needs, in three steps: the Board's models, five simple choices, and
-  every rate. It shows who pays by income and what a household would pay, and plans can
-  be shared as links. Its household bills are tested against the calculator, and its
-  totals against the Board's 2022 results. [docs/balancer.md](docs/balancer.md)
+- **How the five models compare:** a page at `/compare/` with the five models side by
+  side: the Legislative Revenue Office's preliminary 2032 projection for each against the
+  $30 billion and $39 billion needs, what a household would pay (the calculator's figure),
+  and who pays across incomes, with the top fifth broken down. Its who-pays figures are
+  tested against the Board's published ones. The 2032 projections come from the
+  October 22 legislative brief, outside the source snapshot. [docs/compare.md](docs/compare.md)
 
 ## 0.1.0 · October 2026 drafts
 
