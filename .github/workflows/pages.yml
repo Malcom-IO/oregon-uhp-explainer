@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  pages: read
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -28,6 +29,18 @@ jobs:
       - run: npm run build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+      # The published address, so the PDF's links and notes point at this site
+      # (a fork gets its own). Pull requests from forks cannot read it; the PDF
+      # is then built with relative links, which still checks that it renders.
+      - id: pages
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+      - run: npm run pdf
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+          PUBLIC_URL: ${{ steps.pages.outputs.base_url }}
+          # What gets published must point at the published site.
+          REQUIRE_PUBLIC_URL: ${{ github.ref == 'refs/heads/main' }}
       - if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:

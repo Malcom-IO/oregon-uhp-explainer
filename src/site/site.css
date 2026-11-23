@@ -517,7 +517,7 @@
 }
 .uhp-page .xp-table { inline-size: 100%; border-collapse: collapse; font-size: .925em; font-variant-numeric: tabular-nums; }
 .uhp-page .xp-table caption { padding: .9em 1em .5em; color: var(--_muted); font-size: .9em; text-align: start; caption-side: top; }
-.uhp-page .xp-table :is(th, td) { padding: .7em 1em; border-block-end: 1px solid var(--_line); text-align: start; vertical-align: top; }
+.uhp-page .xp-table :is(th, td) { overflow-wrap: normal; padding: .7em 1em; border-block-end: 1px solid var(--_line); text-align: start; vertical-align: top; }
 .uhp-page .xp-table tbody tr:last-child > * { border-block-end: 0; }
 .uhp-page .xp-table thead th {
   color: var(--_muted);
@@ -673,6 +673,19 @@
   .uhp-page .xp-hero { background: none; }
   .uhp-page .xp-example.xp-off { display: block; }
   .uhp-page .xp-print-only { display: block; }
+  .uhp-page .xp-screen-only { display: none; }
+  /* Paper cannot scroll sideways: wide tables shrink to fit instead. */
+  .uhp-page .xp-scroll { overflow: visible; }
+  .uhp-page .xp-table { font-size: .8em; }
+  .uhp-page .xp-table :is(th, td) { padding: .5em .6em; }
+  .uhp-page .xp-facts { break-inside: avoid; }
+  .uhp-page .xp-details .xp-table { font-size: .72em; table-layout: fixed; }
+  .uhp-page .xp-details .xp-table .xp-num { white-space: normal; }
+  .uhp-page .xp-details > :not(summary) { margin-inline: .5em; }
+  .uhp-page .xp-table thead th { letter-spacing: 0; }
+  /* A heading or label stays with what follows it. */
+  .uhp-page :is(h2, h3, h4, .xp-kicker, .xp-band) { break-after: avoid; }
+  .uhp-page .xp-calc .uhp-chart { break-inside: avoid; }
   .uhp-page .xp-section { padding-block: 1.5em; }
   .uhp-page :is(.xp-card, .xp-fact, .xp-model, .xp-est-card, .xp-figure, .xp-table tr, .xp-checks li) { break-inside: avoid; }
 }

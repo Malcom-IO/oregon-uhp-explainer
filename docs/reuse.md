@@ -7,6 +7,14 @@ With Node 24, run `npm ci` and `npm run dev`. For a static build, run
 `BASE_PATH`, for example `BASE_PATH=/oregon-uhp-explainer/ npm run build`.
 Use `npm run preview` to check a build locally, with the same `BASE_PATH`.
 
+To make the PDF of the explainer, run `npm run pdf` after the build, with the
+same `BASE_PATH`. It needs Chrome or Chromium (set `CHROME_PATH` if it is not
+in a usual place) and writes `dist/oregon-uhp-explainer.pdf`, which the page's
+"Download this page as a PDF" link points to. Set `PUBLIC_URL` to the address
+the site is published at, so the PDF's links and its notes about the
+calculators point there; without it the links stay relative. The Pages
+workflow sets it to the repository's own Pages address.
+
 The build produces a small site: the explainer at the root, the calculator
 alone at `calculator/`, and `demo/`, a page that shows each way of embedding
 the calculator with working examples. The demo page loads the built library,
