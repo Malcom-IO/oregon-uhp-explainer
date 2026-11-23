@@ -244,7 +244,7 @@ The one cell outside $3, which looks like a misprint in the report: Table S1 at 
 
 ## 5. Found a problem?
 
-Open an [issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues). Say which number, where you saw it (this page, the
+Open an [issue](https://github.com/Malcom-IO/oregon-uhp-explainer/issues/new?body=%3C!--%0AThis%20project%20explains%20what%20the%20Universal%20Health%20Plan%20Governance%20Board%27s%20documents%20say.%20It%0Atakes%20no%20position%20on%20the%20plan%2C%20it%20is%20not%20run%20by%20the%20Board%2C%20and%20the%20Board%20does%20not%20see%20these%0Aissues.%20To%20tell%20the%20Board%20what%20it%20should%20decide%2C%20use%20its%20public%20comment%20process%3A%0Ahttps%3A%2F%2Fwww.oregon.gov%2Fuhpgb%2FPages%2Fpublic-comment.aspx%0A%0AIssues%20here%20are%20for%20making%20the%20site%20accurate%20and%20clear%3A%20a%20wrong%20number%2C%20a%20missing%20source%2C%20or%0Aa%20sentence%20that%20misreads%20a%20document.%20Fill%20in%20what%20you%20can%3B%20it%27s%20fine%20to%20leave%20a%20line%20blank.%0AEach%20section%20of%20the%20explainer%20has%20its%20own%20address%20you%20can%20paste%20below%2C%20such%20as%0Ahttps%3A%2F%2Fmalcom-io.github.io%2Foregon-uhp-explainer%2F%23coverage%0APlease%20use%20made-up%20household%20figures%2C%20not%20your%20own.%0A--%3E%0A%0A**Where%20on%20the%20site%3A**%0A%0A**What%20it%20says%20now%3A**%0A%0A**What%20it%20should%20say%2C%20and%20why%3A**%0A%0A**Source%20%28document%2C%20page%20and%20table%29%2C%20if%20you%20have%20one%3A**%0A). Say which number, where you saw it (this page, the
 calculator or the explainer), what you expected and the document and page you are
 checking against. Please use made-up household figures, not your own. Issues and the
 changes that answer them are public.
