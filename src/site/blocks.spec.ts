@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import page from '../../index.html?raw';
+import comparePage from '../../compare/index.html?raw';
 import { HOUSEHOLD_EXAMPLES, HOUSEHOLD_ROWS } from '../model/uhp-households';
 import { MODELS, SCENARIOS, payrollTax } from '../model/uhp-model';
 import {
@@ -43,14 +44,15 @@ function compared(value: number, now: number, slack: number): string {
 }
 
 describe('markers', () => {
-  it('has a renderer for every marker in the page, and a marker for every renderer', () => {
-    const inPage = markers(page);
-    expect([...inPage].sort()).toEqual(Object.keys(blocks).sort());
-    expect(new Set(inPage).size).toBe(inPage.length);
+  it('has a renderer for every marker in the pages, and a marker for every renderer', () => {
+    // Each page uses a marker once; together they use every renderer.
+    for (const html of [page, comparePage]) expect(new Set(markers(html)).size).toBe(markers(html).length);
+    const inPages = new Set([...markers(page), ...markers(comparePage)]);
+    expect([...inPages].sort()).toEqual(Object.keys(blocks).sort());
   });
 
   it('replaces every marker', () => {
-    const built = renderBlocks(page);
+    const built = renderBlocks(page) + renderBlocks(comparePage);
     expect(markers(built)).toEqual([]);
     for (const name of Object.keys(blocks)) expect(built, name).toContain(blocks[name]());
   });

@@ -11,6 +11,7 @@ export const banner =
   `/*!\n * Oregon Universal Health Plan calculator ${version} (unofficial), October 2026 drafts snapshot\n * https://github.com/Malcom-IO/oregon-uhp-explainer\n *\n${license.split('\n').map(line => ` * ${line}`.trimEnd()).join('\n')}\n */`;
 
 // The site: the explainer at the root, the calculator alone at calculator/,
+// the five models side by side at compare/,
 // and the embedding demo (a static page in public/demo/). Set BASE_PATH to
 // host it under a subpath, for example BASE_PATH=/oregon-uhp-explainer/ for a
 // GitHub Pages project site.
@@ -18,7 +19,7 @@ export default defineConfig({
   base: process.env['BASE_PATH'] ?? '/',
   build: {
     rollupOptions: {
-      input: { index: page('./index.html'), calculator: page('./calculator/index.html') },
+      input: { index: page('./index.html'), calculator: page('./calculator/index.html'), compare: page('./compare/index.html') },
     },
   },
   plugins: [{

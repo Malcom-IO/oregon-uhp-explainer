@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>How the five revenue models compare (unofficial)</title>
+    <meta name="description" content="An unofficial side-by-side of the five draft revenue models for Oregon's proposed Universal Health Plan: what each raises against what the plan needs, what a household like yours would pay, and who pays across incomes.">
+    <link rel="icon" href="data:,">
+    <style>body { margin: 0; }</style>
+  </head>
+  <body>
+    <!--
+      The page's shell (top bar, light and dark button, printing) comes from the explainer's
+      script, src/site/main.ts. The figures are drawn by src/compare/main.ts from the model in
+      src/model and the data in src/compare.
+    -->
+    <div class="uhp-page" data-uhp-theme="light">
+      <a class="xp-skip" href="#models">Skip to the five models</a>
+
+      <div class="xp-bar" data-uhp-bar>
+        <div class="xp-wrap xp-bar-inner">
+          <p class="xp-bar-title" aria-hidden="true">
+            <span class="xp-bar-eyebrow">Oregon &middot; Universal Health Plan</span>
+            <span class="xp-bar-name">How the five revenue models compare (unofficial)</span>
+          </p>
+          <a class="xp-bar-check" href="#about"><span aria-hidden="true">&check;</span> How<span class="xp-bar-more"> this is calculated</span></a>
+          <div class="xp-theme-switch" data-uhp-theme-switch></div>
+        </div>
+      </div>
+
+      <header class="xp-hero">
+        <div class="xp-wrap">
+          <div class="xp-narrow">
+            <p class="xp-eyebrow">Oregon &middot; Universal Health Plan</p>
+            <h1>How the five revenue models compare (unofficial)</h1>
+            <p class="xp-lead">
+              The Governance Board drafted five ways to raise the money for the plan, each mixing a
+              household contribution and an employer payroll tax. Here they are side by side: what
+              each would raise, what a household like yours would pay, and who pays across incomes.
+            </p>
+            <p class="xp-notice">
+              <strong>This page is unofficial.</strong> It is not published, reviewed or endorsed by
+              the Universal Health Plan Governance Board or the State of Oregon. It is based on the
+              Board's October 2026 draft documents and a later legislative brief, as listed in
+              <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/blob/main/SOURCES.md">SOURCES.md</a>.
+              Corrections go to
+              <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/issues">the project's issues</a>.
+            </p>
+            <p class="xp-snapshot"><!-- uhp:version --> &middot; Source snapshot &middot; October 2026 drafts</p>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="xp-section" id="you">
+          <div class="xp-wrap xp-narrow">
+            <h2>Your household</h2>
+            <!-- The form works only with scripts, so it starts hidden; the script shows it. -->
+            <form class="xp-cmp-you" data-cmp-form hidden>
+              <label>Household income (AGI)
+                <input type="text" inputmode="decimal" autocomplete="off" name="income" value="85,000">
+              </label>
+              <label>People on your tax return
+                <select name="size">
+                  <option value="1">1</option><option value="2" selected>2</option><option value="3">3</option>
+                  <option value="4">4</option><option value="5">5 or more</option>
+                </select>
+              </label>
+              <label>Where you work
+                <select name="employer">
+                  <option value="private" selected>A private employer with an $8.5 million payroll</option>
+                  <option value="public">A public employer</option>
+                  <option value="none">Self-employed, or no wages</option>
+                </select>
+              </label>
+            </form>
+            <p class="xp-cmp-error" id="cmp-income-error" data-cmp-error hidden>Type an amount in dollars, like 85000 or 85,000.</p>
+            <p data-cmp-static>
+              The figures below are for the Board's own example household: $85,000 of income, two
+              people, and a private employer with an $8.5 million payroll. With scripts on, you can
+              enter your own.
+            </p>
+            <p class="xp-note">
+              The yearly household contribution under each model, in 2026 dollars, with income
+              counted as wages. These are the calculator's figures; the
+              <a href="../calculator/">calculator</a> also compares them with what you pay today.
+            </p>
+          </div>
+        </section>
+
+        <section class="xp-section" id="models">
+          <div class="xp-wrap">
+            <h2>The five models</h2>
+            <p class="xp-narrow">
+              Each bar is the Legislative Revenue Office's preliminary projection of what the model
+              would raise in 2032. The two lines mark what the plan would need: $30 billion on the
+              Board's estimate and $39 billion on its actuaries' (Milliman's) best estimate.
+            </p>
+            <ul class="xp-legend" aria-hidden="true">
+              <li><span class="xp-key"></span>Households</li>
+              <li><span class="xp-key xp-key-2"></span>Employers</li>
+              <li><span class="xp-key xp-key-3"></span>Business taxes</li>
+            </ul>
+            <div data-cmp-models><!-- uhp:compare-models --></div>
+            <details class="xp-details">
+              <summary>The numbers as a table</summary>
+              <!-- uhp:compare-models-table -->
+            </details>
+            <p class="xp-note xp-narrow">
+              The Board set the rates of Models 2–5 on 2022 tax data to raise the same amount, and
+              says final rates would be recalculated with an updated target and current tax data.
+              The LRO's figures are static and preliminary. Model 1's projection appears to use the
+              report's Table R1 rates (our reading). Source: revised legislative brief, October 22,
+              2026, page 10.
+            </p>
+          </div>
+        </section>
+
+        <section class="xp-section" id="who-pays">
+          <div class="xp-wrap">
+            <h2 id="who-pays-title" tabindex="-1">Who pays, by income</h2>
+            <p class="xp-narrow">
+              New taxes as a share of each group's income. As the Board does, Oregonians are ranked
+              by the income of the tax return they are on and split into fifths of people, with the
+              more than 600,000 residents on no Oregon return (counted as 600,000) in the lowest fifth. The top fifth is
+              also broken down.
+            </p>
+            <div class="xp-picker" role="group" aria-label="Model" data-cmp-picker hidden></div>
+            <ul class="xp-legend" aria-hidden="true">
+              <li><span class="xp-key"></span>Household contribution</li>
+              <li><span class="xp-key xp-key-2"></span>Employer payroll tax, counted against workers' pay</li>
+            </ul>
+            <div data-cmp-who><!-- uhp:compare-who-pays --></div>
+            <p class="xp-note xp-narrow">
+              As the Board does, the employer payroll tax is counted against workers' pay: employers
+              are assumed to pay it out of wages. That is why groups that owe no household
+              contribution still show a share. Each model's 2022 payroll tax is spread over the IRS
+              table's $114.4 billion of resident wages (our choice; the Board's own base is about
+              $107 billion, which would raise every fifth by about another half point, further
+              above the Board's published rates). The corporate taxes are not shown here. Built from the IRS's 2022
+              Oregon returns, the year the Board's rates were set on.
+            </p>
+          </div>
+        </section>
+
+        <section class="xp-section" id="about">
+          <div class="xp-wrap xp-narrow">
+            <h2>How this is calculated</h2>
+            <p>
+              <strong>What you would pay</strong> uses the calculator's own rules and figures from
+              the Board's draft report and Appendix FR.
+            </p>
+            <p>
+              <strong>What each model raises</strong> is the Legislative Revenue Office's
+              preliminary 2032 projection, from the revised legislative brief dated October 22,
+              2026. It is later than the October 2026 drafts the rest of this project uses.
+            </p>
+            <p>
+              <strong>Who pays</strong> applies the same household rules to every Oregon tax return
+              in 2022, the year the Board's rates were set on. The IRS publishes returns by income
+              bracket, not one by one, so we spread each bracket's returns across it (our method).
+              The IRS table has no income for residents on no return, so they are counted as people
+              with no income, only to place the fifths.
+            </p>
+            <p><strong>Checked against the Board.</strong> The project's tests compare these figures with the Board's published ones for every model:</p>
+            <!-- uhp:compare-checks -->
+            <p>
+              The lowest fifth comes out a little higher than the Board's, and the share owing
+              nothing lower: the Board's return file likely holds more low-income returns than the
+              IRS state tables. The income groups' starting points, such as about
+              <!-- uhp:compare-top1-start --> in 2026 dollars for the top 1%, are our estimates from
+              the same spread of returns. Within the IRS's open "$1 million or more" bracket, the
+              split between the top 0.1% and the rest of the top 1% is an estimate too.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="xp-footer">
+        <div class="xp-wrap">
+          <p>
+            Unofficial: not published, reviewed or endorsed by the Universal Health Plan Governance
+            Board or the State of Oregon.
+          </p>
+          <p>
+            <a href="../">The explainer</a>
+            &middot;
+            <a href="../calculator/">The calculator</a>
+            &middot;
+            Text: <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/blob/main/LICENSE-CONTENT.md">CC BY 4.0</a>
+            &middot;
+            Code: <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/blob/main/LICENSE">MIT license</a>
+            &middot;
+            <a href="https://github.com/Malcom-IO/oregon-uhp-explainer/blob/main/SOURCES.md">Sources</a>
+          </p>
+        </div>
+      </footer>
+    </div>
+    <script type="module" src="/src/site/main.ts"></script>
+    <script type="module" src="/src/compare/main.ts"></script>
+  </body>
+</html>

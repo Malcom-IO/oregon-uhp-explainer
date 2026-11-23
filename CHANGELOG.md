@@ -4,6 +4,16 @@ Each version names two things: the software version, and the source snapshot, th
 set of Universal Health Plan Governance Board documents its numbers come from. A
 change of snapshot changes numbers; read its notes before relying on a figure.
 
+## Unreleased
+
+- **How the five models compare:** a page at `/compare/` with the five models side by
+  side: the Legislative Revenue Office's preliminary 2032 projection for each against the
+  $30 billion and $39 billion needs, what a household would pay (the calculator's figure),
+  and who pays across incomes in fifths of people, as the Board defines them, with the top
+  fifth broken down. The page reads complete without scripts. Its who-pays figures are
+  tested against the Board's published ones. The 2032 projections come from the
+  October 22 legislative brief, outside the source snapshot. [docs/compare.md](docs/compare.md)
+
 ## 0.1.0 · October 2026 drafts
 
 The first release. Built on the Board's October 2026 draft legislative report, its

@@ -26,16 +26,13 @@ import {
   perPerson,
 } from '../model/uhp-statewide';
 import type { Raised, Scenario as StatewideScenario, Step } from '../model/uhp-statewide';
-import { bn, moreLess, pct, pct1, signed, usd, usd100 } from './format';
+import { bn, esc, moreLess, pct, pct1, signed, usd, usd100 } from './format';
+import { START, START_MODEL, checksList, groupOf2026, modelRows, modelsTable as compareModelsTable, owed, top1Start, whoPays } from '../compare/render';
 
 // ------------------------------------------------------------------ helpers
 
-const ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
-
-/** Text made safe to place in HTML. */
-export function esc(text: string | number): string {
-  return String(text).replace(/[&<>"]/g, (c) => ESCAPES[c]);
-}
+// esc lives in format.ts, so a page can use it without loading every renderer here.
+export { esc };
 
 /** A bar's length as a CSS width, never outside its track. */
 function width(percent: number): string {
@@ -435,7 +432,7 @@ export function raised(groups: readonly RaisedGroup[]): string {
 
 // ---------------------------------------------------------------- markers
 
-/** Each marker name in index.html and the block that replaces it. */
+/** Each marker name in a page (index.html, compare/index.html) and the block that replaces it. */
 export const blocks: Readonly<Record<string, () => string>> = Object.freeze({
   // The software version, from package.json; the source snapshot is stated beside it.
   'version': () => `Version ${version}`,
@@ -449,6 +446,12 @@ export const blocks: Readonly<Record<string, () => string>> = Object.freeze({
   'bridge': () => bridge(BRIDGE),
   'statewide-scenarios': () => statewideScenarios(SCENARIOS_STATEWIDE),
   'raised': () => raised(RAISED_GROUPS),
+  // The comparison page (compare/index.html), drawn for the Board's example household.
+  'compare-models': () => modelRows(owed(START.income, START.size, START.employer)),
+  'compare-models-table': () => compareModelsTable(),
+  'compare-who-pays': () => whoPays(START_MODEL, groupOf2026(START.income)),
+  'compare-checks': () => checksList(),
+  'compare-top1-start': () => top1Start(),
 });
 
 const MARKER = /<!--\s*uhp:([a-z0-9-]+)\s*-->/g;
@@ -462,7 +465,7 @@ export function markers(html: string): string[] {
 export function renderBlocks(html: string): string {
   return html.replace(MARKER, (_comment, name: string) => {
     const render = blocks[name];
-    if (!render) throw new Error(`index.html has the marker "uhp:${name}", which has no renderer in src/site/blocks.ts.`);
+    if (!render) throw new Error(`A page has the marker "uhp:${name}", which has no renderer in src/site/blocks.ts.`);
     return render();
   });
 }

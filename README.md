@@ -58,6 +58,7 @@ save. [The limits, in full](docs/review.md#what-it-cannot-tell-you)
 | Document | What is in it |
 | --- | --- |
 | [Check the numbers](docs/numbers.md) | Every input the calculator uses, with its source, and each of the Board's worked examples beside the calculator's result |
+| [How the five models compare](docs/compare.md) | The comparison page: what each model raises against what the plan needs, what a household would pay, who pays by income, and how it is checked against the Board |
 | [How to check this project](docs/review.md) | How the numbers are sourced and tested, how to run the tests, and the limits of the results |
 | [SOURCES.md](SOURCES.md) | Every Board document used, with addresses, page references, checksums and known discrepancies |
 | [Reuse the calculator](docs/reuse.md) | Run it locally, embed it in an iframe or as a module (also on npm as `oregon-uhp-explainer`), its options, colors and themes |

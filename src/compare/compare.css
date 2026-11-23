@@ -1,0 +1,75 @@
+/*
+ * The comparison page's own pieces. Colors, type, the top bar, pickers, tables and
+ * printing come from the explainer (src/site/site.css); these rules use its tokens
+ * and are scoped the same way, under .uhp-page with xp-cmp- classes.
+ */
+
+/* Parts that need the script start hidden; a display rule must not show them early. */
+.uhp-page :is(.xp-cmp-you, .xp-picker)[hidden] { display: none; }
+
+/* Your household */
+.uhp-page .xp-cmp-you { display: flex; flex-wrap: wrap; gap: 1em 1.5em; align-items: end; margin-block: 1em .5em; }
+.uhp-page .xp-cmp-you label { display: grid; grid-template-columns: minmax(0, 1fr); gap: .3em; font-weight: 600; font-size: .95em; min-inline-size: 0; max-inline-size: 100%; }
+.uhp-page .xp-cmp-you select { min-inline-size: 0; max-inline-size: 100%; }
+.uhp-page .xp-cmp-you :is(input, select) {
+  font: inherit; font-size: 1.15em; font-weight: 600; min-block-size: 2.6em; padding: .3em .6em;
+  color: var(--_ink); background: var(--_paper); border: 1px solid var(--_control-line); border-radius: 6px;
+}
+.uhp-page .xp-cmp-you input { inline-size: 9em; }
+.uhp-page .xp-cmp-you [aria-invalid="true"] { border-color: var(--_error); }
+.uhp-page .xp-cmp-error { color: var(--_error); font-weight: 600; }
+
+/* The five models */
+.uhp-page .xp-cmp-model {
+  display: grid; grid-template-columns: minmax(12em, 1fr) minmax(12em, 2fr) 5.5em 8.5em;
+  gap: .5em 1.25em; align-items: center; padding-block: 1.1em; border-block-start: 1px solid var(--_line);
+}
+.uhp-page .xp-cmp-model:first-child { padding-block-start: 2em; }
+.uhp-page .xp-cmp-name h3 { margin: 0; font-size: 1.05em; }
+.uhp-page .xp-cmp-name p { margin: 0; color: var(--_muted); font-size: .9em; }
+.uhp-page .xp-cmp-link { font: inherit; font-size: .85em; color: var(--_accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.uhp-page .xp-cmp-bar { position: relative; block-size: 1.4em; background: var(--_grid); border-radius: 4px; }
+.uhp-page .xp-cmp-fill { display: flex; gap: 2px; block-size: 100%; }
+.uhp-page .xp-cmp-fill span:first-child { border-start-start-radius: 4px; border-end-start-radius: 4px; }
+.uhp-page .xp-cmp-mark { position: absolute; inset-block: -.3em; inline-size: 2px; background: var(--_ink); }
+.uhp-page .xp-cmp-mark span { display: none; }
+/* The lines are labeled once, above the first bar. */
+.uhp-page .xp-cmp-model:first-child .xp-cmp-mark span {
+  display: block; position: absolute; inset-block-end: calc(100% + .2em); inset-inline-start: 50%;
+  transform: translateX(-50%); font-size: .75em; color: var(--_muted); white-space: nowrap;
+}
+.uhp-page .xp-cmp-total { margin: 0; font-weight: 650; font-variant-numeric: tabular-nums; }
+.uhp-page .xp-cmp-total span { display: block; font-weight: 400; font-size: .8em; color: var(--_muted); }
+.uhp-page .xp-cmp-owed { margin: 0; text-align: end; }
+.uhp-page .xp-cmp-owed output { display: block; font-size: 1.35em; font-weight: 700; font-variant-numeric: tabular-nums; }
+.uhp-page .xp-cmp-owed span { font-size: .8em; color: var(--_muted); }
+@media (max-width: 720px) {
+  .uhp-page .xp-cmp-model { grid-template-columns: 1fr auto; }
+  .uhp-page .xp-cmp-bar { grid-column: 1 / -1; grid-row: 2; }
+  .uhp-page .xp-cmp-total { grid-row: 3; }
+  /* No room to label the lines on a phone; the paragraph above the bars says what they mark. */
+  .uhp-page .xp-cmp-model:first-child .xp-cmp-mark span { display: none; }
+  .uhp-page .xp-cmp-model:first-child { padding-block-start: 1.1em; }
+}
+
+/* Who pays */
+.uhp-page #who-pays-title:focus { outline: none; }
+.uhp-page #who-pays-title:focus-visible { outline: 2px solid var(--_accent); outline-offset: 4px; }
+.uhp-page .xp-cmp-chart-title { font-weight: 650; margin-block: 1em .4em; }
+.uhp-page .xp-cmp-chart { max-inline-size: 46em; }
+/* The chart keeps a readable size on a phone and scrolls sideways; the table holds the same numbers. */
+.uhp-page .xp-cmp-chart svg { display: block; inline-size: 100%; min-inline-size: 34em; block-size: auto; overflow: visible; }
+.uhp-page .xp-cmp-chart text { fill: var(--_muted); font-size: 13px; font-family: inherit; }
+.uhp-page .xp-cmp-chart .xp-cmp-strong { fill: var(--_ink); font-weight: 650; }
+.uhp-page .xp-cmp-chart .xp-cmp-me { fill: var(--_accent); font-weight: 700; }
+.uhp-page .xp-cmp-panel { fill: var(--_status); }
+.uhp-page .xp-cmp-axis { stroke: var(--_line); }
+.uhp-page .xp-cmp-link-line { stroke: var(--_muted); stroke-dasharray: 3 3; fill: none; }
+.uhp-page .xp-cmp-outline { fill: none; stroke: var(--_ink); stroke-width: 1.5; }
+.uhp-page .xp-cmp-row-me :is(th, td) { font-weight: 700; }
+
+@media print {
+  .uhp-page .xp-cmp-model { break-inside: avoid; }
+  .uhp-page .xp-cmp-link { display: none; }
+  .uhp-page .xp-cmp-chart svg { min-inline-size: 0; }
+}

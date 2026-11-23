@@ -1,5 +1,7 @@
 // @vitest-environment happy-dom
 import page from '../../index.html?raw';
+import comparePage from '../../compare/index.html?raw';
+import compareCss from '../compare/compare.css?raw';
 import { HOUSEHOLD_ROWS } from '../model/uhp-households';
 import { MODELS, SCENARIOS } from '../model/uhp-model';
 import { HIGH_PLAN, RATE_RESET } from '../model/uhp-statewide';
@@ -210,7 +212,7 @@ describe('the page as a document', () => {
       if (href.startsWith('#')) expect(ids, href).toContain(href.slice(1));
       else if (href.startsWith('https://')) {
         expect(href).toMatch(/^https:\/\/(www\.oregon\.gov\/uhpgb\/|github\.com\/Malcom-IO\/oregon-uhp-explainer(\/|$))/);
-      } else expect(['calculator/', 'demo/', 'oregon-uhp-explainer.pdf']).toContain(href);
+      } else expect(['calculator/', 'compare/', 'demo/', 'oregon-uhp-explainer.pdf']).toContain(href);
     }
   });
 
@@ -235,6 +237,48 @@ describe('the page as a document', () => {
   });
 });
 
+describe('the comparison page as a document', () => {
+  // The same guards as the explainer's, for compare/index.html.
+  const built = renderBlocks(comparePage);
+
+  it('is one root element with the page class, titled as unofficial, with the version and snapshot', () => {
+    expect(comparePage.match(/class="uhp-page"/g)).toHaveLength(1);
+    expect(comparePage).toContain('<title>How the five revenue models compare (unofficial)</title>');
+    expect(comparePage).toMatch(/<h1>How the five revenue models compare \(unofficial\)<\/h1>/);
+    expect(comparePage).toContain('Source snapshot &middot; October 2026 drafts');
+    expect(comparePage).toContain('<strong>This page is unofficial.</strong>');
+    expect(comparePage).toContain('not published, reviewed or endorsed by');
+  });
+
+  it('loads nothing from another site, and only its two scripts', () => {
+    expect(built).not.toMatch(/<(img|iframe|video|audio|object|embed|source)\b/i);
+    expect([...built.matchAll(/<link[^>]*>/g)].map((m) => m[0])).toEqual(['<link rel="icon" href="data:,">']);
+    expect(built).not.toMatch(/url\(|@import/);
+    expect([...built.matchAll(/<script[^>]*>/g)].map((m) => m[0])).toEqual([
+      '<script type="module" src="/src/site/main.ts">',
+      '<script type="module" src="/src/compare/main.ts">',
+    ]);
+    expect(compareCss).not.toMatch(/url\(|@import|@font-face/);
+  });
+
+  it('links only to its own sections, its sibling pages, the Board and the project', () => {
+    const hrefs = [...built.matchAll(/<a\b[^>]*\shref="([^"]*)"/g)].map((m) => m[1]);
+    expect(hrefs).toHaveLength(built.split('<a ').length - 1);
+    const ids = new Set([...built.matchAll(/\sid="([^"]*)"/g)].map((m) => m[1]));
+    for (const href of hrefs) {
+      if (href.startsWith('#')) expect(ids, href).toContain(href.slice(1));
+      else if (href.startsWith('https://')) {
+        expect(href).toMatch(/^https:\/\/(www\.oregon\.gov\/uhpgb\/|github\.com\/Malcom-IO\/oregon-uhp-explainer(\/|$))/);
+      } else expect(['../', '../calculator/']).toContain(href);
+    }
+  });
+
+  it('uses no id twice', () => {
+    const ids = [...built.matchAll(/\sid="([^"]*)"/g)].map((m) => m[1]);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
 describe('the stylesheet', () => {
   /** Selectors of every style rule, with comments, at-rule preludes and declarations removed. */
   function selectors(source: string): string[] {
@@ -248,6 +292,12 @@ describe('the stylesheet', () => {
   it('scopes every rule under the page class', () => {
     const all = selectors(css);
     expect(all.length).toBeGreaterThan(100);
+    expect(all.filter((selector) => !/^\.uhp-page(?![\w-])/.test(selector))).toEqual([]);
+  });
+
+  it('scopes every rule of the comparison page under the page class', () => {
+    const all = selectors(compareCss);
+    expect(all.length).toBeGreaterThan(20);
     expect(all.filter((selector) => !/^\.uhp-page(?![\w-])/.test(selector))).toEqual([]);
   });
 
