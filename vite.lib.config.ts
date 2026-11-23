@@ -1,3 +1,4 @@
+import { copyFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import { banner } from './vite.config.ts';
 
@@ -7,6 +8,13 @@ import { banner } from './vite.config.ts';
 export default defineConfig({
   // The static pages in public/ belong to the site build, not to the library.
   publicDir: false,
+  plugins: [{
+    // Types for hosts that use TypeScript, beside the module they describe.
+    name: 'ship-types',
+    closeBundle() {
+      copyFileSync('src/widget/oregon-uhp.d.ts', 'dist/lib/oregon-uhp.d.ts');
+    },
+  }],
   build: {
     outDir: 'dist/lib',
     emptyOutDir: true,

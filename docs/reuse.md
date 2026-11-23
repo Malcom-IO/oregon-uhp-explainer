@@ -34,8 +34,8 @@ script. The page follows the reader's light or dark system setting; add
 
 ## As a module, mounted in your own page
 
-`dist/lib/oregon-uhp.js` exports `mount`, and `dist/lib/oregon-uhp.css` holds
-the styles. Copy both files to your site. The script carries the MIT license
+`dist/lib/oregon-uhp.js` exports `mount`, `dist/lib/oregon-uhp.css` holds
+the styles, and `dist/lib/oregon-uhp.d.ts` describes them for TypeScript. Copy the files to your site. The script carries the MIT license
 notice in a comment; keep it. The page build includes the same notice as
 `dist/LICENSE.txt`.
 
@@ -59,8 +59,10 @@ optional:
 | `headingLevel` | `1`, `2` or `3`: the heading level of the calculator's title. The default is `2`. Headings inside the calculator follow from it. |
 | `show` | `'all'` (the default), `'household'` or `'employer'`: which calculator to show. |
 | `header` | `false` leaves out the title, the source snapshot line and the “unofficial” note. The page around the calculator must then state all three itself. |
+| `sectionTitles` | `false` leaves out the section titles ("Household calculator", "Employer payroll tax calculator") under a heading your page already has. Each section keeps the title as its accessible name, and the headings inside move up a level. |
 | `initialCoverage` | `'employer'` (the default), `'own'`, `'medicare'`, `'ohp'` or `'none'`: how the household is covered today. It sets the starting “what you pay now” to the Board's example for that coverage, and the employer it implies. |
 | `initialIncome`, `initialHouseholdSize`, `initialEmployer`, `initialPayroll`, `initialCurrentCost` | Starting values. A value the matching field would not accept is ignored. |
+| `initialBusinessKind`, `initialBusinessPayroll`, `initialBusinessSpend` | Starting values for the employer calculator: `'private'` or `'public'`, a payroll above zero, and current benefit spending. |
 
 The calculator opens with results already showing: the Board's example couple,
 with $85,000 of income, a private employer with an $8.5 million payroll, and the
@@ -78,7 +80,9 @@ element or anywhere above it: `--uhp-surface`, `--uhp-paper`, `--uhp-ink`,
 `--uhp-accent`, `--uhp-status`, `--uhp-error`, `--uhp-series-1` to
 `--uhp-series-5`, and `--uhp-font` for the font family. The explainer page also
 reads `--uhp-font-mono` for its small labels. Unset properties keep
-their defaults. If you set colors, also pass `theme: 'light'` or `'dark'`, so
+their defaults. The calculator is at most 72em wide, centered, with padding
+around it; set `--uhp-max-width: none` and `--uhp-padding: 0` to have it fill
+your column flush with the text around it. If you set colors, also pass `theme: 'light'` or `'dark'`, so
 the reader's system setting does not swap in the other defaults, and check the
 contrast of what you choose. `demo/` shows an example.
 

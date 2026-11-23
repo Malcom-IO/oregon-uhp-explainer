@@ -21,9 +21,10 @@
   --_series-3: var(--uhp-series-3, #21715c);
   --_series-4: var(--uhp-series-4, #835196);
   --_series-5: var(--uhp-series-5, #855c0b);
-  max-inline-size: 72em;
+  /* A host sets --uhp-max-width: none and --uhp-padding: 0 to sit flush in its own column. */
+  max-inline-size: var(--uhp-max-width, 72em);
   margin-inline: auto;
-  padding: clamp(.75em, 3vw, 2em);
+  padding: var(--uhp-padding, clamp(.75em, 3vw, 2em));
   background: var(--_surface);
   color: var(--_ink);
   position: relative;

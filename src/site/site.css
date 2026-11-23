@@ -562,7 +562,8 @@
 
 /* --------------------------------------------------------- calculators */
 .uhp-page .xp-calc { margin-block: 2em; }
-.uhp-page .xp-calc > .oregon-uhp { max-inline-size: none; padding: 0; background: transparent; }
+.uhp-page .xp-calc { --uhp-max-width: none; --uhp-padding: 0; }
+.uhp-page .xp-calc > .oregon-uhp { background: transparent; }
 .uhp-page .xp-noscript { margin: 0; padding: 1em 1.15em; border-radius: .5em; background: var(--_status); }
 
 /* -------------------------------------------------- if nothing changes */

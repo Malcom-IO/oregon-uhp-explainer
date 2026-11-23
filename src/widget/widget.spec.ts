@@ -815,6 +815,42 @@ describe('calculator widget', () => {
     expect(host.querySelectorAll('.uhp-section')).toHaveLength(2);
   });
 
+  it('leaves out the section titles when the host asks, keeping each section named', () => {
+    destroy = mount(host, { header: false, sectionTitles: false, headingLevel: 3, initialEmployer: 'none' });
+    expect(host.querySelectorAll('.uhp-section-title')).toHaveLength(0);
+    const sections = [...host.querySelectorAll('section.uhp-section')];
+    expect(sections.map(section => section.getAttribute('aria-label')))
+      .toEqual(['Household calculator', 'Employer payroll tax calculator']);
+    // The headings inside move up into the titles' place.
+    expect(host.querySelector('.uhp-results-title')?.tagName).toBe('H3');
+    expect(host.querySelector('.uhp-bill-title')?.tagName).toBe('H4');
+    expect(host.querySelector('.uhp-business .uhp-results-title')?.tagName).toBe('H3');
+    expect(host.querySelector('.uhp-business .uhp-bill-title')?.tagName).toBe('H4');
+    expectBills(85_000, 2, 'none');
+
+    destroy = mount(host, { header: false, headingLevel: 3 });
+    expect(host.querySelectorAll('section.uhp-section[aria-label]')).toHaveLength(0);
+    expect(host.querySelector('.uhp-section-title')?.tagName).toBe('H3');
+  });
+
+  it('takes starting values for the employer calculator', () => {
+    destroy = mount(host, { show: 'employer', initialBusinessKind: 'public', initialBusinessPayroll: 20_000_000, initialBusinessSpend: 0 });
+    expect(control(BUSINESS_KIND).value).toBe('public');
+    expect(control(BUSINESS_PAYROLL).value).toBe('20,000,000');
+    expect(control(BUSINESS_SPEND).value).toBe('0');
+    for (const card of businessCards()) {
+      const model = MODELS.find(m => String(m.id) === idsIn(card.querySelector('.uhp-bill-title')!.textContent!)[0])!;
+      const owed = employerRate('public', model, 20_000_000) * 20_000_000;
+      expect(card.querySelector('.uhp-bill-amount')?.textContent).toBe(`${usd.format(owed)} / year`);
+      expect(card.querySelector('.uhp-verdict')?.textContent).toBe(`↑${usd.format(owed)} more than you spend now`);
+    }
+    // Values the fields would not accept fall back to the example.
+    destroy = mount(host, { show: 'employer', initialBusinessKind: 'none' as 'private', initialBusinessPayroll: 0, initialBusinessSpend: -5 });
+    expect(control(BUSINESS_KIND).value).toBe('private');
+    expect(control(BUSINESS_PAYROLL).value).toBe('1,100,000');
+    expect(control(BUSINESS_SPEND).value).toBe('110,000');
+  });
+
   it('names every control and keeps ids unique across mounts', () => {
     destroy = mount(host);
     const otherHost = document.createElement('div');

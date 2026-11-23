@@ -34,6 +34,17 @@ export interface WidgetOptions {
    * calculator. Headings then start at `headingLevel`.
    */
   header?: boolean;
+  /**
+   * Set false to leave out the section titles ("Household calculator",
+   * "Employer payroll tax calculator") under a heading the page already has.
+   * Each section keeps the title as its accessible name, and the headings
+   * inside it move up a level.
+   */
+  sectionTitles?: boolean;
+  /** Starting values for the employer calculator. A value the field would not accept is ignored. */
+  initialBusinessKind?: 'private' | 'public';
+  initialBusinessPayroll?: number;
+  initialBusinessSpend?: number;
 }
 
 /** Household sizes every model's schedule covers, taken from the proposal data. */
@@ -320,6 +331,13 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
 
   const withHeader = options.header !== false;
   const sectionLevel = withHeader ? level + 1 : level;
+  const withSectionTitles = options.sectionTitles !== false;
+  /** The level of the headings inside a section: under its title, or in its place. */
+  const innerLevel = withSectionTitles ? sectionLevel + 1 : sectionLevel;
+  const sectionTitle = (section: HTMLElement, text: string) => {
+    if (withSectionTitles) section.append(heading(doc, sectionLevel, text, 'uhp-section-title'));
+    else section.setAttribute('aria-label', text);
+  };
   // A starting value is used only if the field would accept it as typed.
   const amountOption = (value: unknown, positive = false) =>
     typeof value === 'number' && !Number.isNaN(parseAmount(String(value))) && !(positive && value === 0)
@@ -328,7 +346,7 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
 
   // ------------------------------------------------------------ household
   const household = element(doc, 'section', undefined, 'uhp-section');
-  household.append(heading(doc, sectionLevel, copy.household, 'uhp-section-title'));
+  sectionTitle(household, copy.household);
   const layout = element(doc, 'div', undefined, 'uhp-calc');
   const inputs = element(doc, 'div', undefined, 'uhp-inputs');
 
@@ -411,7 +429,7 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
   callout.append(coverageNote, assumptions, householdStatus);
   const householdLive = status(doc);
   const householdAnnouncer = announcer(householdLive);
-  const resultsHeading = heading(doc, sectionLevel + 1, copy.results, 'uhp-results-title uhp-visually-hidden');
+  const resultsHeading = heading(doc, innerLevel, copy.results, 'uhp-results-title uhp-visually-hidden');
   const cards = element(doc, 'div', undefined, 'uhp-bills');
   const chart = createChart(doc);
   results.append(callout, resultsHeading, cards, chart.figure, householdLive);
@@ -515,7 +533,7 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
     announcedNote = rates;
     announcedCoverage = coverageSaid;
     cards.replaceChildren(...bills.map((result, i) =>
-      billCard(doc, sectionLevel + 2, result, i, baseline, coverage.kind)));
+      billCard(doc, innerLevel + 1, result, i, baseline, coverage.kind)));
     chart.update({ income: amount, size: householdSize, employer: kind, payroll: payrollAmount, currentCost: baseline, bills });
   }
 
@@ -538,23 +556,24 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
 
   // ------------------------------------------------------------- business
   const business = element(doc, 'section', undefined, 'uhp-section uhp-business');
-  business.append(heading(doc, sectionLevel, copy.business, 'uhp-section-title'));
+  sectionTitle(business, copy.business);
   const businessLayout = element(doc, 'div', undefined, 'uhp-calc');
   const businessInputs = element(doc, 'div', undefined, 'uhp-inputs');
-  const businessKind = select(doc, id('business-kind'), employers.filter(option => option.value !== 'none'), 'private');
+  const businessKind = select(doc, id('business-kind'), employers.filter(option => option.value !== 'none'),
+    options.initialBusinessKind === 'public' ? 'public' : 'private');
   const businessPayroll = moneyField(doc, id('business-payroll'), copy.businessPayroll, {
-    initial: DEFAULT_BUSINESS_PAYROLL,
+    initial: amountOption(options.initialBusinessPayroll, true) ?? DEFAULT_BUSINESS_PAYROLL,
     requiredPrompt: copy.enterBusinessPayroll,
     positive: true,
   });
   businessPayroll.control.required = true;
   const spend = moneyField(doc, id('spend'), copy.businessSpend, {
-    initial: DEFAULT_BUSINESS_SPEND,
+    initial: amountOption(options.initialBusinessSpend) ?? DEFAULT_BUSINESS_SPEND,
     hint: copy.businessSpendHint,
   });
   businessInputs.append(labeled(doc, copy.businessKind, businessKind), businessPayroll.field, spend.field);
   const businessResults = element(doc, 'div', undefined, 'uhp-results');
-  const businessHeading = heading(doc, sectionLevel + 1, copy.businessResults, 'uhp-results-title uhp-visually-hidden');
+  const businessHeading = heading(doc, innerLevel, copy.businessResults, 'uhp-results-title uhp-visually-hidden');
   const businessCards = element(doc, 'div', undefined, 'uhp-bills uhp-bills-few');
   const businessNote = element(doc, 'p', copy.businessAssumption, 'uhp-hint');
   const businessStatus = element(doc, 'p', undefined, 'uhp-result-status');
@@ -586,7 +605,7 @@ export function mount(host: HTMLElement, options: WidgetOptions = {}): () => voi
     businessCards.replaceChildren(...groups.map(([amount, ids]) => {
       const tax = taxes[MODELS.findIndex(model => String(model.id) === ids[0])];
       const card = element(doc, 'article', undefined, 'uhp-bill');
-      card.append(heading(doc, sectionLevel + 2, modelsLabel(ids), 'uhp-bill-title'));
+      card.append(heading(doc, innerLevel + 1, modelsLabel(ids), 'uhp-bill-title'));
       const total = element(doc, 'p', amount, 'uhp-bill-amount');
       total.append(element(doc, 'span', ` ${copy.perYear}`));
       card.append(total);
