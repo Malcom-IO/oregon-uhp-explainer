@@ -22,6 +22,8 @@ jobs:
     permissions:
       contents: write
       pages: read
+      # npm trusted publishing: the registry checks this workflow's identity, so no token is stored.
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,6 +35,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm test
       - run: npm run typecheck
@@ -62,3 +65,10 @@ jobs:
         run: |
           gh release create "$TAG" --verify-tag --title "$TAG" --notes-file release/notes.md \
             $(find release -maxdepth 1 -type f ! -name notes.md | sort)
+      # The same library files as the release, as the npm package oregon-uhp-calculator,
+      # with a provenance statement linking it to this workflow run. Needs the package's
+      # trusted publisher set to this workflow on npmjs.com, and the repository variable
+      # NPM_PUBLISH set to true (docs/releasing.md).
+      - name: Publish to npm
+        if: github.ref_type == 'tag' && vars.NPM_PUBLISH == 'true'
+        run: npm publish release/npm --provenance --access public

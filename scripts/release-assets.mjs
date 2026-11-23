@@ -69,6 +69,37 @@ cpSync(DIST, staging, { recursive: true });
 execFileSync('zip', ['-qrX', `${site}.zip`, site], { cwd: OUT });
 rmSync(staging, { recursive: true });
 
+// The npm package: the same three library files, with a package.json and README.
+// Published from the release workflow (or by hand: npm publish release/npm).
+const pkg = join(OUT, 'npm');
+mkdirSync(pkg);
+for (const name of ['oregon-uhp.js', 'oregon-uhp.css', 'oregon-uhp.d.ts']) cpSync(join(OUT, name), join(pkg, name));
+cpSync(join(ROOT, 'LICENSE'), join(pkg, 'LICENSE'));
+cpSync(join(ROOT, 'npm/README.md'), join(pkg, 'README.md'));
+const repo = 'https://github.com/Malcom-IO/oregon-uhp-explainer';
+writeFileSync(join(pkg, 'package.json'), `${JSON.stringify({
+  name: 'oregon-uhp-calculator',
+  version,
+  description: `Unofficial calculator for Oregon's proposed Universal Health Plan: what households and employers would pay under the Board's draft financing models (${snapshot} snapshot).`,
+  license: 'MIT',
+  author: 'Marcus Malcom (Malcom IO LLC)',
+  homepage: 'https://malcom-io.github.io/oregon-uhp-explainer/',
+  repository: { type: 'git', url: `git+${repo}.git` },
+  bugs: { url: `${repo}/issues` },
+  keywords: ['oregon', 'health-policy', 'universal-health-care', 'calculator', 'civic-tech'],
+  type: 'module',
+  main: './oregon-uhp.js',
+  module: './oregon-uhp.js',
+  types: './oregon-uhp.d.ts',
+  exports: {
+    '.': { types: './oregon-uhp.d.ts', import: './oregon-uhp.js', default: './oregon-uhp.js' },
+    './oregon-uhp.css': './oregon-uhp.css',
+    './package.json': './package.json',
+  },
+  sideEffects: ['*.css'],
+  files: ['oregon-uhp.js', 'oregon-uhp.css', 'oregon-uhp.d.ts'],
+}, null, 2)}\n`);
+
 const assets = [...Object.keys(files), `${site}.zip`].sort();
 const sums = assets.map((name) => `${createHash('sha256').update(readFileSync(join(OUT, name))).digest('hex')}  ${name}`);
 writeFileSync(join(OUT, 'SHA256SUMS'), `${sums.join('\n')}\n`);

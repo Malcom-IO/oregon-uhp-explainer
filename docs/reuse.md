@@ -36,6 +36,9 @@ script. The page follows the reader's light or dark system setting; add
 
 Each [release](https://github.com/Malcom-IO/oregon-uhp-explainer/releases) has these
 three files ready to download, with checksums, so you need not build them yourself.
+They are also on npm: `npm install oregon-uhp-calculator`, then
+`import { mount } from 'oregon-uhp-calculator'` and
+`import 'oregon-uhp-calculator/oregon-uhp.css'`.
 `dist/lib/oregon-uhp.js` exports `mount`, `dist/lib/oregon-uhp.css` holds
 the styles, and `dist/lib/oregon-uhp.d.ts` describes them for TypeScript. Copy the files to your site. The script carries the MIT license
 notice in a comment; keep it. The page build includes the same notice as

@@ -2,7 +2,10 @@
 
 A version names the software and the source snapshot it is built on (see
 [CHANGELOG.md](../CHANGELOG.md)). Releases are listed on the repository's
-[Releases page](https://github.com/Malcom-IO/oregon-uhp-explainer/releases), each with:
+[Releases page](https://github.com/Malcom-IO/oregon-uhp-explainer/releases), and the
+calculator library is also published to npm as
+[`oregon-uhp-calculator`](https://www.npmjs.com/package/oregon-uhp-calculator). Each
+release has:
 
 - `oregon-uhp.js`, `oregon-uhp.css` and `oregon-uhp.d.ts`: the calculator as a module;
 - the explainer as a PDF;
@@ -33,4 +36,9 @@ A version names the software and the source snapshot it is built on (see
    The Release workflow builds the files again from the tag and publishes the release.
    It refuses a tag that does not match the version in the files.
 
-A release cannot be quietly changed afterward: fix a mistake with a new patch version.
+The same workflow publishes `release/npm/` to npm, with a provenance statement, when the
+repository variable `NPM_PUBLISH` is `true` and the package's trusted publisher on
+npmjs.com is set to this repository's `release.yml`. No npm token is stored.
+
+A release cannot be quietly changed afterward, on GitHub or on npm: fix a mistake with a
+new patch version.
