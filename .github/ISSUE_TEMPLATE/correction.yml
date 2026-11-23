@@ -12,7 +12,9 @@ body:
     id: where
     attributes:
       label: Where on the site?
-      description: Pick the closest match. If you can't find it, choose the last option and describe it below.
+      description: Pick the closest match. If you can't find it, leave "I'm not sure" and describe it below.
+      # Starts on the last option, so an issue filed without choosing doesn't name a section.
+      default: 16
       options:
         - "Explainer: The short version"
         - "Explainer: Where it stands"

@@ -24,8 +24,10 @@ describe('the correction form', () => {
     expect(explainerOptions(form)).toEqual(titles);
   });
 
-  it('lets someone who cannot find the section say so', () => {
-    expect(form).toContain("I'm not sure, or I can't find it in this list");
+  it('starts on "not sure", so skipping the question names no section', () => {
+    const options = [...form.matchAll(/^ {8}- "(.*)"$/gm)].map(([, option]) => option);
+    const start = Number(form.match(/^ {6}default: (\d+)$/m)?.[1]);
+    expect(options[start]).toBe("I'm not sure, or I can't find it in this list");
   });
 
   it('points recommendations to the Board, not to this project', () => {
