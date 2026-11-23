@@ -7,10 +7,12 @@ body:
         This project is not run by the Universal Health Plan Governance Board, and the Board
         does not see these issues. To tell the Board what it should decide, use its
         [public comment process](https://www.oregon.gov/uhpgb/Pages/public-comment.aspx).
+        Please use made-up household figures, not your own.
   - type: dropdown
     id: category
     attributes:
       label: What is it about?
+      description: Optional. Pick the closest, or leave it.
       options:
         - A number or calculation
         - Wording or an explanation
@@ -20,5 +22,8 @@ body:
     id: description
     attributes:
       label: Add a description
+      placeholder: >-
+        What's wrong or unclear, and where you saw it (a link to the section helps). Add your
+        source if you have one.
     validations:
       required: true
