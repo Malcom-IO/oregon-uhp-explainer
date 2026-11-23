@@ -70,7 +70,7 @@ execFileSync('zip', ['-qrX', `${site}.zip`, site], { cwd: OUT });
 rmSync(staging, { recursive: true });
 
 // The npm package: the same three library files, with a package.json and README.
-// Published from the release workflow (or by hand: npm publish release/npm).
+// Published from the release workflow (or by hand: npm publish ./release/npm).
 const pkg = join(OUT, 'npm');
 mkdirSync(pkg);
 for (const name of ['oregon-uhp.js', 'oregon-uhp.css', 'oregon-uhp.d.ts']) cpSync(join(OUT, name), join(pkg, name));

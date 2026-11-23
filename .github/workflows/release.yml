@@ -71,4 +71,4 @@ jobs:
       # NPM_PUBLISH set to true (docs/releasing.md).
       - name: Publish to npm
         if: github.ref_type == 'tag' && vars.NPM_PUBLISH == 'true'
-        run: npm publish release/npm --provenance --access public
+        run: npm publish ./release/npm --provenance --access public
