@@ -1,7 +1,8 @@
 # Sources
 
 This calculator uses the October 2026 draft materials the Oregon Universal Health Plan Governance
-Board posted on Oregon.gov. The project is independent of the State of Oregon and the Board.
+Board posted on Oregon.gov. The project is unofficial: it is not published, reviewed or endorsed by
+the Board or the State of Oregon.
 These estimates describe the proposals in that snapshot.
 
 The byte sizes and SHA-256 fingerprints below are for PDFs fetched on November 19, 2026
@@ -80,6 +81,20 @@ materials. **686,974 bytes.** SHA-256
 | --- | --- | --- | --- |
 | pp. 8–9 (PDF pp. 9–10), model design table | Counts of tiers and brackets, worker credit, and exemption levels. Model 5 has six household brackets including the exempt bracket. | Counts, percentages, and shares of the poverty level | Proposal data `PUBLISHED_SOURCE` and model design cross-check |
 | p. 9 (PDF p. 10), distribution comparison table | Zero-liability share, middle-fifth average net rate, summary maximum, and top 1% liability share. Model 2 has 60.4% of returns with no contribution. | Percent of modeled returns, income, or liability, as labeled | Proposal data `PUBLISHED_SOURCE` and `published` statistics |
+
+## Joint Task Force on Universal Health Care, Final Report
+
+*Final Report and Recommendations*, September 2022, prepared by the Legislative Policy and
+Research Office for the task force created by Senate Bill 770 (2019). This is the approved copy
+from the task force's September 29, 2022 meeting materials. It predates the Board and is not
+part of the October 2026 snapshot. Fetched November 23, 2026 (Pacific time).
+**4,034,080 bytes.** SHA-256
+`90beee9f8dd978ae092a5056d5dd88aed0e7f7598164e67a749a869fe3d4bc85`.
+[Task Force final report PDF](https://olis.oregonlegislature.gov/liz/2021I1/Downloads/CommitteeMeetingDocument/257230)
+
+| Location | What it provides and spot check | Units and year | Use in this repo |
+| --- | --- | --- | --- |
+| pp. 27–28, "Private Insurance" | Defines substitutive, supplementary and complementary coverage. Recommends prohibiting substitutive coverage and state-regulated supplementary plans "to the extent permitted by state and federal law," and allows complementary coverage. | Policy recommendation, 2022 | The explainer's "A plan you buy yourself" card |
 
 ## ECOnorthwest finance and revenue report
 
