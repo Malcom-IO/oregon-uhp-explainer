@@ -65,6 +65,7 @@ save. [The limits, in full](docs/review.md#what-it-cannot-tell-you)
 | [The explainer page](docs/explainer-page.md) | How the page is built, and how to edit or translate it without breaking a number |
 | [The calculation engine](docs/engine.md) | How the five models are stored as data, and how to add a revised model |
 | [CHANGELOG.md](CHANGELOG.md) and [releases](https://github.com/Malcom-IO/oregon-uhp-explainer/releases) | Each version, the source snapshot it is built on, and its downloadable files: the calculator library, the PDF and the site as a ZIP |
+| [Planned work](https://github.com/Malcom-IO/oregon-uhp-explainer/issues?q=is%3Aissue%20state%3Aopen%20label%3Aplanned) | What the project plans to do next, as issues labeled `planned` |
 | [LICENSE](LICENSE) and [LICENSE-CONTENT.md](LICENSE-CONTENT.md) | What you may do with the code and the text, and how to credit it |
 
 ## Cite it
